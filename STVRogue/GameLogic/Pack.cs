@@ -62,5 +62,27 @@ namespace STVRogue.GameLogic
 			List<Node> path = dungeon.shortestpath(location, u);
             move(path[0]);
         }
+        
+        /*ADDED*/
+        public Monster getMonster() {
+            foreach (Monster m in members)
+            {
+                if (m.HP > 0){
+                    return m;
+                }
+            }
+            throw new ArgumentException(); /*this is when no monsters are alive*/
+        }
+
+        /*ADDED*/ 
+        public int getAction() {
+            return 1; /* A  test in which 1 means attack, 2 means flee*/
+        }
+
+        /*ADDED*/ 
+        public void flee() {
+            throw new NotImplementedException();
+        }
+        
     }
 }
