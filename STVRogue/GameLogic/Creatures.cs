@@ -87,5 +87,9 @@ namespace STVRogue.GameLogic
                 accelerated = false;
             }
         }
+        /*ADDED*/ 
+        public int getAction() {
+            return 1; /* A  test in which 1 means attack*/
+        }
     }
 }
