@@ -29,6 +29,7 @@ namespace STVRogue.GameLogic
 			predicates = new Predicates(); 
             M = nodeCapacityMultiplier;
 			int numberOfNodesInZone = 0;
+			int size = 10;
 			STVRogue.Utils.RandomGenerator.initializeWithSeed(100); //seed number can change
 
 			//every node is named with its zone number followed by its number in a zone (nodeId = preId+lastId)
@@ -324,6 +325,14 @@ namespace STVRogue.GameLogic
 			return this.neighbors.Contains(nd);
 		}
 
+        /* ADDED */
+        public Boolean contested() {
+            if (packs.Count > 0 && player.HP!= 0 ){
+                return true;
+            } else {
+                return false;
+            }                        
+        }
         /* Execute a fight between the player and the packs in this node.
          * Such a fight can take multiple rounds as describe in the Project Document.
          * A fight terminates when either the node has no more monster-pack, or when
@@ -331,11 +340,47 @@ namespace STVRogue.GameLogic
          */
         public void fight(Player player)
         {
-            // while there exists a pack and player's HP is higher than 0
-            while(this.packs.Count != 0 && player.HP!=0 ){
-                //to be implemented
+            int state = 0;
+            
+            while (contested() ){ /* while packs still exist*/
+                switch (state) 
+                {
+                    case 0:
+
+                    case 1: /* S1: Player Attacks*/
+                        player.Attack(packs.FirstOrDefault().getMonster());
+                        if (contested() ) {
+                            state = 3;
+                        } else {
+                            state = 6;
+                        }
+
+                    case 2:   /* S2: Crystal is used*/                     
+                        foreach(Monster m in packs.FirstOrDefault()) {
+                            player.Attack(m);
+                        }
+                        if (contested() ) {
+                            state = 3;
+                        } else {
+                            state = 6;
+                        }
+                        
+                    case 3:
+                        int action = packs.FirstOrDefault().getAction();
+                        if (action = 1){
+                            packs.FirstOrDefault().Attack(player);
+                        } 
+                        if (action = 2){
+                            packs.FirstOrDefault().flee();
+                        }
+                        if (contested() ){
+                            state = 4;
+                        } else {
+                            state = 6;
+                        }
+                }
+
             }
-            throw new NotImplementedException();
         }
     }
 
