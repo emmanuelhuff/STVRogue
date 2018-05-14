@@ -16,6 +16,7 @@ namespace STVRogue.GameLogic
 		public uint difficultyLevel;
 		public List<Bridge> bridges; //stores every bridge instance to access previously implemented ones in for loop
 									 /* a constant multiplier that determines the maximum number of monster-packs per node: */
+		public List<Zone> zones;
 		public uint M;
 
 		/* To create a new dungeon with the specified difficult level and capacity multiplier */
@@ -27,19 +28,22 @@ namespace STVRogue.GameLogic
 			difficultyLevel = level;
 			bridges = new List<Bridge>(); //List of bridges initialized
 			predicates = new Predicates();
+			zones = new List<Zone>();
 			M = nodeCapacityMultiplier;
 			int numberOfNodesInZone = 0;
-			int size = 10;
-			STVRogue.Utils.RandomGenerator.initializeWithSeed(100); //seed number can change
+			//STVRogue.Utils.RandomGenerator.initializeWithSeed(100); //seed number can change
 
 			//every node is named with its zone number followed by its number in a zone (nodeId = preId+lastId)
 			string preId = "";
 			string lastId = "";
 			string nodeId = "";
-			startNode = new Node("" + 10); //start node id is set
+			startNode = new Node("" + 10,1); //start node id is set
 			Logger.log("Set startNode Id: 10");
 			for (int i = 1; i < level + 1; i++) //i signifies zone level
 			{
+				Zone newZone = new Zone(i, nodeCapacityMultiplier);
+				zones.Add(newZone);
+				//Logger.log("Number of zones " + zones.Count);
 				Logger.log("Creating level " + i);
 				List<Node> nodesInZone = new List<Node>(); // stores nodes in the level
 				preId = "" + i; // preId is zone level
@@ -51,10 +55,11 @@ namespace STVRogue.GameLogic
 				{ //create and add nodes to the list nodesInZone
 					lastId = "" + j;
 					nodeId = preId + lastId; //merge preId and lastId to create nodeId
-					Node newNode = new Node(nodeId); //create node
+					Node newNode = new Node(nodeId,i); //create node
 					Logger.log("Created node with id " + nodeId);
 					nodesInZone.Add(newNode); //add node to the list
 				}
+				newZone.nodesInZone = nodesInZone; //CHANGE IT AFTERWARDS, no need to have nodesInZone list anymore
 
 				//nodesInZone stores every node in this zone
 				int numberOfNodesToConnect; // temp variable to decide how many nodes to connect for startNode or for bridges
@@ -142,7 +147,7 @@ namespace STVRogue.GameLogic
 
 					lastId = "" + (numberOfNodesInZone + 1);
 					nodeId = preId + lastId;
-					exitNode = new Node(nodeId); //create exit node's id
+					exitNode = new Node(nodeId,i); //create exit node's id
 					Logger.log("Last zone is finished, exit node id is set to " + nodeId);
 					max = 4;
 					if (listOfNotFullNodes.Count < 4) max = listOfNotFullNodes.Count; //can make at most listOfNotFullNodes.Count number of connections
@@ -158,7 +163,7 @@ namespace STVRogue.GameLogic
 				  //a bridge can be connected to at minimum 1 and at maximum 3 nodes
 					lastId = "" + (numberOfNodesInZone + 1);
 					nodeId = preId + lastId;
-					Bridge endBridge = new Bridge(nodeId); //create the bridge
+					Bridge endBridge = new Bridge(nodeId,i); //create the bridge
 					bridges.Add(endBridge); //add it to bridges list to access it in the next loop iteration
 					Logger.log("A new bridge is created with id " + nodeId);
 
@@ -303,13 +308,15 @@ namespace STVRogue.GameLogic
 		public List<Node> neighbors = new List<Node>();
 		public List<Pack> packs = new List<Pack>();
 		public List<Item> items = new List<Item>();
+		public int level;
 		public bool visited;
 		public Node pred;
 
 		public Node() { }
-		public Node(String id)
+		public Node(String id, int level)
 		{
 			this.id = id;
+			this.level = level;
 			this.visited = false;
 			this.pred = null;
 		}
@@ -365,7 +372,8 @@ namespace STVRogue.GameLogic
                 switch (state) 
                 {
                     case 0:
-                        int UserInput = 4; /*4 is the only state S0 can't reach straight away*/
+						int UserInput = STVRogue.GameLogic.Command.getUserInput();
+                        //int UserInput = 4; /*4 is the only state S0 can't reach straight away*/
 
                         /* Randomly picking 1,2,3,5, or 6 as UserInput */
                         while (UserInput == 4){ 
@@ -454,7 +462,7 @@ namespace STVRogue.GameLogic
     {
         List<Node> fromNodes = new List<Node>();
         List<Node> toNodes = new List<Node>();
-        public Bridge(String id) : base(id) { }
+        public Bridge(String id,int level) : base(id,level) { }
 
         /* Use this to connect the bridge to a node from the same zone. */
         public void connectToNodeOfSameZone(Node nd)
@@ -480,4 +488,19 @@ namespace STVRogue.GameLogic
 
         }
     }
+
+	public class Zone{
+		public List<Node> nodesInZone;
+		public uint capacity;
+		public int id;
+
+		public Zone(int level, uint M){
+			this.id = level;
+			this.capacity = (uint)(M * (level + 1));
+
+		}
+		public void addNodesToZone(Node n){
+			this.nodesInZone.Add(n);
+		}
+	}
 }

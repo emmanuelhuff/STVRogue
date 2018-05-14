@@ -62,11 +62,26 @@ namespace STVRogue.GameLogic
         }
 
         /*ADDED*/
-        public void flee()
+		public Boolean flee()
         {
-            /*is there an adjacent node? if so, remove pack, add to other node. To do so, Node class neighbors that is not a bridge*/
-            /* Pack.location is the node*/
-            throw new NotImplementedException();
+			
+			Node currentLocation = this.location;
+			int currentLevel = currentLocation.level;
+			List<Node> adjacentNodes = currentLocation.neighbors;
+			int zoneLevel;
+			foreach(Node adjNode in adjacentNodes){
+				zoneLevel = adjNode.level;
+				if(currentLevel == zoneLevel){
+					//check if it is contested, if it is not flee to that node
+					if(!adjNode.contested(this)){
+						//change location and flee
+						this.location = adjNode;
+						return true;
+					}
+				} //else do nothing, it can not flee to a node from the different zone
+			}
+			return false;
+
         }
 
         override public void Attack(Creature foe)
