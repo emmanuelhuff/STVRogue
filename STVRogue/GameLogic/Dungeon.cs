@@ -408,7 +408,7 @@ namespace STVRogue.GameLogic
 						break;
 
                     case 2:   /* S2: Crystal is used*/                     
-                        foreach(Monster m in packs.FirstOrDefault()) {
+                        foreach(Monster m in packs.FirstOrDefault().members) {
                             player.Attack(m);
                         }
 						if (contested(player) ) {
