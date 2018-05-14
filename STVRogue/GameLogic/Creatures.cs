@@ -18,6 +18,7 @@ namespace STVRogue.GameLogic
         virtual public void Attack(Creature foe)
         {
             foe.HP = (int)Math.Max(0, foe.HP - AttackRating);
+			//Logger.log("Creature's HP is " + foe.HP);
             String killMsg = foe.HP == 0 ? ", KILLING it" : "";
             Logger.log("Creature " + id + " attacks " + foe.id + killMsg + ".");
         }
@@ -33,6 +34,11 @@ namespace STVRogue.GameLogic
             this.id = id; name = "Orc";
             HP = 1 + RandomGenerator.rnd.Next(6);
         }
+
+        //ADDED
+		public void setHP(int newHP){
+			this.HP = newHP;
+		}
     }
 
     public class Player : Creature
@@ -73,17 +79,16 @@ namespace STVRogue.GameLogic
                 int packCount = foe_.pack.members.Count;
                 foe_.pack.members.RemoveAll(target => target.HP <= 0);
                 KillPoint += (uint) (packCount - foe_.pack.members.Count) ;
-                /* Wrong implementation; can't remove while iterating:
-                foreach (Monster target in foe_.pack.members)
-                {
-                    base.Attack(target);
-                    if (target.HP == 0)
-                    {
-                        foe_.pack.members.Remove(foe_);
-                        KillPoint++;
-                    }
-                }
-                */
+				// ADDED IMPLEMENTATION
+				for (int i = packCount - 1; i >= 0; i--){
+					Monster target = foe_.pack.members.ElementAt(i);
+					base.Attack(target);
+					if(target.HP==0){
+						foe_.pack.members.Remove(target);
+						KillPoint++;
+					}
+				}
+                
                 accelerated = false;
             }
         }
