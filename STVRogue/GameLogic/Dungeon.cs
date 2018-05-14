@@ -342,14 +342,14 @@ namespace STVRogue.GameLogic
         {
             int state = 0;
             
-            while (contested() ){ /* while packs still exist*/
+			while (contested(player) ){ /* while packs still exist*/
                 switch (state) 
                 {
                     case 0:
                         int UserInput = 4; /*4 is the only state S0 can't reach straight away*/
 
                         /* Randomly picking 1,2,3,5, or 6 as UserInput */
-                        while (UserInput = 4){ 
+                        while (UserInput == 4){ 
                             UserInput = 1 + RandomGenerator.rnd.Next(5);
                         }
 
@@ -373,7 +373,7 @@ namespace STVRogue.GameLogic
                         }
 
                         /* If player flees */
-                        if (UserInput = 5) {
+                        if (UserInput == 5) {
                             state = 5;
                         }
                         break;
@@ -381,17 +381,18 @@ namespace STVRogue.GameLogic
 
                     case 1: /* S1: Player Attacks*/
                         player.Attack(packs.FirstOrDefault().getMonster());
-                        if (contested() ) {
+						if (contested(player) ) {
                             state = 3;
                         } else {
                             state = 6;
                         }
+						break;
 
                     case 2:   /* S2: Crystal is used*/                     
                         foreach(Monster m in packs.FirstOrDefault()) {
                             player.Attack(m);
                         }
-                        if (contested() ) {
+						if (contested(player) ) {
                             state = 3;
                         } else {
                             state = 6;
@@ -400,13 +401,13 @@ namespace STVRogue.GameLogic
                         
                     case 3:
                         int action = packs.FirstOrDefault().getAction();
-                        if (action = 1){
+                        if (action == 1){
                             packs.FirstOrDefault().Attack(player);
                         } 
-                        if (action = 2){
+                        if (action == 2){
                             packs.FirstOrDefault().flee();
                         }
-                        if (contested() ){
+						if (contested(player) ){
                             state = 4;
                         } else {
                             state = 6;
