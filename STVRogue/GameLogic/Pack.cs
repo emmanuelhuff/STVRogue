@@ -76,11 +76,17 @@ namespace STVRogue.GameLogic
 
         /*ADDED*/ 
         public int getAction() {
-            return 1; /* A  test in which 1 means attack, 2 means flee*/
+            if (( ((1- ((m.HP)/(m.startingHP))/2))*100) < RandomGenerator.rnd.Next(100)){
+                return 2;
+            } else {
+                return 1; /* A  test in which 1 means attack, 2 means flee*/
+            }
         }
 
         /*ADDED*/ 
         public void flee() {
+            /*is there an adjacent node? if so, remove pack, add to other node. To do so, Node class neighbors that is not a bridge*/
+            /* Pack.location is the node*/            
             throw new NotImplementedException();
         }
         

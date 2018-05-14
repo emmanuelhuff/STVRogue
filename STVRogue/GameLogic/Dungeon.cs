@@ -344,112 +344,140 @@ namespace STVRogue.GameLogic
 			return this.neighbors.Contains(nd);
 		}
 
-		/* ADDED */
-		public Boolean contested()
-		{
-			/*if (packs.Count > 0 && player.HP != 0)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}*/
-			return true;
-		}
-		/* Execute a fight between the player and the packs in this node.
+        /* ADDED */
+        public Boolean contested(Player player) {
+            if (packs.Count > 0 && player.HP!= 0 ){
+                return true;
+            } else {
+                return false;
+            }                        
+        }
+        /* Execute a fight between the player and the packs in this node.
          * Such a fight can take multiple rounds as describe in the Project Document.
          * A fight terminates when either the node has no more monster-pack, or when
          * the player's HP is reduced to 0. 
          */
-		public void fight(Player player)
-		{
-			/*int state = 0;
+        public void fight(Player player)
+        {
+            int state = 0;
+            
+			while (contested(player) ){ /* while packs still exist*/
+                switch (state) 
+                {
+                    case 0:
+                        int UserInput = 4; /*4 is the only state S0 can't reach straight away*/
 
-			while (contested())
-			{ 
-				switch (state)
-				{
-					case 0:
+                        /* Randomly picking 1,2,3,5, or 6 as UserInput */
+                        while (UserInput == 4){ 
+                            UserInput = 1 + RandomGenerator.rnd.Next(5);
+                        }
 
-					case 1: 
-						player.Attack(packs.FirstOrDefault().getMonster());
-						if (contested())
-						{
-							state = 3;
-						}
-						else
-						{
-							state = 6;
-						}
+                        /*If potion is used*/
+                        if (UserInput == 1) {
+                            state = 1;
+                        }
 
-					case 2:  
-						foreach (Monster m in packs.FirstOrDefault())
-						{
-							player.Attack(m);
-						}
-						if (contested())
-						{
-							state = 3;
-						}
-						else
-						{
-							state = 6;
-						}
+                        /*if crystal is used*/
+                        if (UserInput == 2){
+                            state = 2;
+                        }
 
-					case 3:
-						int action = packs.FirstOrDefault().getAction();
-						if (action = 1)
-						{
-							packs.FirstOrDefault().Attack(player);
-						}
-						if (action = 2)
-						{
-							packs.FirstOrDefault().flee();
-						}
-						if (contested())
-						{
-							state = 4;
-						}
-						else
-						{
-							state = 6;
-						}
-				}
+                        /* if player attacks */
+                        if (UserInput == 3 || UserInput == 6){
+                            if (contested(player)){
+                                state = 3; /* still contested*/
+                            } else {
+                                state = 6; /* not contested*/
+                            }
+                        }
 
-			}*/
-		}
-	}
+                        /* If player flees */
+                        if (UserInput == 5) {
+                            state = 5;
+                        }
+                        break;
+            
 
-	public class Bridge : Node
-	{
-		List<Node> fromNodes = new List<Node>();
-		List<Node> toNodes = new List<Node>();
-		public Bridge(String id) : base(id) { }
+                    case 1: /* S1: Player Attacks*/
+                        player.Attack(packs.FirstOrDefault().getMonster());
+						if (contested(player) ) {
+                            state = 3;
+                        } else {
+                            state = 6;
+                        }
+						break;
 
-		/* Use this to connect the bridge to a node from the same zone. */
-		public void connectToNodeOfSameZone(Node nd)
-		{
-			base.connect(nd);
-			fromNodes.Add(nd);
-		}
+                    case 2:   /* S2: Crystal is used*/                     
+                        foreach(Monster m in packs.FirstOrDefault()) {
+                            player.Attack(m);
+                        }
+						if (contested(player) ) {
+                            state = 3;
+                        } else {
+                            state = 6;
+                        }
+                        break;
+                        
+                    case 3:
+                        int action = packs.FirstOrDefault().getAction();
+                        if (action == 1){
+                            packs.FirstOrDefault().Attack(player);
+                        } 
+                        if (action == 2){
+                            packs.FirstOrDefault().flee();
+                        }
+						if (contested(player) ){
+                            state = 4;
+                        } else {
+                            state = 6;
+                        }
+                        break;
+                        
+                    case 4:
+                        packs.FirstOrDefault().Attack(player);
+                        state = 0;
+                        break;
 
-		/* Use this to connect the bridge to a node from the next zone. */
-		public void connectToNodeOfNextZone(Node nd)
-		{
-			base.connect(nd);
-			toNodes.Add(nd);
-		}
+                    case 5:
+                        player.flee();
+                        break;
 
-		/** ADDED */
-		public void disconnectFromSameZone()
-		{
-			//for each node in fromNodes list, remove the connection between the bridge (call base.disconnect(Node n))
-			foreach (Node nd in this.fromNodes)
-			{
-				base.disconnect(nd);
-			}
+                    case 6: /* Node is no longer contested*/
+                        break;
+                }
 
-		}
-	}
+            }
+        }
+    }
+
+    public class Bridge : Node
+    {
+        List<Node> fromNodes = new List<Node>();
+        List<Node> toNodes = new List<Node>();
+        public Bridge(String id) : base(id) { }
+
+        /* Use this to connect the bridge to a node from the same zone. */
+        public void connectToNodeOfSameZone(Node nd)
+        {
+            base.connect(nd);
+            fromNodes.Add(nd);
+        }
+
+        /* Use this to connect the bridge to a node from the next zone. */
+        public void connectToNodeOfNextZone(Node nd)
+        {
+            base.connect(nd);
+            toNodes.Add(nd);
+        }
+
+        /** ADDED */
+        public void disconnectFromSameZone(){
+            //for each node in fromNodes list, remove the connection between the bridge (call base.disconnect(Node n))
+            foreach (Node nd in this.fromNodes)
+            {
+                base.disconnect(nd);
+            }
+
+        }
+    }
 }
