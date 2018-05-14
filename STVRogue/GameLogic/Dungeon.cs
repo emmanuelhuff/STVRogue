@@ -346,6 +346,38 @@ namespace STVRogue.GameLogic
                 switch (state) 
                 {
                     case 0:
+                        int UserInput = 4; /*4 is the only state S0 can't reach straight away*/
+
+                        /* Randomly picking 1,2,3,5, or 6 as UserInput */
+                        while (UserInput = 4){ 
+                            UserInput = 1 + RandomGenerator.rnd.Next(5);
+                        }
+
+                        /*If potion is used*/
+                        if (UserInput == 1) {
+                            state = 1;
+                        }
+
+                        /*if crystal is used*/
+                        if (UserInput == 2){
+                            state = 2;
+                        }
+
+                        /* if player attacks */
+                        if (UserInput == 3 || UserInput == 6){
+                            if (contested(player)){
+                                state = 3; /* still contested*/
+                            } else {
+                                state = 6; /* not contested*/
+                            }
+                        }
+
+                        /* If player flees */
+                        if (UserInput = 5) {
+                            state = 5;
+                        }
+                        break;
+            
 
                     case 1: /* S1: Player Attacks*/
                         player.Attack(packs.FirstOrDefault().getMonster());
