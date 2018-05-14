@@ -61,6 +61,14 @@ namespace STVRogue.GameLogic
             bag.Remove(item);
         }
 
+        /*ADDED*/
+        public void flee()
+        {
+            /*is there an adjacent node? if so, remove pack, add to other node. To do so, Node class neighbors that is not a bridge*/
+            /* Pack.location is the node*/
+            throw new NotImplementedException();
+        }
+
         override public void Attack(Creature foe)
         {
             if (!(foe is Monster)) throw new ArgumentException();

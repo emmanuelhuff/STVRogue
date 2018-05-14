@@ -76,7 +76,14 @@ namespace STVRogue.GameLogic
 
         /*ADDED*/ 
         public int getAction() {
-            if (( ((1- ((m.HP)/(m.startingHP))/2))*100) < RandomGenerator.rnd.Next(100)){
+            int H = 0;
+			int orgH = this.startingHP;
+            //hi
+			foreach(Monster m in this.members){
+				H += m.HP;
+			}
+         
+			if ((((1- (H/orgH))/2)*100) < RandomGenerator.rnd.Next(100)){
                 return 2;
             } else {
                 return 1; /* A  test in which 1 means attack, 2 means flee*/
