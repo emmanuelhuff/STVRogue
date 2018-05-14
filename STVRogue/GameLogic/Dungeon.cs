@@ -326,7 +326,7 @@ namespace STVRogue.GameLogic
 		}
 
         /* ADDED */
-        public Boolean contested() {
+        public Boolean contested(Player player) {
             if (packs.Count > 0 && player.HP!= 0 ){
                 return true;
             } else {
@@ -396,6 +396,7 @@ namespace STVRogue.GameLogic
                         } else {
                             state = 6;
                         }
+                        break;
                         
                     case 3:
                         int action = packs.FirstOrDefault().getAction();
@@ -410,6 +411,19 @@ namespace STVRogue.GameLogic
                         } else {
                             state = 6;
                         }
+                        break;
+                        
+                    case 4:
+                        packs.FirstOrDefault().Attack(player);
+                        state = 0;
+                        break;
+
+                    case 5:
+                        player.flee();
+                        break;
+
+                    case 6: /* Node is no longer contested*/
+                        break;
                 }
 
             }
