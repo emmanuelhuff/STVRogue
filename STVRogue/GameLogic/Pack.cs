@@ -89,7 +89,15 @@
                     return 1; /* A  test in which 1 means attack, 2 means flee*/
                 }
             }
-
+            
+		public int getPackHPValue(){
+			int packHpValue = 0;
+			foreach(Monster m in this.members){
+				packHpValue += m.HP;
+			}
+			return packHpValue;
+		}
+        
             /*ADDED*/ 
     		public bool flee() {
                 /*is there an adjacent node? if so, remove pack, add to other node. To do so, Node class neighbors that is not a bridge*/

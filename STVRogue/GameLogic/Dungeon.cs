@@ -369,6 +369,7 @@ namespace STVRogue.GameLogic
 				return false;
 			}
 		}
+
 		/* Execute a fight between the player and the packs in this node.
          * Such a fight can take multiple rounds as describe in the Project Document.
          * A fight terminates when either the node has no more monster-pack, or when
@@ -531,6 +532,7 @@ namespace STVRogue.GameLogic
 		{
 			this.id = level;
 			this.capacity = (uint)(M * (level + 1));
+			this.nodesInZone = new List<Node>();
 
 		}
 		public void addNodesToZone(Node n)
