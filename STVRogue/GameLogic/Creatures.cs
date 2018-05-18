@@ -61,6 +61,17 @@ namespace STVRogue.GameLogic
             bag.Remove(item);
         }
 
+		public int getHPValueOfBag(){
+			int bagHPValue = 0;
+			foreach(Item i in this.bag){
+				if(i.GetType()== typeof(HealingPotion)){
+					bagHPValue += (int)((HealingPotion)i).HPvalue;
+				}
+			}
+			return bagHPValue;
+				
+		}
+
         /*ADDED*/
 		public Boolean flee()
         {

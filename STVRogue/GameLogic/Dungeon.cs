@@ -85,6 +85,9 @@ namespace STVRogue.GameLogic
 					Bridge startBridge = bridges.ElementAt(i - 2); //bridge is already created in previous loop
 					zoneFirstNode = (Node)startBridge;
 					int maxConnect = 4 - startBridge.neighbors.Count; //maximum number of connections that bridge can make
+
+					if (numberOfNodesInZone < maxConnect)
+						maxConnect = numberOfNodesInZone;
 					numberOfNodesToConnect = RandomGenerator.rnd.Next(1, maxConnect + 1); //Decide how many connections it should make
 					Logger.log("Connecting bridge " + startBridge.id + " to " + numberOfNodesToConnect + " nodes in the next zone ");
 					for (int j = 0; j < numberOfNodesToConnect; j++)
@@ -369,7 +372,14 @@ namespace STVRogue.GameLogic
 				return false;
 			}
 		}
-
+        //ADDED
+		public int getNodeHPValue(){
+			int nodeHPValue = 0;
+			foreach(Pack p in this.packs){
+				nodeHPValue += p.getPackHPValue();
+			}
+			return nodeHPValue;
+		}
 		/* Execute a fight between the player and the packs in this node.
          * Such a fight can take multiple rounds as describe in the Project Document.
          * A fight terminates when either the node has no more monster-pack, or when
@@ -538,6 +548,14 @@ namespace STVRogue.GameLogic
 		public void addNodesToZone(Node n)
 		{
 			this.nodesInZone.Add(n);
+		}
+
+		public int getZoneHPValue(){
+			int zoneHPValue = 0;
+			foreach(Node n in this.nodesInZone){
+				zoneHPValue += n.getNodeHPValue();
+			}
+			return zoneHPValue;
 		}
 	}
 }
