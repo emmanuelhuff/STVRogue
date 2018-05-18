@@ -192,6 +192,19 @@ namespace STVRogue.GameLogic
 			}
 			return true;
 		}
+		/* ADDED */
+        //return average of connectivity for Dungeon
+        public float checkAvg(List<Node> allNodes)
+        {
+            float avg = 0;
+            int denominator = allNodes.Count;
+
+            foreach (Node nd in allNodes)
+            {
+
+            }
+            return avg /= denominator;
+        }
 
 		/* Return a shortest path between node u and node v */
 		public List<Node> shortestpath(Node u, Node v)
