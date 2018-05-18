@@ -31,21 +31,17 @@ namespace STVRogue.GameLogic
 			zones = new List<Zone>();
 			M = nodeCapacityMultiplier;
 			int numberOfNodesInZone = 0;
-			//STVRogue.Utils.RandomGenerator.initializeWithSeed(100); //seed number can change
 
 			//every node is named with its zone number followed by its number in a zone (nodeId = preId+lastId)
-			string preId = "";
-			string lastId = "";
-			string nodeId = "";
-			startNode = new Node("" + 10,1); //start node id is set
+			string preId,lastId,nodeId = "";
+			startNode = new Node("" + 10, 1); //start node id is set
 			Logger.log("Set startNode Id: 10");
 			for (int i = 1; i < level + 1; i++) //i signifies zone level
 			{
 				Zone newZone = new Zone(i, nodeCapacityMultiplier);
 				zones.Add(newZone);
-				//Logger.log("Number of zones " + zones.Count);
 				Logger.log("Creating level " + i);
-				List<Node> nodesInZone = new List<Node>(); // stores nodes in the level
+				//List<Node> nodesInZone = new List<Node>(); // stores nodes in the level
 				preId = "" + i; // preId is zone level
 				numberOfNodesInZone = RandomGenerator.rnd.Next(2, 5); //randomly decide between 2-4 nodes in a zone
 																	  //if you change number of nodes can be in a zone, be careful with the dependent statements below
@@ -55,11 +51,10 @@ namespace STVRogue.GameLogic
 				{ //create and add nodes to the list nodesInZone
 					lastId = "" + j;
 					nodeId = preId + lastId; //merge preId and lastId to create nodeId
-					Node newNode = new Node(nodeId,i); //create node
+					Node newNode = new Node(nodeId, i); //create node
 					Logger.log("Created node with id " + nodeId);
-					nodesInZone.Add(newNode); //add node to the list
+					newZone.nodesInZone.Add(newNode); //add node to the list
 				}
-				newZone.nodesInZone = nodesInZone; //CHANGE IT AFTERWARDS, no need to have nodesInZone list anymore
 
 				//nodesInZone stores every node in this zone
 				int numberOfNodesToConnect; // temp variable to decide how many nodes to connect for startNode or for bridges
@@ -75,12 +70,12 @@ namespace STVRogue.GameLogic
 					for (int j = 0; j < numberOfNodesToConnect; j++)
 					{ //connect them with the start node
 						int nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone); //randomly get node index to connect
-						while (startNode.alreadyConnected(nodesInZone.ElementAt(nodeIndex)))
+						while (startNode.alreadyConnected(newZone.nodesInZone.ElementAt(nodeIndex)))
 						{ //if the chosen node is already connected
 							nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone); //choose a new one
 						}
-						startNode.connect(nodesInZone.ElementAt(nodeIndex)); //connect start node with that node
-						Logger.log("Connected to node " + nodesInZone.ElementAt(j).id);
+						startNode.connect(newZone.nodesInZone.ElementAt(nodeIndex)); //connect start node with that node
+						Logger.log("Connected to node " + newZone.nodesInZone.ElementAt(j).id);
 					}
 				}
 				else
@@ -95,35 +90,35 @@ namespace STVRogue.GameLogic
 					for (int j = 0; j < numberOfNodesToConnect; j++)
 					{ //connect them with the bridge node
 						int nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone); //randomly decide the node index
-						while (startBridge.alreadyConnected(nodesInZone.ElementAt(nodeIndex)))
+						while (startBridge.alreadyConnected(newZone.nodesInZone.ElementAt(nodeIndex)))
 						{
 							nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone);
 						}
-						startBridge.connectToNodeOfNextZone(nodesInZone.ElementAt(nodeIndex)); //connect bridge with the next zone
-						Logger.log("Connected to node " + nodesInZone.ElementAt(j).id);
+						startBridge.connectToNodeOfNextZone(newZone.nodesInZone.ElementAt(nodeIndex)); //connect bridge with the next zone
+						Logger.log("Connected to node " + newZone.nodesInZone.ElementAt(j).id);
 					}
 
 
 
-
+                    
 				}
 				Logger.log("Connecting nodes in the same zone");
 
 				//connect nodes in the same zone
 				//TO-DO improve the algorithm
 				//Currently it exits the algorithm once every node is accessible from the starting node of the zone            
-				while (!allReachable(nodesInZone, zoneFirstNode))
+				while (!allReachable(newZone.nodesInZone, zoneFirstNode))
 				{
 
-					Node n1 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //randomly choose node1
+					Node n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //randomly choose node1
 					while (n1.isFullyConnected()) //if it is fully connected node
 					{
-						n1 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //choose another one
+						n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //choose another one
 					}
-					Node n2 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //randomly select node2
+					Node n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //randomly select node2
 					while (n2.isFullyConnected() || n2.id == n1.id || n2.alreadyConnected(n1)) //make sure it is not fully connected, not same as node1, not already connected with node1
 					{
-						n2 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+						n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
 					}
 					n1.connect(n2);
 					Logger.log("Nodes " + n1.id + " " + n2.id + " are connected");
@@ -131,9 +126,9 @@ namespace STVRogue.GameLogic
 
 
 				List<Node> listOfNotFullNodes = new List<Node>(); //get list of not fully connected nodes to consider connections
-				for (int j = 0; j < nodesInZone.Count; j++)
+				for (int j = 0; j < newZone.nodesInZone.Count; j++)
 				{
-					Node nd = nodesInZone.ElementAt(j);
+					Node nd = newZone.nodesInZone.ElementAt(j);
 					if (!nd.isFullyConnected()) listOfNotFullNodes.Add(nd);
 				}
 				Logger.log("Creating list of not full nodes, number of not full nodes " + listOfNotFullNodes.Count);
@@ -147,7 +142,7 @@ namespace STVRogue.GameLogic
 
 					lastId = "" + (numberOfNodesInZone + 1);
 					nodeId = preId + lastId;
-					exitNode = new Node(nodeId,i); //create exit node's id
+					exitNode = new Node(nodeId, i); //create exit node's id
 					Logger.log("Last zone is finished, exit node id is set to " + nodeId);
 					max = 4;
 					if (listOfNotFullNodes.Count < 4) max = listOfNotFullNodes.Count; //can make at most listOfNotFullNodes.Count number of connections
@@ -163,7 +158,7 @@ namespace STVRogue.GameLogic
 				  //a bridge can be connected to at minimum 1 and at maximum 3 nodes
 					lastId = "" + (numberOfNodesInZone + 1);
 					nodeId = preId + lastId;
-					Bridge endBridge = new Bridge(nodeId,i); //create the bridge
+					Bridge endBridge = new Bridge(nodeId, i); //create the bridge
 					bridges.Add(endBridge); //add it to bridges list to access it in the next loop iteration
 					Logger.log("A new bridge is created with id " + nodeId);
 
@@ -351,155 +346,195 @@ namespace STVRogue.GameLogic
 			return this.neighbors.Contains(nd);
 		}
 
-        /* ADDED */
-        public Boolean contested(Player player) {
-            if (packs.Count > 0 && player.HP!= 0 ){
-                return true;
-            } else {
-                return false;
-            }                        
-        }
-        /* Execute a fight between the player and the packs in this node.
+		//ADDED
+		public int currentNumberOfMonsters()
+		{
+			int numberOfMonsters = 0;
+			foreach (Pack p in this.packs)
+			{
+				numberOfMonsters += p.members.Count;
+			}
+			return numberOfMonsters;
+		}
+
+		/* ADDED */
+		public Boolean contested(Player player)
+		{
+			if (packs.Count > 0 && player.HP != 0)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		/* Execute a fight between the player and the packs in this node.
          * Such a fight can take multiple rounds as describe in the Project Document.
          * A fight terminates when either the node has no more monster-pack, or when
          * the player's HP is reduced to 0. 
          */
-        public void fight(Player player)
-        {
-            int state = 0;
-            
-			while (contested(player) ){ /* while packs still exist*/
-                switch (state) 
-                {
-                    case 0:
+		public void fight(Player player)
+		{
+			int state = 0;
+
+			while (contested(player))
+			{ /* while packs still exist*/
+				switch (state)
+				{
+					case 0:
 						int UserInput = STVRogue.GameLogic.Command.getUserInput();
-                        //int UserInput = 4; /*4 is the only state S0 can't reach straight away*/
+						//int UserInput = 4; /*4 is the only state S0 can't reach straight away*/
 
-                        /* Randomly picking 1,2,3,5, or 6 as UserInput */
-                        while (UserInput == 4){ 
-                            UserInput = 1 + RandomGenerator.rnd.Next(5);
-                        }
+						/* Randomly picking 1,2,3,5, or 6 as UserInput */
+						while (UserInput == 4)
+						{
+							UserInput = 1 + RandomGenerator.rnd.Next(5);
+						}
 
-                        /*If potion is used*/
-                        if (UserInput == 1) {
-                            state = 1;
-                        }
+						/*If potion is used*/
+						if (UserInput == 1)
+						{
+							state = 1;
+						}
 
-                        /*if crystal is used*/
-                        if (UserInput == 2){
-                            state = 2;
-                        }
+						/*if crystal is used*/
+						if (UserInput == 2)
+						{
+							state = 2;
+						}
 
-                        /* if player attacks */
-                        if (UserInput == 3 || UserInput == 6){
-                            if (contested(player)){
-                                state = 3; /* still contested*/
-                            } else {
-                                state = 6; /* not contested*/
-                            }
-                        }
+						/* if player attacks */
+						if (UserInput == 3 || UserInput == 6)
+						{
+							if (contested(player))
+							{
+								state = 3; /* still contested*/
+							}
+							else
+							{
+								state = 6; /* not contested*/
+							}
+						}
 
-                        /* If player flees */
-                        if (UserInput == 5) {
-                            state = 5;
-                        }
-                        break;
-            
-
-                    case 1: /* S1: Player Attacks*/
-                        player.Attack(packs.FirstOrDefault().getMonster());
-						if (contested(player) ) {
-                            state = 3;
-                        } else {
-                            state = 6;
-                        }
+						/* If player flees */
+						if (UserInput == 5)
+						{
+							state = 5;
+						}
 						break;
 
-                    case 2:   /* S2: Crystal is used*/                     
-                        foreach(Monster m in packs.FirstOrDefault().members) {
-                            player.Attack(m);
-                        }
-						if (contested(player) ) {
-                            state = 3;
-                        } else {
-                            state = 6;
-                        }
-                        break;
-                        
-                    case 3:
-                        int action = packs.FirstOrDefault().getAction();
-                        if (action == 1){
-                            packs.FirstOrDefault().Attack(player);
-                        } 
-                        if (action == 2){
-                            packs.FirstOrDefault().flee();
-                        }
-						if (contested(player) ){
-                            state = 4;
-                        } else {
-                            state = 6;
-                        }
-                        break;
-                        
-                    case 4:
-                        packs.FirstOrDefault().Attack(player);
-                        state = 0;
-                        break;
 
-                    case 5:
-                        player.flee();
-                        break;
+					case 1: /* S1: Player Attacks*/
+						player.Attack(packs.FirstOrDefault().getMonster());
+						if (contested(player))
+						{
+							state = 3;
+						}
+						else
+						{
+							state = 6;
+						}
+						break;
 
-                    case 6: /* Node is no longer contested*/
-                        break;
-                }
+					case 2:   /* S2: Crystal is used*/
+						foreach (Monster m in packs.FirstOrDefault().members)
+						{
+							player.Attack(m);
+						}
+						if (contested(player))
+						{
+							state = 3;
+						}
+						else
+						{
+							state = 6;
+						}
+						break;
 
-            }
-        }
-    }
+					case 3:
+						int action = packs.FirstOrDefault().getAction();
+						if (action == 1)
+						{
+							packs.FirstOrDefault().Attack(player);
+						}
+						if (action == 2)
+						{
+							packs.FirstOrDefault().flee();
+						}
+						if (contested(player))
+						{
+							state = 4;
+						}
+						else
+						{
+							state = 6;
+						}
+						break;
 
-    public class Bridge : Node
-    {
-        List<Node> fromNodes = new List<Node>();
-        List<Node> toNodes = new List<Node>();
-        public Bridge(String id,int level) : base(id,level) { }
+					case 4:
+						packs.FirstOrDefault().Attack(player);
+						state = 0;
+						break;
 
-        /* Use this to connect the bridge to a node from the same zone. */
-        public void connectToNodeOfSameZone(Node nd)
-        {
-            base.connect(nd);
-            fromNodes.Add(nd);
-        }
+					case 5:
+						player.flee();
+						break;
 
-        /* Use this to connect the bridge to a node from the next zone. */
-        public void connectToNodeOfNextZone(Node nd)
-        {
-            base.connect(nd);
-            toNodes.Add(nd);
-        }
+					case 6: /* Node is no longer contested*/
+						break;
+				}
 
-        /** ADDED */
-        public void disconnectFromSameZone(){
-            //for each node in fromNodes list, remove the connection between the bridge (call base.disconnect(Node n))
-            foreach (Node nd in this.fromNodes)
-            {
-                base.disconnect(nd);
-            }
+			}
+		}
+	}
 
-        }
-    }
+	public class Bridge : Node
+	{
+		List<Node> fromNodes = new List<Node>();
+		List<Node> toNodes = new List<Node>();
+		public Bridge(String id, int level) : base(id, level) { }
 
-	public class Zone{
+		/* Use this to connect the bridge to a node from the same zone. */
+		public void connectToNodeOfSameZone(Node nd)
+		{
+			base.connect(nd);
+			fromNodes.Add(nd);
+		}
+
+		/* Use this to connect the bridge to a node from the next zone. */
+		public void connectToNodeOfNextZone(Node nd)
+		{
+			base.connect(nd);
+			toNodes.Add(nd);
+		}
+
+		/** ADDED */
+		public void disconnectFromSameZone()
+		{
+			//for each node in fromNodes list, remove the connection between the bridge (call base.disconnect(Node n))
+			foreach (Node nd in this.fromNodes)
+			{
+				base.disconnect(nd);
+			}
+
+		}
+	}
+
+	public class Zone
+	{
 		public List<Node> nodesInZone;
 		public uint capacity;
 		public int id;
 
-		public Zone(int level, uint M){
+		public Zone(int level, uint M)
+		{
 			this.id = level;
 			this.capacity = (uint)(M * (level + 1));
 
 		}
-		public void addNodesToZone(Node n){
+		public void addNodesToZone(Node n)
+		{
 			this.nodesInZone.Add(n);
 		}
 	}
