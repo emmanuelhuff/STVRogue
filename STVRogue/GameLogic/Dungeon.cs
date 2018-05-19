@@ -183,6 +183,40 @@ namespace STVRogue.GameLogic
 
             }
 
+            //TEST
+			foreach(Zone z in zones){
+				Logger.log("Zone " + z.id + " contains:");
+				foreach(Node n in z.nodesInZone){
+					Logger.log(n.id);
+				}
+			}
+            //TEST
+            //Add startnode, bridges and endnode
+			foreach(Zone z in zones){
+				if(z.id==1){ //first zone, add start node
+					z.nodesInZone.Add(startNode);
+				}else if(z.id == level){ //last zone, add end node
+					z.nodesInZone.Add(exitNode);
+				}
+
+					if (z.id != level)
+					{
+						z.nodesInZone.Add(bridges.ElementAt(z.id - 1));
+					}
+				
+
+			}
+			//TEST
+            foreach (Zone z in zones)
+            {
+                Logger.log("Zone " + z.id + " contains:");
+                foreach (Node n in z.nodesInZone)
+                {
+                    Logger.log(n.id);
+                }
+            }
+            //TEST
+
         }
         public bool allReachable(List<Node> toReachNodes, Node mainNode)
         {
