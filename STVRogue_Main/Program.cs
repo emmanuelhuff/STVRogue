@@ -20,6 +20,10 @@ namespace STVRogue
 			//game.state = 0;
 			int nextState = 0;
 			int command = -1;
+			Logger.log("Press Enter to exit");
+			while (Console.ReadKey().Key != ConsoleKey.Enter) { }
+			Logger.log("pressed");
+
 			while (game.player.HP>0)
             {
 				/************REMOVE THIS COMMENT AND its finish to uncomment this part
