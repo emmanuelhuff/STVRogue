@@ -52,6 +52,25 @@ namespace STVRogue.GameLogic
         {
             id = "player";
             AttackRating = 5;
+			HP = HPbase;
+        }
+        //ADDED
+		public bool containsMagicCrystal(){
+			foreach(Item i in bag){
+				if (i.GetType() == typeof(Crystal))
+					return true;
+			}
+			return false;
+		}
+        //ADDED
+		public bool containsHealingPotion()
+        {
+            foreach (Item i in bag)
+            {
+				if (i.GetType() == typeof(HealingPotion))
+                    return true;
+            }
+            return false;
         }
 
         public void use(Item item)
@@ -61,13 +80,73 @@ namespace STVRogue.GameLogic
             bag.Remove(item);
         }
 
+		public int getHPValueOfBag(){
+			int bagHPValue = 0;
+			foreach(Item i in this.bag){
+				if(i.GetType()== typeof(HealingPotion)){
+					bagHPValue += (int)((HealingPotion)i).HPvalue;
+				}
+			}
+			return bagHPValue;
+				
+		}
+
+		public Command getNextCommand(){
+			int command = Console.Read();
+            if (command != 1 && command != 2 && command != 3 && command != 4)
+            {
+				Logger.log("Unknown command");
+				command = -1;
+            }
+			Command userCommand = new Command(command); //key press numbers for known commands, -1 for unknown commands
+            return userCommand;
+		}
+
         /*ADDED*/
-        public void flee()
+		public Boolean flee()
         {
-            /*is there an adjacent node? if so, remove pack, add to other node. To do so, Node class neighbors that is not a bridge*/
-            /* Pack.location is the node*/
-            throw new NotImplementedException();
+			
+			Node currentLocation = this.location;
+			int currentLevel = currentLocation.level;
+			List<Node> adjacentNodes = currentLocation.neighbors;
+			int zoneLevel;
+			foreach(Node adjNode in adjacentNodes){
+				zoneLevel = adjNode.level;
+				if(currentLevel == zoneLevel){
+					//check if it is contested, if it is not flee to that node
+					if(!adjNode.contested(this)){
+						//change location and flee
+						this.location = adjNode;
+						Logger.log("Player fleed from "+currentLocation+" to " + this.location);
+						this.collectItems();
+						return true;
+					}
+				} //else do nothing, it can not flee to a node from the different zone
+			}
+			return false;
+
         }
+
+		/*ADDED*/
+        public void move()
+        {         
+            Node currentLocation = this.location;
+            List<Node> adjacentNodes = currentLocation.neighbors;
+			int nodeIndex = RandomGenerator.rnd.Next(0, adjacentNodes.Count);
+			this.location = adjacentNodes.ElementAt(nodeIndex);
+			Logger.log("Player moved from "+currentLocation.id+" to " + this.location);
+			//Collect items in this location
+			this.collectItems();
+        }
+
+		public void collectItems(){
+			Node currentLocation = this.location;
+			foreach(Item i in currentLocation.items){
+				currentLocation.items.Remove(i);
+				this.bag.Add(i);
+				Logger.log("Collected item " + i.id);
+			}
+		}
 
         override public void Attack(Creature foe)
         {
@@ -94,12 +173,27 @@ namespace STVRogue.GameLogic
 					if(target.HP==0){
 						foe_.pack.members.Remove(target);
 						KillPoint++;
+
 					}
 				}
                 
                 accelerated = false;
             }
+
+
+            
         }
+		public bool AttackBool(Creature foe){
+			Attack(foe);
+			if (!(foe is Monster)) throw new ArgumentException();
+            Monster foe_ = foe as Monster;
+			if (foe_.pack.members.Count == 0)
+            { //delete this pack from player's node
+				return true; //pack is beated
+			}else{
+				return false;
+			}
+		}
         /*ADDED*/ 
         public int getAction() {
             return 1; /* A  test in which 1 means attack*/
