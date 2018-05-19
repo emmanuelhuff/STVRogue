@@ -69,7 +69,8 @@ namespace STVRogue.GameLogic
 							int monstersToLocate = RandomGenerator.rnd.Next(min, max + 1); //decide how many monsters will be in this monster-pack                        
 							Pack newPack = new Pack("" + packId, (uint)monstersToLocate); //Create a pack
 							Logger.log("Putting " + monstersToLocate + " monsters in pack" + packId + " locating in " + nodeToLocate.id);
-							packId++; //increase pack ID
+                            newPack.location= z.nodesInZone.ElementAt<Node>(nodeNumber);//RETURN BACK
+                            packId++; //increase pack ID
 							z.nodesInZone.ElementAt<Node>(nodeNumber).packs.Add(newPack); //add pack to the node
 							monstersInZone -= monstersToLocate; //decrease number of monsters to be located in the zone
 							numberOfMonstersToPut -= monstersToLocate; //decrease number of monsters to be located in the dungeon

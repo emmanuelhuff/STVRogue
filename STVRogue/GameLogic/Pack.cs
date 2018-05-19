@@ -9,20 +9,22 @@
     {
         public class Pack
         {
-            String id;
-            public List<Monster> members = new List<Monster>();
+            public String id;
+        public List<Monster> members;
             int startingHP = 0;
             public Node location;
             public Dungeon dungeon;
 
             public Pack(String id, uint n)
             {
+            this.members = new List<Monster>();
                 this.id = id;
                 for (int i = 0; i < n; i++)
                 {
                     Monster m = new Monster("" + id + "_" + i);
-                    members.Add(m);
+                    this.members.Add(m);
                     startingHP += m.HP;
+                m.pack = this;
                 }
             }
 

@@ -92,7 +92,8 @@ namespace STVRogue.GameLogic
 		}
 
 		public Command getNextCommand(){
-			int command = Console.Read();
+            string userInput = Console.ReadLine();
+            int command = int.Parse(userInput);
             if (command != 1 && command != 2 && command != 3 && command != 4)
             {
 				Logger.log("Unknown command");
@@ -134,7 +135,7 @@ namespace STVRogue.GameLogic
             List<Node> adjacentNodes = currentLocation.neighbors;
 			int nodeIndex = RandomGenerator.rnd.Next(0, adjacentNodes.Count);
 			this.location = adjacentNodes.ElementAt(nodeIndex);
-			Logger.log("Player moved from "+currentLocation.id+" to " + this.location);
+			Logger.log("Player moved from "+currentLocation.id+" to " + this.location.id);
 			//Collect items in this location
 			this.collectItems();
         }
@@ -152,12 +153,55 @@ namespace STVRogue.GameLogic
         {
             if (!(foe is Monster)) throw new ArgumentException();
             Monster foe_ = foe as Monster;
+            Pack tempPack = foe_.pack;
+            Node packLocation = tempPack.location;
+            Logger.log("Location is " + tempPack.location.id);
+            Logger.log("All monsters in the pack: ");
+            foreach (Monster m in tempPack.members)
+            {
+                Logger.log(m.id);
+            }
+            Logger.log("All packs in location ");
+            foreach (Pack p in packLocation.packs)
+            {
+                Logger.log(p.id);
+            }
             if (!accelerated)
             {
                 base.Attack(foe);
-                if (foe_.HP == 0)
+                if (foe.HP == 0)
                 {
-                    foe_.pack.members.Remove(foe_);
+                    
+                    tempPack.members.Remove(foe_);
+                    Logger.log("All monsters in the pack: ");
+                    foreach (Monster m in tempPack.members)
+                    {
+                        Logger.log(m.id);
+                    }
+                    Logger.log("Player attacked" + foe.id);
+                    
+                    if(tempPack.members.Count == 0)
+                    {
+                        Logger.log("Pack is now empty' pack id "+tempPack.id);
+                        if (tempPack == null)
+                        {
+                            Logger.log("it is null");
+                            foreach (Pack pack in packLocation.packs)
+                            {
+                                Logger.log("Pack " + pack.id + " in node " + packLocation);
+                            }
+                        }
+                        else {
+                            Logger.log("It is not null");
+                            foreach (Pack pack in packLocation.packs)
+                            {
+                                Logger.log("Pack " + pack.id + " in node " + packLocation);
+                            }
+                        }
+                        //packLocation.packs.Remove(tempPack);
+                        Logger.log("Killed the pack' commented remove");
+                    }
+                    //foe_.pack.members.Remove(foe_);
                     KillPoint++;
                 }
             }

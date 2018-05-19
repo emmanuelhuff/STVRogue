@@ -26,7 +26,7 @@ namespace STVRogue
 
 			while (game.player.HP>0)
             {
-				/************REMOVE THIS COMMENT AND its finish to uncomment this part
+				
 				 //Could not debug it without terminal, Visual studio community does not have integrated terminal
 				 
 				 
@@ -34,10 +34,15 @@ namespace STVRogue
 				//  player can move in the dungeon,
 				// can use an item
 				Logger.log("Press 1 to move adjacent nodes"); //TO-DO: Add you can move these nodes, select the node you want to move..
+                foreach(Node n in game.player.location.neighbors)
+                {
+                    Logger.log(n.id);
+                }
 				if(game.player.containsMagicCrystal())
 				    Logger.log("Press 2 to use Crystal");
 				if (game.player.containsHealingPotion())
 				    Logger.log("Press 3 to use Healing Potion");
+                command = game.player.getNextCommand().commandId;
 				while(command==-1){
 					command = game.player.getNextCommand().commandId;
 				}
@@ -92,7 +97,7 @@ namespace STVRogue
 				while(game.player.location.packs.Count>0 && game.player.HP>0){//node is contested
 					Logger.log("Calling with state " + nextState);
 					nextState = game.player.location.fight(game.player, nextState);
-					if(nextState==-1){
+					if(nextState==-1 || nextState == 5 || nextState == 6){
 						nextState = 0;
 						break;
 					}

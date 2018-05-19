@@ -350,9 +350,9 @@ namespace STVRogue.GameLogic
     public class Node
     {
         public String id;
-        public List<Node> neighbors = new List<Node>();
-        public List<Pack> packs = new List<Pack>();
-        public List<Item> items = new List<Item>();
+        public List<Node> neighbors;
+        public List<Pack> packs;
+        public List<Item> items;
         public int level;
         public bool visited;
         public Node pred;
@@ -360,6 +360,9 @@ namespace STVRogue.GameLogic
         public Node() { }
         public Node(String id, int level)
         {
+            neighbors = new List<Node>();
+            packs = new List<Pack>();
+            items = new List<Item>();
             this.id = id;
             this.level = level;
             this.visited = false;
@@ -524,10 +527,18 @@ namespace STVRogue.GameLogic
                     {
                         player.location.packs.Remove(player.location.packs.First());
                     }
+                    if (player.location.packs.Count > 0)
+                    {
+                        return 3;
+                    }
+                    else
+
+                    {
+                        return 6;
+                    }
                     ///ASK:
                     /// if player attacks the last monster in a pack, pack dies
                     /// after this pack is removed, node can pass to the not contested situation if there is no other monster packs
-                    return 3;
 
 
                 }
