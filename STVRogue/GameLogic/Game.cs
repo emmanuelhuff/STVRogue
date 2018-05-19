@@ -138,7 +138,7 @@ namespace STVRogue.GameLogic
 						int nodeNumber = RandomGenerator.rnd.Next(0, (int)numberOfNodesInZone); //randomly pick which node to locate
                         Node nodeToLocate = z.nodesInZone.ElementAt<Node>(nodeNumber);
 						Item itemToAdd = itemsToSeed.ElementAt<Item>((int)(itemsIndex * normalItemsInZone + i)); //starts from 0 for level 1, 
-						Logger.log("Putting item positioned " + (itemsIndex * normalItemsInZone + i)+ " to "+z.id);
+						Logger.log("Putting item positioned " + (itemsIndex * normalItemsInZone + i)+ " to "+nodeToLocate.id);
 						nodeToLocate.items.Add(itemToAdd);
 						numberOfItemsToPut--;
 					}

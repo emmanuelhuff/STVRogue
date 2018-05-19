@@ -141,7 +141,7 @@ namespace STVRogue.GameLogic
 
 		public void collectItems(){
 			Node currentLocation = this.location;
-			foreach(Item i in currentLocation.items){
+			foreach(Item i in currentLocation.items.ToList()){
 				currentLocation.items.Remove(i);
 				this.bag.Add(i);
 				Logger.log("Collected item " + i.id);
