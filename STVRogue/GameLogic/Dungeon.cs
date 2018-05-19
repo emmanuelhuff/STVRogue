@@ -15,21 +15,22 @@ namespace STVRogue.GameLogic
 		public Node exitNode;
 		public uint difficultyLevel;
 		public List<Bridge> bridges; //stores every bridge instance to access previously implemented ones in for loop
-									 /* a constant multiplier that determines the maximum number of monster-packs per node: */
-		public uint M;
+        public List<Node> neighborNodes;
+        public uint M; /* a constant multiplier that determines the maximum number of monster-packs per node: */
 
-		/* To create a new dungeon with the specified difficult level and capacity multiplier */
-		//TO-DO: check average connectivity predicate
-		//TO-DO: improve the algorithm for building connections between nodes in the same zone
-		public Dungeon(uint level, uint nodeCapacityMultiplier)
+        /* To create a new dungeon with the specified difficult level and capacity multiplier */
+        //TO-DO: check average connectivity predicate
+        //TO-DO: improve the algorithm for building connections between nodes in the same zone
+        public Dungeon(uint level, uint nodeCapacityMultiplier)
 		{
 			Logger.log("Creating a dungeon of difficulty level " + level + ", node capacity multiplier " + nodeCapacityMultiplier + ".");
 			difficultyLevel = level;
 			bridges = new List<Bridge>(); //List of bridges initialized
+            neighborNodes = new List<Node>();
 			predicates = new Predicates();
 			M = nodeCapacityMultiplier;
 			int numberOfNodesInZone = 0;
-			int size = 10;
+            int connected = 0;
 			STVRogue.Utils.RandomGenerator.initializeWithSeed(100); //seed number can change
 
 			//every node is named with its zone number followed by its number in a zone (nodeId = preId+lastId)
@@ -75,13 +76,11 @@ namespace STVRogue.GameLogic
 							nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone); //choose a new one
 						}
 						startNode.connect(nodesInZone.ElementAt(nodeIndex)); //connect start node with that node
-						Logger.log("Connected to node " + nodesInZone.ElementAt(j).id);
+                        Logger.log("Connected to node " + nodesInZone.ElementAt(j).id);
 					}
 				}
 				else
 				{ //connect bridge to some nodes in the next zone
-
-
 					Bridge startBridge = bridges.ElementAt(i - 2); //bridge is already created in previous loop
 					zoneFirstNode = (Node)startBridge;
 					int maxConnect = 4 - startBridge.neighbors.Count; //maximum number of connections that bridge can make
@@ -95,7 +94,7 @@ namespace STVRogue.GameLogic
 							nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone);
 						}
 						startBridge.connectToNodeOfNextZone(nodesInZone.ElementAt(nodeIndex)); //connect bridge with the next zone
-						Logger.log("Connected to node " + nodesInZone.ElementAt(j).id);
+                        Logger.log("Connected to node " + nodesInZone.ElementAt(j).id);
 					}
 
 
@@ -174,21 +173,123 @@ namespace STVRogue.GameLogic
 
 				}
 
+                if (i == 1)
+                {
+                    Node n1, n2;
+                    connected = startNode.neighbors.Count;
+                    for (int j = 0; j < numberOfNodesInZone; j++)
+                    {
+                        connected += nodesInZone.ElementAt(j).neighbors.Count;
+                    }
+                    while (Convert.ToDouble(connected/(numberOfNodesInZone + 1)) > 3)
+                    {
+                        n1 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n1.neighbors.Count <= 1)
+                        {
+                            n1 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n2 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n2.neighbors.Count <= 1 || n2.id == n1.id || !n2.alreadyConnected(n1))
+                        {
+                            n2 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n1.disconnect(n2);
+                        Logger.log("Nodes " + n1.id + " " + n2.id + " are disconnected");
+                        connected -= 2;
+                    }
+                }
+                else if (i == level)
+                {
+                    Node n1, n2;
+                    connected = exitNode.neighbors.Count;
+                    connected += bridges.ElementAt(i - 2).neighbors.Count;
+                    for (int j = 0; j < numberOfNodesInZone; j++)
+                    {
+                        connected += nodesInZone.ElementAt(j).neighbors.Count;
+                    }
+                    while (Convert.ToDouble(connected / (numberOfNodesInZone + 2)) > 3)
+                    {
+                        n1 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n1.neighbors.Count <= 1)
+                        {
+                            n1 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n2 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n2.neighbors.Count <= 1 || n2.id == n1.id || !n2.alreadyConnected(n1))
+                        {
+                            n2 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n1.disconnect(n2);
+                        Logger.log("Nodes " + n1.id + " " + n2.id + " are disconnected");
+                        connected -= 2;
+                    }
+                }
+                else
+                {
+                    Node n1, n2;
+                    connected = bridges.ElementAt(i-2).neighbors.Count;
+                    for (int j = 0; j < numberOfNodesInZone; j++)
+                    {
+                        connected += nodesInZone.ElementAt(j).neighbors.Count;
+                    }
+                    while (Convert.ToDouble(connected / (numberOfNodesInZone + 1)) > 3)
+                    {
+                        n1 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n1.neighbors.Count <= 1)
+                        {
+                            n1 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n2 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n2.neighbors.Count <= 1 || n2.id == n1.id || !n2.alreadyConnected(n1))
+                        {
+                            n2 = nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n1.disconnect(n2);
+                        Logger.log("Nodes " + n1.id + " " + n2.id + " are disconnected");
+                        connected -= 2;
+                    }
+                }
 
 				//pass to next zone
 				Logger.log("Passing to next zone");
+                neighborNodes.AddRange(nodesInZone);
 
 			}
 
 		}
 		public bool allReachable(List<Node> toReachNodes, Node mainNode)
 		{
+            Boolean flag = true;
 			for (int i = 0; i < toReachNodes.Count; i++)
 			{
-				if (!predicates.isReachable(toReachNodes.ElementAt(i), mainNode)) return false;
+                if (!predicates.isReachable(toReachNodes.ElementAt(i), mainNode))
+                {
+                    flag = false;
+                    if (flag == false) break;
+                }
 			}
-			return true;
+			return flag;
 		}
+
+        public double connectivtyDegree()
+        {
+            double connected = 0;
+            connected = startNode.neighbors.Count;
+            connected += exitNode.neighbors.Count;
+            int i = 0;
+            while (neighborNodes.ElementAt(i) != null)
+            {
+                connected += neighborNodes.ElementAt(i).neighbors.Count;
+                i++;
+            }
+            int j = 0;
+            while (bridges.ElementAt(j) != null)
+            {
+                connected += bridges.ElementAt(j).neighbors.Count;
+                j++;
+            }
+            return connected/(i+j+4);
+        }
 
 		/* Return a shortest path between node u and node v */
 		public List<Node> shortestpath(Node u, Node v)
