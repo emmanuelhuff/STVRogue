@@ -12,6 +12,7 @@ namespace STVRogue.GameLogic
 		public Player player;
 		public Dungeon dungeon;
 		public List<Item> itemsToSeed;
+		//public int state;
 
 		/* This creates a player and a random dungeon of the given difficulty level and node-capacity
 		 * The player is positioned at the dungeon's starting-node.
@@ -118,6 +119,7 @@ namespace STVRogue.GameLogic
 			int numberOfItemsToPut = itemsToSeed.Count;
 			Logger.log("Number of items to put in total : " + numberOfItemsToPut);
 			int itemsInZone = (int)(numberOfItemsToPut / (int)difficultyLevel); //Check if it is integer division
+			int normalItemsInZone = itemsInZone;
 			int itemsIndex = 0;
 			while (numberOfItemsToPut > 0)//while there are monsters to put
 			{
@@ -135,8 +137,8 @@ namespace STVRogue.GameLogic
 					for (int i = 0; i < itemsInZone;i++){
 						int nodeNumber = RandomGenerator.rnd.Next(0, (int)numberOfNodesInZone); //randomly pick which node to locate
                         Node nodeToLocate = z.nodesInZone.ElementAt<Node>(nodeNumber);
-						Item itemToAdd = itemsToSeed.ElementAt<Item>((int)(itemsIndex * itemsInZone + i)); //starts from 0 for level 1, 
-						Logger.log("Putting item positioned " + (itemsIndex * itemsInZone + i)+ " to "+z.id);
+						Item itemToAdd = itemsToSeed.ElementAt<Item>((int)(itemsIndex * normalItemsInZone + i)); //starts from 0 for level 1, 
+						Logger.log("Putting item positioned " + (itemsIndex * normalItemsInZone + i)+ " to "+z.id);
 						nodeToLocate.items.Add(itemToAdd);
 						numberOfItemsToPut--;
 					}
@@ -170,6 +172,7 @@ namespace STVRogue.GameLogic
 			Logger.log("Player does " + userCommand);
 			return true;
 		}
+
 
 		//ADDED
 		public int getProportion(uint numberOfMonsters, int k, uint l)

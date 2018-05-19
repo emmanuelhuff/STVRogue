@@ -35,6 +35,8 @@
                 }
             }
 
+
+
             /* Move the pack to an adjacent node. */
             public void move(Node u)
             {
@@ -76,17 +78,13 @@
 
             /*ADDED*/ 
             public int getAction() {
-                int H = 0;
-    			int orgH = this.startingHP;
-                //hi
-    			foreach(Monster m in this.members){
-    				H += m.HP;
-    			}
-             
-    			if ((((1- (H/orgH))/2)*100) < RandomGenerator.rnd.Next(100)){
-                    return 2;
+			int H = this.getPackHPValue();
+    		int orgH = this.startingHP;
+  
+			if (RandomGenerator.rnd.Next(101) < (((1- (H/orgH))/2)*100)){
+                    return 2; //it flees
                 } else {
-                    return 1; /* A  test in which 1 means attack, 2 means flee*/
+                    return 1; //it attacks /* A  test in which 1 means attack, 2 means flee*/
                 }
             }
             
@@ -97,6 +95,7 @@
 			}
 			return packHpValue;
 		}
+	
         
             /*ADDED*/ 
     		public bool flee() {

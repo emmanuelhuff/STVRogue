@@ -398,118 +398,191 @@ namespace STVRogue.GameLogic
          * A fight terminates when either the node has no more monster-pack, or when
          * the player's HP is reduced to 0. 
          */
-		public void fight(Player player)
+		/*
+            Command List:
+            1- Move to next node,flee
+            2- Use Magic Crystal
+            3- Use Healing Potion
+            4- Attack
+            */
+		public int fight(Player player, int state)
 		{
-			int state = 0;
-
-			while (contested(player))
-			{ /* while packs still exist*/
-				switch (state)
+			int command = -1;
+			if(state == 0){
+				Logger.log("Press 1 to flee");
+				if(player.containsMagicCrystal())//if player bag contains item type of magic crystal
+				    Logger.log("Press 2 to use Magic Crystal");
+				if(player.containsHealingPotion())
+				    Logger.log("Press 3 to use Healing Potion");
+				Logger.log("Press 4 to attack");
+				command = player.getNextCommand().commandId;
+				if(command==1){
+					//if presses 1 try to flee
+                    //if possible game.state = 5
+                    //if not game.state = 0
+					if(player.flee()){
+						Logger.log("Player fleed, not contested anymore");
+						return 5; //next state 5
+					}else{
+						Logger.log("Player could not flee, still contested");
+						return 0;
+					}
+				}else if(command==2)
 				{
-					case 0:
-						int UserInput = STVRogue.GameLogic.Command.getUserInput();
-						//int UserInput = 4; /*4 is the only state S0 can't reach straight away*/
+					if(!player.containsMagicCrystal()){
+						Logger.log("Player has no magic crystal, press a valid command");
+						return 0;
 
-						/* Randomly picking 1,2,3,5, or 6 as UserInput */
-						while (UserInput == 4)
-						{
-							UserInput = 1 + RandomGenerator.rnd.Next(5);
+					}
+					//player uses magic crystal
+					foreach(Item i in player.bag){
+						if(i.GetType() == typeof(Crystal)){
+							player.use(i);
+							Logger.log("Player used crystal");
+							break; //break the for loop
 						}
+						Logger.log("Could not be able to execute this");
+							
+					}
+					return 2;
+					
+				}else if (command == 3)
+                {
+					if (!player.containsHealingPotion())
+                    {
+                        Logger.log("Player has no healing potion, press a valid command");
+                        return 0;
 
-						/*If potion is used*/
-						if (UserInput == 1)
-						{
-							state = 1;
-						}
+                    }
+					foreach (Item i in player.bag)
+                    {
+						if (i.GetType() == typeof(HealingPotion))
+                        {
+                            player.use(i);
+                            Logger.log("Player used potion");
+                            break; //break the for loop
+                        }
+                        Logger.log("Could not be able to execute this");
 
-						/*if crystal is used*/
-						if (UserInput == 2)
-						{
-							state = 2;
-						}
-
-						/* if player attacks */
-						if (UserInput == 3 || UserInput == 6)
-						{
-							if (contested(player))
-							{
-								state = 3; /* still contested*/
-							}
-							else
-							{
-								state = 6; /* not contested*/
-							}
-						}
-
-						/* If player flees */
-						if (UserInput == 5)
-						{
-							state = 5;
-						}
-						break;
+                    }
+					//player uses healing potion
+					return 1;
+                    
+				}else if (command == 4)
+                {
+					//player attacks
+					Logger.log("Player attacked");
+					bool removePack = player.AttackBool(player.location.packs.First().members.First());
+					if(removePack){
+						player.location.packs.Remove(player.location.packs.First());
+					}
+					///ASK:
+					/// if player attacks the last monster in a pack, pack dies
+					/// after this pack is removed, node can pass to the not contested situation if there is no other monster packs
+					return 3;
 
 
-					case 1: /* S1: Player Attacks*/
-						player.Attack(packs.FirstOrDefault().getMonster());
-						if (contested(player))
-						{
-							state = 3;
-						}
-						else
-						{
-							state = 6;
-						}
-						break;
+                }
 
-					case 2:   /* S2: Crystal is used*/
-						foreach (Monster m in packs.FirstOrDefault().members)
-						{
-							player.Attack(m);
-						}
-						if (contested(player))
-						{
-							state = 3;
-						}
-						else
-						{
-							state = 6;
-						}
-						break;
+                
+			}else if(state == 1)
+			{
+				Logger.log("Player is not accelerated, player is attacking a monster in a pack");
+				bool removePack = player.AttackBool(player.location.packs.First().members.FirstOrDefault()); //player attacks one monster in one pack
 
-					case 3:
-						int action = packs.FirstOrDefault().getAction();
-						if (action == 1)
-						{
-							packs.FirstOrDefault().Attack(player);
-						}
-						if (action == 2)
-						{
-							packs.FirstOrDefault().flee();
-						}
-						if (contested(player))
-						{
-							state = 4;
-						}
-						else
-						{
-							state = 6;
-						}
-						break;
-
-					case 4:
-						packs.FirstOrDefault().Attack(player);
-						state = 0;
-						break;
-
-					case 5:
-						player.flee();
-						break;
-
-					case 6: /* Node is no longer contested*/
-						break;
+				//call attack function and check if attacked pack should be removed
+                if (removePack)
+                {
+                    player.location.packs.Remove(player.location.packs.First());
+                }
+				if(player.location.packs.Count>0){
+					return 3; //still contested
+				}else{
+					return 6;
 				}
+                //if still contested
+                //game.state = 3
+                //else game.state=6
 
+				
+			}else if (state == 2)
+            {
+				Logger.log("Player is accelerated, player is attacking all monsters in a pack");
+				bool removePack = player.AttackBool(player.location.packs.First().members.FirstOrDefault()); //accelerated check is inside the function
+                //call attack function and check if attacked pack should be removed
+				if(removePack){
+					player.location.packs.Remove(player.location.packs.First());
+				}
+				if (player.location.packs.Count > 0)
+                {
+                    return 3; //still contested
+                }
+                else
+                {
+                    return 6;
+                }
+                //if still contested
+                //game.state = 3
+                //else game.state=6
+                
+			}else if (state == 3)
+            {
+				Logger.log("Pack flees or attacks");
+				Pack pack = player.location.packs.First();
+				if(pack.getAction() == 1){//pack attacks
+					Logger.log("Pack attacks");
+					pack.Attack(player); //TO-DO check attack method
+					return 0;
+				}else if(pack.getAction()==2){ //pack flees
+					if(pack.flee()){//TO-DO check flee method
+						Logger.log("Pack flees");
+						if(player.location.packs.Count>0){
+							return 4;
+						}else{
+							return 6;
+						}
+					} else{
+						Logger.log("Pack tried to flee, not possible. Pack attacks");
+						pack.Attack(player);
+						return 0;
+					}
+				}else{
+					Logger.log("Not possible");
+					return -1;
+				}
+                //if flee probability> attack
+                    //pack flees
+                    //if still contested
+                        //game.state= 4
+                    //if not contested
+                        //game.state = 6
+                //else pack attacks
+                    //game.state=0
+
+			}else if (state == 4)
+            {
+				Logger.log("Pack attacks");
+				player.location.packs.First().Attack(player); //TO-DO randomly decide the pack
+				return 0;
+                //game.state = 0 //if player is still alive checked in main while
+                
+			}else if (state == 5)
+            {
+				Logger.log("Player successfully fleed, not contested anymore");
+				return -1;
+				//return -1; //exit
+			}else if (state == 6)
+            {
+				Logger.log("Node is not contested anymore");
+				return -1;
+                //return -1; //exit
+                
+			}else{
+				return -1;
 			}
+
+			Logger.log("Control");
+			return -1;
 		}
 	}
 
