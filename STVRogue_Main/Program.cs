@@ -13,17 +13,18 @@ namespace STVRogue
     {
         static void Main(string[] args)
         {
-            Game game = new Game(5, 2, 20);
-            //game.player.location = new Node("a dummy node",1);
-			game.player.location = game.dungeon.startNode;
-			game.player.collectItems();
-			//game.state = 0;
+            Game game = new Game(5, 2, 20); //Initializes the game
+			game.player.location = game.dungeon.startNode; //sets player's first location in the game
+			game.player.collectItems(); //player collects items in its position(startnode)
+
 			int nextState = 0;
 			int command = -1;
-			Logger.log("Press Enter to exit");
+            //test for getting user input
+			/*Logger.log("Press Enter to exit"); 
 			while (Console.ReadKey().Key != ConsoleKey.Enter) { }
-			Logger.log("pressed");
+			Logger.log("pressed");*/
 
+            //The game continues while the player is alive
 			while (game.player.HP>0)
             {
 				
@@ -96,7 +97,7 @@ namespace STVRogue
                 }
 				while(game.player.location.packs.Count>0 && game.player.HP>0){//node is contested
 					Logger.log("Calling with state " + nextState);
-					nextState = game.player.location.fight(game.player, nextState);
+					nextState = game.player.location.fight(game.player, nextState); //it calls the fight function with the current state
 					if(nextState==-1 || nextState == 5 || nextState == 6){
 						nextState = 0;
 						break;

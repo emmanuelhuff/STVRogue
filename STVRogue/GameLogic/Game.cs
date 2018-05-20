@@ -25,51 +25,54 @@ namespace STVRogue.GameLogic
 		{
 			Logger.log("Creating a game of difficulty level " + difficultyLevel + ", node capacity multiplier "
 					   + nodeCapacityMultiplier + ", and " + numberOfMonsters + " monsters.");
-			//call dungeon constructor
-			dungeon = new Dungeon(difficultyLevel, nodeCapacityMultiplier);
+			
+			dungeon = new Dungeon(difficultyLevel, nodeCapacityMultiplier);//call dungeon constructor
 			player = new Player();
 			player.location = dungeon.startNode;
-			int numberOfMonstersToPut = (int)numberOfMonsters;
+			int numberOfMonstersToPut = (int)numberOfMonsters; //a temporary variable to keep track of number of monsters to put in the dungeon
 			int min = 1, max = 1; //used in while loop to define number of monsters in a pack
 			int packId = 0;
-			uint numberOfNodesInZone = 0;
-			// TO-DO: randomly seed monster-packs and items into the dungeon
+			uint numberOfNodesInZone = 0; //a temporary variable to store number of nodes in a zone (in foreach loop)
+
             
-			//RANDOMLY SEED MONSTERS
+			//Randomly seeds monsters into the dungeon
 			//Currently puts all monsters in the dungeon at the creation
 			Logger.log("Number of monsters to put in total : " + numberOfMonsters);
-			while (numberOfMonstersToPut > 0)//while there are monsters to put
+			while (numberOfMonstersToPut > 0)//while there are monsters to put in the dungeon
 			{
-				foreach (Zone z in dungeon.zones)
+				foreach (Zone z in dungeon.zones) //Seeds monsters zone by zone
 				{
 
-					int monstersInZone = -1;
+					int monstersInZone = -1; // -1 is just for control does not have any meaning
 					if (z.id == difficultyLevel)
 					{//if it is the last zone
 						monstersInZone = numberOfMonstersToPut; //put remainder monsters
 					}
-					else
+					else //else every zone gets proportioned number of monsters
 					{
 						monstersInZone = getProportion(numberOfMonsters, z.id, difficultyLevel); //gets number of monsters to put in this zone
 					}
 					Logger.log("Will put " + monstersInZone + " monsters to the zone " + z.id);
 					numberOfNodesInZone = (uint)z.nodesInZone.Count; //get number of nodes (N)  
-					while (monstersInZone > 0)
+
+					while (monstersInZone > 0) //while there are monsters to put in the zone
 					{
 						int nodeNumber = RandomGenerator.rnd.Next(0, (int)numberOfNodesInZone); //randomly pick which node to locate
-						Node nodeToLocate = z.nodesInZone.ElementAt<Node>(nodeNumber);
+						Node nodeToLocate = z.nodesInZone.ElementAt<Node>(nodeNumber); //get this node instance
 
-						int nodeCapacity = (int)z.capacity - (nodeToLocate.currentNumberOfMonsters()); //number of monsters that can locate
-																									   //check the capacity nodeCapacity, if less than 1 try another node, else create a monster pack of 
-						Logger.log("Node to locate: " + nodeToLocate.id + " with capacity " + nodeCapacity);                                                                               //size min=1 max=nodeCapacity   
+						int nodeCapacity = (int)z.capacity - (nodeToLocate.currentNumberOfMonsters()); //number of monsters that can locate in that node
+						//check the capacity nodeCapacity, if less than 1 try another node, else create a monster pack of size min=1 max=nodeCapacity   
+						Logger.log("Node to locate: " + nodeToLocate.id + " with capacity " + nodeCapacity);                                                                               
 						if (nodeCapacity > 1)
 						{
-							if (nodeCapacity < monstersInZone) max = nodeCapacity;
+							//the upper limit for max is either the node's capacity or remaining number of monsters that should be located in this zone
+							if (nodeCapacity < monstersInZone) max = nodeCapacity; //if node capacity is less than remaining monsters to put, update max limit
 							else max = monstersInZone;
-							int monstersToLocate = RandomGenerator.rnd.Next(min, max + 1); //decide how many monsters will be in this monster-pack                        
+                            
+							int monstersToLocate = RandomGenerator.rnd.Next(min, max + 1); //decide how many monsters will be in this monster-pack between this number limit                    
 							Pack newPack = new Pack("" + packId, (uint)monstersToLocate); //Create a pack
 							Logger.log("Putting " + monstersToLocate + " monsters in pack" + packId + " locating in " + nodeToLocate.id);
-                            newPack.location= z.nodesInZone.ElementAt<Node>(nodeNumber);//RETURN BACK
+                            newPack.location= z.nodesInZone.ElementAt<Node>(nodeNumber);//Assign this pack's location
                             packId++; //increase pack ID
 							z.nodesInZone.ElementAt<Node>(nodeNumber).packs.Add(newPack); //add pack to the node
 							monstersInZone -= monstersToLocate; //decrease number of monsters to be located in the zone
@@ -82,18 +85,20 @@ namespace STVRogue.GameLogic
 				}
 			}
 
-			itemsToSeed = new List<Item>();
+			itemsToSeed = new List<Item>(); //stores the list of items to be seeded in the dungeon
 			int itemTotal = 0;
+            //There is a constraint for HP value of the player & HP values of items that player has in the bag
+            //and HP values of items exist in the dungeon
 			Logger.log("Upper limit " + (0.8 * getHPM()));
-			while (getItemsHP() <= (0.8 * getHPM()))
+			while (getItemsHP() <= (0.8 * getHPM())) //while this constraint is satisfied, it creates items
 			{
-				int decide = RandomGenerator.rnd.Next(0, 2); //0 or 1, 0 means create healing potion, 1 crystal
+				int decide = RandomGenerator.rnd.Next(0, 2); //0 or 1, 0 means create healing potion, 1 means create magic crystal 
 				if (decide == 0)
 				{
 					//create healing potion
-					HealingPotion healingPotion = new HealingPotion("" + itemTotal);
+					HealingPotion healingPotion = new HealingPotion("" + itemTotal); //create it with id
 					itemTotal++;
-					itemsToSeed.Add(healingPotion);
+					itemsToSeed.Add(healingPotion); //add it into the list
 					Logger.log("Created healing potion " + healingPotion.id);
 				}
 				else if (decide == 1)
@@ -101,30 +106,33 @@ namespace STVRogue.GameLogic
 					//create crystal
 					Crystal crystal = new Crystal("" + itemTotal);
 					itemTotal++;
-					itemsToSeed.Add(crystal);
+					itemsToSeed.Add(crystal); //add it into the list
 					Logger.log("Created crystal " + crystal.id);
 				}
 				else
 				{
 					Logger.log("Something went wrong");
 				}
-				Logger.log("Current itemsToSeedHP " + getItemsHP());
+				Logger.log("Current itemsToSeedHP " + getItemsHP()); 
 
-			}//remove last created item for property to hold
+			}
+            //since it leaves the while loop just after this constraint is passed
+			//remove last created item for property to hold
 			itemsToSeed.RemoveAt(itemsToSeed.Count - 1);
 
 			Logger.log("Current getITemsHP " + getItemsHP());
 
-			//RANDOMLY SEED ITEMS
+			//Randomly seed items in the itemsToSeed list
 			//Currently puts all items in the dungeon at the creation
-			int numberOfItemsToPut = itemsToSeed.Count;
+			int numberOfItemsToPut = itemsToSeed.Count; //number of items to seed is the length of the list
 			Logger.log("Number of items to put in total : " + numberOfItemsToPut);
-			int itemsInZone = (int)(numberOfItemsToPut / (int)difficultyLevel); //Check if it is integer division
-			int normalItemsInZone = itemsInZone;
-			int itemsIndex = 0;
-			while (numberOfItemsToPut > 0)//while there are monsters to put
+			int itemsInZone = (int)(numberOfItemsToPut / (int)difficultyLevel); //Equally partition the number of items, except the last zone
+			int normalItemsInZone = itemsInZone; //used for indexing the items in itemsToSeed for the last level
+            //because itemsInZone for the last level changes, indexing changes
+			int itemsIndex = 0; //index of the item in the itemsToSeed list
+			while (numberOfItemsToPut > 0)//while there are items to put in the dungeon
 			{
-				foreach (Zone z in dungeon.zones)
+				foreach (Zone z in dungeon.zones) //for each zone
 				{
 
 					if (z.id == difficultyLevel)
@@ -134,37 +142,27 @@ namespace STVRogue.GameLogic
 					}
                     
 					Logger.log("Will put " + itemsInZone + " items to the zone " + z.id);
-					numberOfNodesInZone = (uint)z.nodesInZone.Count; //get number of nodes (N)  
-					for (int i = 0; i < itemsInZone;i++){
+					numberOfNodesInZone = (uint)z.nodesInZone.Count; //get number of nodes (N) 
+
+					for (int i = 0; i < itemsInZone;i++){ //for each item to put in this zone
 						int nodeNumber = RandomGenerator.rnd.Next(0, (int)numberOfNodesInZone); //randomly pick which node to locate
-                        Node nodeToLocate = z.nodesInZone.ElementAt<Node>(nodeNumber);
-						Item itemToAdd = itemsToSeed.ElementAt<Item>((int)(itemsIndex * normalItemsInZone + i)); //starts from 0 for level 1, 
+                        Node nodeToLocate = z.nodesInZone.ElementAt<Node>(nodeNumber); //get this node
+						Item itemToAdd = itemsToSeed.ElementAt<Item>((int)(itemsIndex * normalItemsInZone + i)); //starts from 0 for level 1, 0+number of items put in each zone for level 2
+                        //increases by number of items put in zone for every level
 						Logger.log("Putting item positioned " + (itemsIndex * normalItemsInZone + i)+ " to "+nodeToLocate.id);
-						nodeToLocate.items.Add(itemToAdd);
-						numberOfItemsToPut--;
+						nodeToLocate.items.Add(itemToAdd); //add the item to this node
+						numberOfItemsToPut--; //Decrease number of items to put
 					}
-					itemsIndex++; 
+					itemsIndex++; //increase items index 
                                    
 
 				}
 			}
-
-			//RANDOMLY SEED ITEMS
-			//while sum of HP values of healing potions in the dungeon < 0.8 * getHPM
-			// create items in a way that the property holds
-			//Decide randomly creating crystal or healing potion
-
-
-			//randomly seed these items from itemlist
-			// divide it equally into zones (last zone can have remainder)
-			//for each zone place it randomly
-
-
-
-
-
+                     
+            
 		}
 
+        //NEVER USED, may be it should be used?
 		/*
 		 * A single update turn to the game. 
 		 */
@@ -176,10 +174,13 @@ namespace STVRogue.GameLogic
 
 
 		//ADDED
+        /*
+         * Returns the number of monsters that this level should have regarding the proportion 
+         */
 		public int getProportion(uint numberOfMonsters, int k, uint l)
 		{
-			double doubleVersion = ((2 * k * numberOfMonsters) / ((l + 1) * (l + 2)));
-			return (int)doubleVersion;
+			double doubleVersion = ((2 * k * numberOfMonsters) / ((l + 1) * (l + 2))); //proportion specified in the document
+			return (int)doubleVersion; //returns the bottom value |_ _|
 
 		}
 
@@ -188,28 +189,31 @@ namespace STVRogue.GameLogic
 		public int getItemsHP()
 		{
 			int itemsHP = 0;
-			foreach (Item i in itemsToSeed)
+			foreach (Item i in itemsToSeed) //for each item in the list
 			{
-				if (i.GetType() == typeof(HealingPotion))
+				if (i.GetType() == typeof(HealingPotion)) //if item is a healing potion
 				{
-					itemsHP += (int)((HealingPotion)i).HPvalue;
+					itemsHP += (int)((HealingPotion)i).HPvalue; //Add its HP value
 				}
 			}
-			return itemsHP;
+			return itemsHP; //return total hp of the itemsToSeed list
 		}
 
 		//ADDED
+        /*
+         * Returns total hp of all monsters in the dungeon
+        */
 		public int getHPM()
 		{
 			int totalHPOfMonsters = 0;
-			foreach (Zone z in this.dungeon.zones)
+			foreach (Zone z in this.dungeon.zones) //for each zone
 			{
-				totalHPOfMonsters += z.getZoneHPValue();
+				totalHPOfMonsters += z.getZoneHPValue(); //adds up zone HP values
 			}
-			return totalHPOfMonsters;
+			return totalHPOfMonsters; //Returns total hp of all monsters in the dungeon
 		}
 
-
+        //SHOULD BE USED
 		public class GameCreationException : Exception
 		{
 			public GameCreationException() { }
