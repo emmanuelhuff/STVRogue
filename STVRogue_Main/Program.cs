@@ -97,6 +97,7 @@ namespace STVRogue
                 }
 				while(game.player.location.packs.Count>0 && game.player.HP>0){//node is contested
 					Logger.log("Calling with state " + nextState);
+					Logger.log("You have encountered a pack of Orcs! A battle commences...");
 					nextState = game.player.location.fight(game.player, nextState); //it calls the fight function with the current state
 					if(nextState==-1 || nextState == 5 || nextState == 6){
 						nextState = 0;
