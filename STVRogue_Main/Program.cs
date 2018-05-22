@@ -34,15 +34,15 @@ namespace STVRogue
 				//While it is not contested,
 				//  player can move in the dungeon,
 				// can use an item
-				Logger.log("Press 1 to move adjacent nodes"); //TO-DO: Add you can move these nodes, select the node you want to move..
+				Logger.log("Press 1 to move an adjacent node."); //TO-DO: Add you can move these nodes, select the node you want to move..
                 foreach(Node n in game.player.location.neighbors)
                 {
                     Logger.log(n.id);
                 }
 				if(game.player.containsMagicCrystal())
-				    Logger.log("Press 2 to use Crystal");
+				    Logger.log("Press 2 to use a Crystal");
 				if (game.player.containsHealingPotion())
-				    Logger.log("Press 3 to use Healing Potion");
+				    Logger.log("Press 3 to use a Healing Potion");
                 command = game.player.getNextCommand().commandId;
 				while(command==-1){
 					command = game.player.getNextCommand().commandId;
@@ -65,7 +65,7 @@ namespace STVRogue
                             if (i.GetType() == typeof(Crystal))
                             {
                                 game.player.use(i);
-                                Logger.log("Player used crystal");
+                                Logger.log("Player used a crystal");
                                 break; //break the for loop
                             }
                             Logger.log("Could not be able to execute this");
