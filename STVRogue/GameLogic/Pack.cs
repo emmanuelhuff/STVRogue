@@ -10,21 +10,21 @@
         public class Pack
         {
             public String id;
-        public List<Monster> members;
-            int startingHP = 0;
+            public List<Monster> members;
+            public int startingHP = 0;
             public Node location;
             public Dungeon dungeon;
 
             public Pack(String id, uint n)
             {
-            this.members = new List<Monster>();
+                this.members = new List<Monster>();
                 this.id = id;
                 for (int i = 0; i < n; i++)
                 {
                     Monster m = new Monster("" + id + "_" + i);
                     this.members.Add(m);
                     startingHP += m.HP;
-                m.pack = this;
+                    m.pack = this;
                 }
             }
 
