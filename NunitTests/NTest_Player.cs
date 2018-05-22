@@ -15,7 +15,66 @@ namespace STVRogue.GameLogic
     [TestFixture]
     public class NTest_Player
     {
+        
+		[Test]
+        public void NTest_createPlayer()
+        {
+            Player P = new Player();
+			Assert.AreEqual(P.id, "player");
+			Assert.AreEqual(P.AttackRating, 5);
+			Assert.AreEqual(P.HPbase, 100);
+
+        }
+
+		[Test]
+        public void NTest_bagContainsMagicCrystal_returnsTrue()
+        {
+            Player P = new Player();
+			HealingPotion healingPotion = new HealingPotion("healing");
+			Crystal crystal = new Crystal("crystal");
+			P.bag.Add(healingPotion);
+			P.bag.Add(crystal);
+			Assert.IsTrue(P.containsMagicCrystal());
+
+        }
+
+		[Test]
+        public void NTest_bagDoesNotContainMagicCrystal_returnsFalse()
+        {
+            Player P = new Player();
+            HealingPotion healingPotion1 = new HealingPotion("healing1");
+			HealingPotion healingPotion2 = new HealingPotion("healing2");
+            P.bag.Add(healingPotion1);
+			P.bag.Add(healingPotion2);
+            Assert.IsFalse(P.containsMagicCrystal());
+
+        }
+
+		[Test]
+        public void NTest_bagContainsHealingPotion_returnsTrue()
+        {
+            Player P = new Player();
+            HealingPotion healingPotion = new HealingPotion("healing");
+            Crystal crystal = new Crystal("crystal");
+            P.bag.Add(healingPotion);
+            P.bag.Add(crystal);
+			Assert.IsTrue(P.containsHealingPotion());
+
+        }
+
         [Test]
+        public void NTest_bagDoesNotContainHealingPotion_returnsFalse()
+        {
+            Player P = new Player();
+			Crystal crystal1 = new Crystal("crystal1");
+			Crystal crystal2 = new Crystal("crystal2");
+			P.bag.Add(crystal1);
+			P.bag.Add(crystal2);
+			Assert.IsFalse(P.containsHealingPotion());
+
+        }
+
+		[Test]
         public void NTest_use_onEmptyBag()
         {
             Player P = new Player();
@@ -32,6 +91,26 @@ namespace STVRogue.GameLogic
             Assert.True(x.used);
             Assert.False(P.bag.Contains(x));
         }
+
+		[Test]
+        public void NTest_getHPValueOfBag_onEmptyBag_returnsZero()
+        {
+            Player P = new Player();
+			Assert.Zero(P.getHPValueOfBag());
+        }
+
+		[Test]
+        public void NTest_getHPValueOfBag_returnsValid()
+        {
+            Player P = new Player();
+			HealingPotion healingPotion = new HealingPotion("hp");
+			int originalHPValue = (int)healingPotion.HPvalue;
+			P.bag.Add(healingPotion);
+			Assert.AreEqual(originalHPValue, P.getHPValueOfBag());
+        }
+
+
+
 
 		[Test]
         public void NTest_attack_foeNotMonster_throwsException()
@@ -112,5 +191,103 @@ namespace STVRogue.GameLogic
             Assert.IsTrue(testPack.members.Contains(targetMonster)); //returns true if last monster is not killed
             Assert.IsFalse(!testPack.members.Contains(targetMonster));
         }
+
+        //TEST getNextCommand
+		[Test]
+        public void NTest_getNextCommand_unknown()
+        {
+
+        }
+		[Test]
+        public void NTest_getNextCommand_known()
+        {
+
+        }
+        //TEST flee
+		[Test]
+		public void NTest_flee_playerFlees(){
+			Player player = new Player();
+			Node n1 = new Node("1", 1);
+            Node n2 = new Node("2", 1);
+            n1.neighbors.Add(n2);
+            n2.neighbors.Add(n1);
+			player.location = n1;
+			Assert.IsTrue(player.flee());         
+			Assert.AreSame(player.location, n2);
+            
+
+		}
+
+		[Test]
+        public void NTest_flee_playerCanNotFlee()
+        {
+			Player player = new Player();
+            Node n1 = new Node("1", 1);
+            Node n2 = new Node("2", 1);
+            n1.neighbors.Add(n2);
+            n2.neighbors.Add(n1);
+            player.location = n1;
+			Pack pack = new Pack("1", 2);
+			n2.packs.Add(pack);
+			Assert.IsFalse(player.flee()); 
+            Assert.AreSame(player.location, n1);
+
+        }
+        //TEST move
+		[Test]
+        public void NTest_move_playerMoves()
+        {
+
+        }
+        //TEST collectItems
+		[Test]
+        public void NTest_collectItems_ReturnsValid()
+        {
+            Player P = new Player();
+			Node testNode = new Node("1", 1);
+			HealingPotion healingPotion = new HealingPotion("hp");
+			Crystal crystal = new Crystal("cr");
+
+			testNode.items.Add(healingPotion);
+			testNode.items.Add(crystal);
+			List<Item> testList = testNode.items.ToList<Item>();
+			P.location = testNode;
+
+			P.collectItems();
+			CollectionAssert.AreEquivalent(testList, P.bag.ToList<Item>());
+
+        }
+        //TEST attackbool
+		[Test]
+        public void NTest_attackBool_throwsException()
+        {
+			Player p1 = new Player();
+            Player p2 = new Player();
+            Assert.Throws<ArgumentException>(() => p1.Attack(p2));
+
+        }
+		[Test]
+        public void NTest_attackBool_packIsBeated()
+        {
+			Player player = new Player();
+			Pack pack = new Pack("1",1);
+			uint playerAttackRating = player.AttackRating;
+			int monsterHP = pack.members.First().HP;
+			pack.members.First().setHP((int)Math.Max(1, playerAttackRating - 5));
+			Assert.IsTrue(player.AttackBool(pack.members.First()));
+
+        }
+		[Test]
+        public void NTest_attackBool_packIsAlive()
+        {
+			Player player = new Player();
+            Pack pack = new Pack("1", 1);
+            uint playerAttackRating = player.AttackRating;
+            int monsterHP = pack.members.First().HP;
+			pack.members.First().setHP((int)(playerAttackRating + 5));
+			Assert.IsFalse(player.AttackBool(pack.members.First()));
+        }
+        //CHECK attack methods
+
     }
 }

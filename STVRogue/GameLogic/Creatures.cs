@@ -108,25 +108,50 @@ namespace STVRogue.GameLogic
         {
 			
 			Node currentLocation = this.location;
-			int currentLevel = currentLocation.level;
 			List<Node> adjacentNodes = currentLocation.neighbors;
-			int zoneLevel;
-			foreach(Node adjNode in adjacentNodes){
-				zoneLevel = adjNode.level;
-				if(currentLevel == zoneLevel){
-					//check if it is contested, if it is not flee to that node
-					if(!adjNode.contested(this)){
+			foreach(Node adjNode in adjacentNodes){            
+					//check if it will be contested, if then do not flee to that node
+					if (adjNode.packs.Count == 0)
+					{
 						//change location and flee
 						this.location = adjNode;
-						Logger.log("Player fleed from "+currentLocation+" to " + this.location);
+						Logger.log("Player fleed from " + currentLocation + " to " + this.location);
 						this.collectItems();
 						return true;
 					}
-				} //else do nothing, it can not flee to a node from the different zone
+				
 			}
 			return false;
 
         }
+
+		/*OLD FLEE, are we sure that player can not flee to a node from the diff zone?
+        public Boolean flee()
+        {
+
+            Node currentLocation = this.location;
+            int currentLevel = currentLocation.level;
+            List<Node> adjacentNodes = currentLocation.neighbors;
+            int zoneLevel;
+            foreach (Node adjNode in adjacentNodes)
+            {
+                zoneLevel = adjNode.level;
+                if (currentLevel == zoneLevel)
+                {
+                    //check if it will be contested, if then do not flee to that node
+                    if (adjNode.packs.Count == 0)
+                    {
+                        //change location and flee
+                        this.location = adjNode;
+                        Logger.log("Player fleed from " + currentLocation + " to " + this.location);
+                        this.collectItems();
+                        return true;
+                    }
+                } //else do nothing, it can not flee to a node from the different zone
+            }
+            return false;
+
+        }*/
 
 		/*ADDED*/
         public void move()
@@ -238,9 +263,9 @@ namespace STVRogue.GameLogic
 				return false;
 			}
 		}
-        /*ADDED*/ 
+        /*ADDED
         public int getAction() {
-            return 1; /* A  test in which 1 means attack*/
-        }
+            return 1; // A  test in which 1 means attack
+        }*/
     }
 }
