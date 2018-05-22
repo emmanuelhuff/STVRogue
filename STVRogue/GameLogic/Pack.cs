@@ -56,7 +56,7 @@
                 }
                 location = u;
                 u.packs.Add(this);
-                Logger.log("Pack " + id + " moves to an already full node " + u.id + ". Not rejected.");
+                Logger.log("Pack " + id + " moves to the node " + u.id + ". Not rejected.");
 
             }
 
@@ -67,7 +67,7 @@
                 move(path[0]);
             }
             
-            /*ADDED*/
+            /*ADDED, USED?
             public Monster getMonster() {
                 foreach (Monster m in members)
                 {
@@ -75,8 +75,8 @@
                         return m;
                     }
                 }
-                throw new ArgumentException(); /*this is when no monsters are alive*/
-            }
+                throw new ArgumentException(); //*this is when no monsters are alive
+            }*/
 
             /*ADDED*/ 
             public int getAction() {
@@ -115,7 +115,6 @@
     			foreach (Node adjNode in adjacentNodes)
                 {
                     zoneLevel = adjNode.level;
-    				if(zoneLevel == currentLevel){
     					adjNodeCapacity = dungeon.zones.ElementAt<Zone>(zoneLevel - 1).capacity;
                         foreach (Pack p in adjNode.packs)
                         {
@@ -130,9 +129,7 @@
                             return true;
 
                         }
-    				}else{
-        					//it can not go to that node
-    				}
+    				
                     
 
                 }
@@ -144,5 +141,53 @@
                 // if no node is found return false
             }
             
+		/*OLD FLEE, are we sure that it cant flee to next level?
+        public bool flee()
+        {
+            //is there an adjacent node? if so, remove pack, add to other node. To do so, Node class neighbors that is not a bridge/
+            // Pack.location is the node/
+            // Fleeing is only possible if there is an adjacent node, with enough capacity left,
+            // to accommodate O.O is then moved into this node.
+            //is there an adjacent node? if so, remove pack, add to other node. To do so, Node class neighbors that is not a bridge/
+            // Pack.location is the node
+            Node currentLocation = this.location;
+            int currentLevel = currentLocation.level;
+            List<Node> adjacentNodes = currentLocation.neighbors;
+            int zoneLevel, currentMonsters = 0;
+            uint adjNodeCapacity;
+            foreach (Node adjNode in adjacentNodes)
+            {
+                zoneLevel = adjNode.level;
+                if (zoneLevel == currentLevel)
+                {
+                    adjNodeCapacity = dungeon.zones.ElementAt<Zone>(zoneLevel - 1).capacity;
+                    foreach (Pack p in adjNode.packs)
+                    {
+                        currentMonsters += p.members.Count;
+                    }
+                    if (adjNodeCapacity - currentMonsters >= this.members.Count)
+                    {
+                        //it can flee to that node
+                        currentLocation.packs.Remove(this);//remove this pack from its current location
+                        adjNode.packs.Add(this); //Add it to the new location
+                        this.location = adjNode; //change pack's location to the new node
+                        return true;
+
+                    }
+                }
+                else
+                {
+                    //it can not go to that node
+                }
+
+
+            }
+            return false;
+            // For each node in adjacentNodes, get the level() and the capacity of the node (from its zone)
+            // Get number of monsters in that node
+            // if there is enough capacity, move to that node
+            // if that node is found return true
+            // if no node is found return false
+        }*/
         }
     }
