@@ -92,6 +92,13 @@ namespace STVRogue.GameLogic
 		[Test]
         public void NTest_moveTowards_validMove()
         {
+			Dungeon dungeon = new Dungeon(3, 3);
+			Pack pack1 = new Pack("1", 4);
+			pack1.location = dungeon.startNode;
+			dungeon.startNode.packs.Add(pack1);
+			Node nextNode = (dungeon.shortestpath(dungeon.startNode, dungeon.exitNode))[0];
+			pack1.moveTowards(dungeon.exitNode);
+			Assert.AreSame(nextNode, pack1.location);
 
         }
 		/*[Test]
@@ -118,20 +125,45 @@ namespace STVRogue.GameLogic
 		[Test]
         public void NTest_getPackHPValue_validHP()
         {
+			Pack pack = new Pack("1", 3);
+			int packHP = 0;
+			foreach(Monster m in pack.members){
+				packHP += m.HP;
+			}
+			Assert.AreEqual(packHP, pack.getPackHPValue());
 
         }
 
 		[Test]
         public void NTest_flee_returnsTruePackFlees()
         {
+			Dungeon dungeon = new Dungeon(3, 3);
+            Pack pack1 = new Pack("1", 4);
+            pack1.location = dungeon.startNode;
+            dungeon.startNode.packs.Add(pack1);
+			//there is no monster packs in the dungeon so there is no capacity problems
+			Assert.IsTrue(pack1.flee());
+			Assert.AreNotSame(pack1.location, dungeon.startNode);
+			Assert.Contains(pack1.location, dungeon.startNode.neighbors);
 
         }
 		[Test]
         public void NTest_flee_returnsFalsePackCantFlee()
         {
-
+			Dungeon dungeon = new Dungeon(3, 3);
+            Pack pack1 = new Pack("1", 4);
+            pack1.location = dungeon.startNode;
+            dungeon.startNode.packs.Add(pack1);
+			int packId = 2;
+			foreach(Node n in dungeon.startNode.neighbors){
+				Pack pack = new Pack("" + packId, 4);
+				pack.location = n;
+				n.packs.Add(pack);
+			}
+            Assert.IsFalse(pack1.flee());
+            Assert.AreSame(pack1.location, dungeon.startNode);
         }
-
+        
 
     }
 }
