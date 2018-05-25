@@ -280,7 +280,7 @@ namespace STVRogue.GameLogic
 
 
         }
-        public bool AllReachable(List<Node> toReachNodes, Node mainNode)
+        public bool allReachable(List<Node> toReachNodes, Node mainNode)
         {
             for (int i = 0; i < toReachNodes.Count; i++)
             {
