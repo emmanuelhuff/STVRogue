@@ -31,6 +31,7 @@ namespace STVRogue.GameLogic
             zones = new List<Zone>();
             M = nodeCapacityMultiplier;
             int numberOfNodesInZone = 0;
+            int connected = 0;
 
             //every node is named with its zone number followed by its number in a zone (nodeId = preId+lastId)
             string preId, lastId, nodeId = "";
@@ -176,6 +177,82 @@ namespace STVRogue.GameLogic
                     //end bridge is also connected
 
                 }
+                if (i == 1)
+                {
+                    Node n1, n2;
+                    connected = startNode.neighbors.Count;
+                    for (int j = 0; j < numberOfNodesInZone; j++)
+                    {
+                        connected += newZone.nodesInZone.ElementAt(j).neighbors.Count;
+                    }
+                    while (Convert.ToDouble(connected / (numberOfNodesInZone + 1)) > 3)
+                    {
+                        n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n1.neighbors.Count <= 1)
+                        {
+                            n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n2.neighbors.Count <= 1 || n2.id == n1.id || !n2.alreadyConnected(n1))
+                        {
+                            n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n1.disconnect(n2);
+                        Logger.log("Nodes " + n1.id + " " + n2.id + " are disconnected");
+                        connected -= 2;
+                    }
+                }
+                else if (i == level)
+                {
+                    Node n1, n2;
+                    connected = exitNode.neighbors.Count;
+                    connected += bridges.ElementAt(i - 2).neighbors.Count;
+                    for (int j = 0; j < numberOfNodesInZone; j++)
+                    {
+                        connected += newZone.nodesInZone.ElementAt(j).neighbors.Count;
+                    }
+                    while (Convert.ToDouble(connected / (numberOfNodesInZone + 2)) > 3)
+                    {
+                        n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n1.neighbors.Count <= 1)
+                        {
+                            n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n2.neighbors.Count <= 1 || n2.id == n1.id || !n2.alreadyConnected(n1))
+                        {
+                            n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n1.disconnect(n2);
+                        Logger.log("Nodes " + n1.id + " " + n2.id + " are disconnected");
+                        connected -= 2;
+                    }
+                }
+                else
+                {
+                    Node n1, n2;
+                    connected = bridges.ElementAt(i - 2).neighbors.Count;
+                    for (int j = 0; j < numberOfNodesInZone; j++)
+                    {
+                        connected += newZone.nodesInZone.ElementAt(j).neighbors.Count;
+                    }
+                    while (Convert.ToDouble(connected / (numberOfNodesInZone + 1)) > 3)
+                    {
+                        n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n1.neighbors.Count <= 1)
+                        {
+                            n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        while (n2.neighbors.Count <= 1 || n2.id == n1.id || !n2.alreadyConnected(n1))
+                        {
+                            n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+                        }
+                        n1.disconnect(n2);
+                        Logger.log("Nodes " + n1.id + " " + n2.id + " are disconnected");
+                        connected -= 2;
+                    }
+                }
 
 
                 //pass to next zone
@@ -238,6 +315,22 @@ namespace STVRogue.GameLogic
 
             }
             return avg /= denominator;
+        }
+        /* ADDED */
+        //return connectivity degree of Dungeon
+        public double connectivityDegree()
+        {
+            int connected = 0;
+            int numOfNodes = 0;
+            foreach (Zone z in zones)
+            {
+                foreach (Node n in z.nodesInZone)
+                {
+                    connected += n.neighbors.Count;
+                }
+                numOfNodes += z.nodesInZone.Count;
+            }
+            return connected / numOfNodes;
         }
 
         /* Return a shortest path between node u and node v */
