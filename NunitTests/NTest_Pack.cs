@@ -53,7 +53,7 @@ namespace STVRogue.GameLogic
 			Node node2 = new Node("2", 1);
 			pack.location = node1;
 			node1.packs.Add(pack);
-			Assert.Throws<ArgumentException>(() => pack.move(node2));
+			Assert.Throws<ArgumentException>(() => pack.Move(node2));
 		}
 		[Test]
 		public void NTest_move_nodeIsAlreadyFullRejected()
@@ -72,7 +72,7 @@ namespace STVRogue.GameLogic
 				firstZone.ElementAt(1).neighbors.Add(firstZone.ElementAt(2));
 				firstZone.ElementAt(2).neighbors.Add(firstZone.ElementAt(1));
 			}
-			pack1.move(firstZone.ElementAt(2));
+			pack1.Move(firstZone.ElementAt(2));
 			//rejected
 			Assert.AreSame(firstZone.ElementAt(1), pack1.location);
 
@@ -90,7 +90,7 @@ namespace STVRogue.GameLogic
 				pack1.location = firstNode;
 				firstNode.packs.Add(pack1);
 				Node secondNode = firstNode.neighbors.First();
-				pack1.move(secondNode);
+				pack1.Move(secondNode);
 				Assert.AreSame(secondNode, pack1.location);
 			}
 
@@ -103,11 +103,11 @@ namespace STVRogue.GameLogic
 			pack1.location = dungeon.startNode;
 
             dungeon.startNode.packs.Add(pack1);
-			Node nextNode = (dungeon.shortestpath(dungeon.startNode, dungeon.exitNode))[0];
+			Node nextNode = (dungeon.Shortestpath(dungeon.startNode, dungeon.exitNode))[0];
             
 			Utils.Logger.log("Next node will be " + nextNode.id);
             Utils.Logger.log("exitnode is " + dungeon.exitNode.id);
-			pack1.moveTowards(dungeon.exitNode);
+			pack1.MoveTowards(dungeon.exitNode);
 			/*
 
 			

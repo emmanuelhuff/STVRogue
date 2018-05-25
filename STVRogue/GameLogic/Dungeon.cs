@@ -261,14 +261,7 @@ namespace STVRogue.GameLogic
 
             }
 
-            //TEST
-			foreach(Zone z in zones){
-				Logger.log("Zone " + z.id + " contains:");
-				foreach(Node n in z.nodesInZone){
-					Logger.log(n.id);
-				}
-			}
-            //TEST
+           
             //Add startnode, bridges and endnode
 			foreach(Zone z in zones){
 				if(z.id==1){ //first zone, add start node
@@ -284,19 +277,10 @@ namespace STVRogue.GameLogic
 				
 
 			}
-			//TEST
-            foreach (Zone z in zones)
-            {
-                Logger.log("Zone " + z.id + " contains:");
-                foreach (Node n in z.nodesInZone)
-                {
-                    Logger.log(n.id);
-                }
-            }
-            //TEST
+
 
         }
-        public bool allReachable(List<Node> toReachNodes, Node mainNode)
+        public bool AllReachable(List<Node> toReachNodes, Node mainNode)
         {
             for (int i = 0; i < toReachNodes.Count; i++)
             {
@@ -306,7 +290,7 @@ namespace STVRogue.GameLogic
         }
         /* ADDED */
         //return average of connectivity for Dungeon
-        public float checkAvg(List<Node> allNodes)
+		public float CheckAvg(List<Node> allNodes)
         {
             float avg = 0;
             int denominator = allNodes.Count;
@@ -319,7 +303,7 @@ namespace STVRogue.GameLogic
         }
         /* ADDED */
         //return connectivity degree of Dungeon
-        public double connectivityDegree()
+		public double ConnectivityDegree()
         {
             int connected = 0;
             int numOfNodes = 0;
@@ -335,7 +319,7 @@ namespace STVRogue.GameLogic
         }
 
         /* Return a shortest path between node u and node v */
-        public List<Node> shortestpath(Node u, Node v)
+        public List<Node> Shortestpath(Node u, Node v)
         {
             List<Node> queue = new List<Node>(); //list of nodes to visit
             Dictionary<string, uint> nodeDist = new Dictionary<string, uint>(); //node id's and their distances 
@@ -407,7 +391,7 @@ namespace STVRogue.GameLogic
 
         /** ADDED */
         /* To disconnect a bridge from the rest of the zone the bridge is in. */
-        public void disconnect(Bridge b)
+        public void Disconnect(Bridge b)
         {
             Logger.log("Disconnecting the bridge " + b.id + " from its zone.");
 
@@ -418,12 +402,12 @@ namespace STVRogue.GameLogic
 
         /** ADDED */
         /* To calculate the level of the given node. */
-        public uint level(Node d)
+        public uint Level(Node d)
         {
             //get shortest path from starting node to node d
             //check list of nodes, increment the level with the number of bridge nodes
             uint nodeLevel = 0;
-            List<Node> pathFromStartNode = shortestpath(startNode, d);
+            List<Node> pathFromStartNode = Shortestpath(startNode, d);
             foreach (Node nd in pathFromStartNode)
             {
                 if (predicates.isBridge(startNode, exitNode, nd)) nodeLevel++;
@@ -432,7 +416,7 @@ namespace STVRogue.GameLogic
             //throw new NotImplementedException(); 
         }
 
-        public bool notConnectedGraph(List<Node> nodesInZone)
+		public bool NotConnectedGraph(List<Node> nodesInZone)
         {
             for (int i = 0; i < nodesInZone.Count; i++)
             {
