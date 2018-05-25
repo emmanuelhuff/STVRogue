@@ -19,7 +19,7 @@ namespace STVRogue.GameLogic
 
 	}
 
-    class Monster : Creature
+    public class Monster : Creature
     {
         public Pack pack;
 
@@ -44,7 +44,7 @@ namespace STVRogue.GameLogic
 		}
     }
 
-    class Player : Creature
+    public class Player : Creature
     {
         public Dungeon dungeon;
         public int HPbase = 100;
