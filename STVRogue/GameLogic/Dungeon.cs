@@ -156,6 +156,7 @@ namespace STVRogue.GameLogic
                         exitNode.connect(listOfNotFullNodes.ElementAt(j)); //not randomized
                         Logger.log("Connected to node " + listOfNotFullNodes.ElementAt(j).id);
                     }
+					//this.exitNode = exitNode;
                 }
                 else
                 { //connect to end bridge
@@ -260,14 +261,7 @@ namespace STVRogue.GameLogic
 
             }
 
-            //TEST
-			foreach(Zone z in zones){
-				Logger.log("Zone " + z.id + " contains:");
-				foreach(Node n in z.nodesInZone){
-					Logger.log(n.id);
-				}
-			}
-            //TEST
+           
             //Add startnode, bridges and endnode
 			foreach(Zone z in zones){
 				if(z.id==1){ //first zone, add start node
@@ -283,16 +277,7 @@ namespace STVRogue.GameLogic
 				
 
 			}
-			//TEST
-            foreach (Zone z in zones)
-            {
-                Logger.log("Zone " + z.id + " contains:");
-                foreach (Node n in z.nodesInZone)
-                {
-                    Logger.log(n.id);
-                }
-            }
-            //TEST
+
 
         }
         public bool allReachable(List<Node> toReachNodes, Node mainNode)
@@ -305,7 +290,7 @@ namespace STVRogue.GameLogic
         }
         /* ADDED */
         //return average of connectivity for Dungeon
-        public float checkAvg(List<Node> allNodes)
+		public float CheckAvg(List<Node> allNodes)
         {
             float avg = 0;
             int denominator = allNodes.Count;
@@ -318,7 +303,7 @@ namespace STVRogue.GameLogic
         }
         /* ADDED */
         //return connectivity degree of Dungeon
-        public double connectivityDegree()
+		public double ConnectivityDegree()
         {
             int connected = 0;
             int numOfNodes = 0;
@@ -334,30 +319,33 @@ namespace STVRogue.GameLogic
         }
 
         /* Return a shortest path between node u and node v */
-        public List<Node> shortestpath(Node u, Node v)
+        public List<Node> Shortestpath(Node u, Node v)
         {
             List<Node> queue = new List<Node>(); //list of nodes to visit
             Dictionary<string, uint> nodeDist = new Dictionary<string, uint>(); //node id's and their distances 
                                                                                 //nodeDist dictionary contains all reachable nodes from node u
             List<Node> reachableNodesFromU = predicates.reachableNodes(u);
-            //make their distances int max
+			//make their distances int max
+			Logger.log("in shortest");
+
             foreach (Node nd in reachableNodesFromU)
             {
                 nodeDist.Add(nd.id, Int32.MaxValue); //include math to use INT_MAX?, using System? for Int32.MaxValue
                 nd.visited = false;
                 nd.pred = null;
             }
+			Logger.log("in shortest");
             //source node u is the first to be visited, change distance to 0, make it visited, add it to queue
             u.visited = true;
-            nodeDist.Add(u.id, 0);
+			nodeDist[u.id] = 0;
             queue.Add(u);
             uint tempDistance = 0;
-
+			Logger.log("in shortest");
             while (queue.Count != 0)
             { //while queue is not empty
                 Node nd = queue.First();
                 queue.RemoveAt(0); //delete queue's first element
-                tempDistance = nodeDist["nd"]; //get the distance value
+				tempDistance = nodeDist[nd.id]; //get the distance value
 
                 /**for each neighbour of the nd if the neighbour node is not visited, 
                 make it visited
@@ -372,7 +360,7 @@ namespace STVRogue.GameLogic
                     if (!tempNode.visited)
                     {
                         tempNode.visited = true;
-                        nodeDist.Add(tempNode.id, tempDistance + 1);
+						nodeDist[tempNode.id] = tempDistance + 1;
                         tempNode.pred = nd;
                         queue.Add(tempNode);
                     }
@@ -393,9 +381,9 @@ namespace STVRogue.GameLogic
                 path.Add(current.pred); //path push back current.pred
                 current = current.pred; //current = current.pred;
             }
-            path.Reverse(); //****PROBABLY it should return reverse
+            path.Reverse(); //starts from start node
+            
             return path;
-            //return path.Reverse();
             //now the list path has the shortest path from v to u
             //return it in reverse order
         }
@@ -403,7 +391,7 @@ namespace STVRogue.GameLogic
 
         /** ADDED */
         /* To disconnect a bridge from the rest of the zone the bridge is in. */
-        public void disconnect(Bridge b)
+        public void Disconnect(Bridge b)
         {
             Logger.log("Disconnecting the bridge " + b.id + " from its zone.");
 
@@ -414,12 +402,12 @@ namespace STVRogue.GameLogic
 
         /** ADDED */
         /* To calculate the level of the given node. */
-        public uint level(Node d)
+        public uint Level(Node d)
         {
             //get shortest path from starting node to node d
             //check list of nodes, increment the level with the number of bridge nodes
             uint nodeLevel = 0;
-            List<Node> pathFromStartNode = shortestpath(startNode, d);
+            List<Node> pathFromStartNode = Shortestpath(startNode, d);
             foreach (Node nd in pathFromStartNode)
             {
                 if (predicates.isBridge(startNode, exitNode, nd)) nodeLevel++;
@@ -428,7 +416,7 @@ namespace STVRogue.GameLogic
             //throw new NotImplementedException(); 
         }
 
-        public bool notConnectedGraph(List<Node> nodesInZone)
+		public bool NotConnectedGraph(List<Node> nodesInZone)
         {
             for (int i = 0; i < nodesInZone.Count; i++)
             {

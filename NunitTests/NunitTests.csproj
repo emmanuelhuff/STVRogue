@@ -65,6 +65,7 @@
     <Compile Include="NTest_Creature.cs" />
     <Compile Include="NTest_Monster.cs" />
     <Compile Include="NTest_Pack.cs" />
+    <Compile Include="NTest_Commands.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
