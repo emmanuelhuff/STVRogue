@@ -14,9 +14,7 @@ namespace STVRogue.GameLogic
 		public int HP;
 		public uint AttackRating = 1;
 		public Node location;
-		public Creature() { }
-		public abstract void Attack(Creature foe);
-
+		public abstract void Attack(Creature foe);      
 	}
 
     public class Monster : Creature
