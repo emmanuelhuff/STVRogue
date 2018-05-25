@@ -123,8 +123,9 @@ namespace STVRogue.GameLogic
 		[Test]
         public void NTest_attack_notAcceleratedFoeHPZero_creatureIsKilled()
         {
+			Dungeon dungeon = new Dungeon(3, 4);
 			Player testPlayer = new Player();
-            Pack testPack = new Pack("testPack", 1);
+			Pack testPack = new Pack("testPack", 1,dungeon);
             Monster M = testPack.members.FirstOrDefault<Monster>();
             M.setHP(1);
 			M.pack = testPack;
@@ -138,7 +139,8 @@ namespace STVRogue.GameLogic
         public void NTest_attack_notAcceleratedFoeHPDiffThanZero_creatureIsNotKilled()
         {
 			Player testPlayer = new Player();
-			Pack testPack = new Pack("testPack", 1);
+			Dungeon dungeon = new Dungeon(3, 4);
+			Pack testPack = new Pack("testPack", 1,dungeon);
 			Monster testMonster = testPack.members.FirstOrDefault<Monster>();
             testMonster.setHP(6);
 			testMonster.pack = testPack;
@@ -151,8 +153,9 @@ namespace STVRogue.GameLogic
         public void NTest_attack_acceleratedTargetHPZero_targetIsKilled()
         {
 			Player testPlayer = new Player();
+			Dungeon dungeon = new Dungeon(3, 4);
 			testPlayer.accelerated = true;
-			Pack testPack = new Pack("testPack", 3);
+			Pack testPack = new Pack("testPack", 3,dungeon);
 			foreach(Monster m in testPack.members){
 				Logger.log(m.id);
 			}
@@ -171,9 +174,10 @@ namespace STVRogue.GameLogic
 		[Test]
         public void NTest_attack_acceleratedTargetHPNotZero_targetIsNotKilled()
         {
+			Dungeon dungeon = new Dungeon(3, 4);
 			Player testPlayer = new Player();
             testPlayer.accelerated = true;
-            Pack testPack = new Pack("testPack", 3);
+			Pack testPack = new Pack("testPack", 3,dungeon);
             foreach (Monster m in testPack.members)
             {
                 Logger.log(m.id);
@@ -221,13 +225,14 @@ namespace STVRogue.GameLogic
 		[Test]
         public void NTest_flee_playerCanNotFlee()
         {
+			Dungeon dungeon = new Dungeon(3, 4);
 			Player player = new Player();
             Node n1 = new Node("1", 1);
             Node n2 = new Node("2", 1);
             n1.neighbors.Add(n2);
             n2.neighbors.Add(n1);
             player.location = n1;
-			Pack pack = new Pack("1", 2);
+			Pack pack = new Pack("1", 2,dungeon);
 			n2.packs.Add(pack);
 			Assert.IsFalse(player.flee()); 
             Assert.AreSame(player.location, n1);
@@ -269,8 +274,9 @@ namespace STVRogue.GameLogic
 		[Test]
         public void NTest_attackBool_packIsBeated()
         {
+			Dungeon dungeon = new Dungeon(3, 4);
 			Player player = new Player();
-			Pack pack = new Pack("1",1);
+			Pack pack = new Pack("1",1,dungeon);
 			uint playerAttackRating = player.AttackRating;
 			int monsterHP = pack.members.First().HP;
 			pack.members.First().setHP((int)Math.Max(1, playerAttackRating - 5));
@@ -280,8 +286,9 @@ namespace STVRogue.GameLogic
 		[Test]
         public void NTest_attackBool_packIsAlive()
         {
+			Dungeon dungeon = new Dungeon(3, 4);
 			Player player = new Player();
-            Pack pack = new Pack("1", 1);
+			Pack pack = new Pack("1", 1,dungeon);
             uint playerAttackRating = player.AttackRating;
             int monsterHP = pack.members.First().HP;
 			pack.members.First().setHP((int)(playerAttackRating + 5));

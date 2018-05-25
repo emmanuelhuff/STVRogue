@@ -155,6 +155,7 @@ namespace STVRogue.GameLogic
                         exitNode.connect(listOfNotFullNodes.ElementAt(j)); //not randomized
                         Logger.log("Connected to node " + listOfNotFullNodes.ElementAt(j).id);
                     }
+					//this.exitNode = exitNode;
                 }
                 else
                 { //connect to end bridge
@@ -247,24 +248,27 @@ namespace STVRogue.GameLogic
             Dictionary<string, uint> nodeDist = new Dictionary<string, uint>(); //node id's and their distances 
                                                                                 //nodeDist dictionary contains all reachable nodes from node u
             List<Node> reachableNodesFromU = predicates.reachableNodes(u);
-            //make their distances int max
+			//make their distances int max
+			Logger.log("in shortest");
+
             foreach (Node nd in reachableNodesFromU)
             {
                 nodeDist.Add(nd.id, Int32.MaxValue); //include math to use INT_MAX?, using System? for Int32.MaxValue
                 nd.visited = false;
                 nd.pred = null;
             }
+			Logger.log("in shortest");
             //source node u is the first to be visited, change distance to 0, make it visited, add it to queue
             u.visited = true;
-            nodeDist.Add(u.id, 0);
+			nodeDist[u.id] = 0;
             queue.Add(u);
             uint tempDistance = 0;
-
+			Logger.log("in shortest");
             while (queue.Count != 0)
             { //while queue is not empty
                 Node nd = queue.First();
                 queue.RemoveAt(0); //delete queue's first element
-                tempDistance = nodeDist["nd"]; //get the distance value
+				tempDistance = nodeDist[nd.id]; //get the distance value
 
                 /**for each neighbour of the nd if the neighbour node is not visited, 
                 make it visited
@@ -279,7 +283,7 @@ namespace STVRogue.GameLogic
                     if (!tempNode.visited)
                     {
                         tempNode.visited = true;
-                        nodeDist.Add(tempNode.id, tempDistance + 1);
+						nodeDist[tempNode.id] = tempDistance + 1;
                         tempNode.pred = nd;
                         queue.Add(tempNode);
                     }
@@ -300,9 +304,9 @@ namespace STVRogue.GameLogic
                 path.Add(current.pred); //path push back current.pred
                 current = current.pred; //current = current.pred;
             }
-            path.Reverse(); //****PROBABLY it should return reverse
+            path.Reverse(); //starts from start node
+            
             return path;
-            //return path.Reverse();
             //now the list path has the shortest path from v to u
             //return it in reverse order
         }

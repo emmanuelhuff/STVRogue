@@ -15,9 +15,10 @@
             public Node location;
             public Dungeon dungeon;
 
-            public Pack(String id, uint n)
+		public Pack(String id, uint n,Dungeon dungeon)
             {
                 this.members = new List<Monster>();
+			    this.dungeon = dungeon;
                 this.id = id;
                 for (int i = 0; i < n; i++)
                 {
@@ -42,19 +43,22 @@
             /* Move the pack to an adjacent node. */
             public void move(Node u)
             {
+			System.Diagnostics.Debug.WriteLine("here");
                 if (!location.neighbors.Contains(u)) throw new ArgumentException();
     			int capacity = (int) (dungeon.M * (dungeon.level(u) + 1));
                 // count monsters already in the node:
                 foreach (Pack Q in location.packs) {
                     capacity = capacity - Q.members.Count;
                 }
+			System.Diagnostics.Debug.WriteLine("here");
                 // capacity now expresses how much space the node has left
                 if (members.Count > capacity)
                 {
                     Logger.log("Pack " + id + " is trying to move to a full node " + u.id + ", but this would cause the node to exceed its capacity. Rejected.");
                     return;
                 }
-                location = u;
+                this.location = u;
+			System.Diagnostics.Debug.WriteLine("here");
                 u.packs.Add(this);
                 Logger.log("Pack " + id + " moves to the node " + u.id + ". Not rejected.");
 
@@ -63,8 +67,12 @@
             /* Move the pack one node further along a shortest path to u. */
             public void moveTowards(Node u)
             {
-    			List<Node> path = dungeon.shortestpath(location, u);
-                move(path[0]);
+			
+			List<Node> path = new List<Node>();
+			path = this.dungeon.shortestpath(this.location, u);
+			Logger.log("will move to " + path[0].id);
+			this.move((Node)path[0]);
+			Logger.log("Moved to " + this.location.id);
             }
             
             /*ADDED, USED?
