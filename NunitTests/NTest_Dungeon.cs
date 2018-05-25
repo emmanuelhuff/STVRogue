@@ -100,7 +100,7 @@ namespace STVRogue.GameLogic
         public void NTest_located_Level()
 		{
 			Node n1 = new Node("1",1);
-			Assert.Equals(dungeon.Level(n1), 1);
+			Assert.Equals(dungeon.level(n1), 1);
         }
               
 		[Test(Description ="Test function disconnect() that Disconnection is fully completed")]
