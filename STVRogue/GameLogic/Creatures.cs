@@ -92,13 +92,19 @@ namespace STVRogue.GameLogic
 		}
 
 		public Command getNextCommand(){
-            string userInput = Console.ReadLine();
-            int command = int.Parse(userInput);
-            if (command != 1 && command != 2 && command != 3 && command != 4)
-            {
-				Logger.log("Unknown command");
-				command = -1;
-            }
+			
+			string userInput ="";
+			userInput = Console.ReadLine();
+			int command = -1;
+			if(int.TryParse(userInput,out command)){
+				if (command != 1 && command != 2 && command != 3 && command != 4)
+                {
+                    Logger.log("Unknown command");
+                }
+			}else{
+				Logger.log("Input should be an integer.");
+			}
+            
 			Command userCommand = new Command(command); //key press numbers for known commands, -1 for unknown commands
             return userCommand;
 		}

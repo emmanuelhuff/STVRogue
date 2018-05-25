@@ -19,10 +19,7 @@ namespace STVRogue
 
 			int nextState = 0;
 			int command = -1;
-            //test for getting user input
-			/*Logger.log("Press Enter to exit"); 
-			while (Console.ReadKey().Key != ConsoleKey.Enter) { }
-			Logger.log("pressed");*/
+
 
             //The game continues while the player is alive
 			while (game.player.HP>0)
@@ -35,7 +32,8 @@ namespace STVRogue
 				//  player can move in the dungeon,
 				// can use an item
 				Logger.log("Press 1 to move an adjacent node."); //TO-DO: Add you can move these nodes, select the node you want to move..
-                foreach(Node n in game.player.location.neighbors)
+				Logger.log("Adjacent nodes:");
+				foreach(Node n in game.player.location.neighbors)
                 {
                     Logger.log(n.id);
                 }
@@ -45,6 +43,7 @@ namespace STVRogue
 				    Logger.log("Press 3 to use a Healing Potion");
                 command = game.player.getNextCommand().commandId;
 				while(command==-1){
+					Logger.log("Waiting for the user input");
 					command = game.player.getNextCommand().commandId;
 				}
 
