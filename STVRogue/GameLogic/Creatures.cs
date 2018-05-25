@@ -178,8 +178,11 @@ namespace STVRogue.GameLogic
         {
             if (!(foe is Monster)) throw new ArgumentException();
             Monster foe_ = foe as Monster;
+
             Pack tempPack = foe_.pack;
+
             Node packLocation = tempPack.location;
+
             Logger.log("Location is " + tempPack.location.id);
             Logger.log("All monsters in the pack: ");
             foreach (Monster m in tempPack.members)
@@ -254,8 +257,10 @@ namespace STVRogue.GameLogic
         }
 		public bool AttackBool(Creature foe){
 			Attack(foe);
+			Logger.log("here101");
 			if (!(foe is Monster)) throw new ArgumentException();
             Monster foe_ = foe as Monster;
+			Logger.log("here102");
 			if (foe_.pack.members.Count == 0)
             { //delete this pack from player's node
 				return true; //pack is beated
