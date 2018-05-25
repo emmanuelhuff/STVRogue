@@ -103,7 +103,7 @@ namespace STVRogue.GameLogic
 			pack1.location = dungeon.startNode;
 
             dungeon.startNode.packs.Add(pack1);
-			Node nextNode = (dungeon.shortestpath(dungeon.startNode, dungeon.exitNode))[0];
+			Node nextNode = (dungeon.Shortestpath(dungeon.startNode, dungeon.exitNode))[0];
             
 			Utils.Logger.log("Next node will be " + nextNode.id);
             Utils.Logger.log("exitnode is " + dungeon.exitNode.id);
