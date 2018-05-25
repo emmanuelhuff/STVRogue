@@ -7,22 +7,15 @@ using STVRogue.Utils;
 
 namespace STVRogue.GameLogic
 {
-    public class Creature
-    {
-        public String id;
-        public String name;
-        public int HP;
-        public uint AttackRating = 1;
-        public Node location;
-        public Creature() { }
-        virtual public void Attack(Creature foe)
-        {
-            foe.HP = (int)Math.Max(0, foe.HP - AttackRating);
-			//Logger.log("Creature's HP is " + foe.HP);
-            String killMsg = foe.HP == 0 ? ", KILLING it" : "";
-            Logger.log("Creature " + id + " attacks " + foe.id + killMsg + ".");
-        }
-    }
+	public abstract class Creature
+	{
+		public String id;
+		public String name;
+		public int HP;
+		public uint AttackRating = 1;
+		public Node location;
+		public abstract void Attack(Creature foe);      
+	}
 
     public class Monster : Creature
     {
@@ -33,6 +26,14 @@ namespace STVRogue.GameLogic
         {
             this.id = id; name = "Orc";
             HP = 1 + RandomGenerator.rnd.Next(6);
+        }
+
+		public override void Attack(Creature foe)
+        {
+            foe.HP = (int)Math.Max(0, foe.HP - AttackRating);
+            //Logger.log("Creature's HP is " + foe.HP);
+            String killMsg = foe.HP == 0 ? ", KILLING it" : "";
+            Logger.log("Creature " + id + " attacks " + foe.id + killMsg + ".");
         }
 
         //ADDED
@@ -180,7 +181,7 @@ namespace STVRogue.GameLogic
 			}
 		}
 
-        override public void Attack(Creature foe)
+        public override void Attack(Creature foe)
         {
             if (!(foe is Monster)) throw new ArgumentException();
             Monster foe_ = foe as Monster;
@@ -202,7 +203,10 @@ namespace STVRogue.GameLogic
             }
             if (!accelerated)
             {
-                base.Attack(foe);
+				foe.HP = (int)Math.Max(0, foe.HP - AttackRating);
+                String killMsg = foe.HP == 0 ? ", KILLING it" : "";
+                Logger.log("Creature " + id + " attacks " + foe.id + killMsg + ".");
+                //base.Attack(foe);
                 if (foe.HP == 0)
                 {
                     
@@ -247,7 +251,11 @@ namespace STVRogue.GameLogic
 				// ADDED IMPLEMENTATION
 				for (int i = packCount - 1; i >= 0; i--){
 					Monster target = foe_.pack.members.ElementAt(i);
-					base.Attack(target);
+
+					target.HP = (int)Math.Max(0, target.HP - AttackRating);
+					String killMsg = target.HP == 0 ? ", KILLING it" : "";
+					Logger.log("Creature " + id + " attacks " + target.id + killMsg + ".");
+					//base.Attack(target);
 					if(target.HP==0){
 						foe_.pack.members.Remove(target);
 						KillPoint++;
