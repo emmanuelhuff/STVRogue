@@ -7,9 +7,11 @@ namespace STVRogue.GameLogic
     {
 
         [Test]
-        public void NTest_()
+        public void NTest_createCreature_byMonster()
         {
-
+			Creature creature = new Monster("1");
+			Assert.Equals(creature.AttackRating, 1);
         }
+              
     }
 }
