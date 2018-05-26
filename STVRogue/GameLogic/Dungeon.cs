@@ -391,7 +391,7 @@ namespace STVRogue.GameLogic
 
         /** ADDED */
         /* To disconnect a bridge from the rest of the zone the bridge is in. */
-        public void disconnect(Bridge b)
+        public void Disconnect(Bridge b)
         {
             Logger.log("Disconnecting the bridge " + b.id + " from its zone.");
 
