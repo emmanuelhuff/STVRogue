@@ -106,6 +106,7 @@ namespace STVRogue
 
 				} //REMOVE THIS COMMENT */
             }
+			Logger.log("Player died, the game ends..");
 
 
         }

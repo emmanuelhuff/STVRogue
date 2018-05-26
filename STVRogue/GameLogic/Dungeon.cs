@@ -290,7 +290,7 @@ namespace STVRogue.GameLogic
         }
         /* ADDED */
         //return average of connectivity for Dungeon
-		public float CheckAvg(List<Node> allNodes)
+		public float checkAvg(List<Node> allNodes)
         {
             float avg = 0;
             int denominator = allNodes.Count;
@@ -391,7 +391,7 @@ namespace STVRogue.GameLogic
 
         /** ADDED */
         /* To disconnect a bridge from the rest of the zone the bridge is in. */
-        public void Disconnect(Bridge b)
+        public void disconnect(Bridge b)
         {
             Logger.log("Disconnecting the bridge " + b.id + " from its zone.");
 
@@ -416,7 +416,12 @@ namespace STVRogue.GameLogic
             //throw new NotImplementedException(); 
         }
 
-		public bool notConnectedGraph(List<Node> nodesInZone)
+        /**
+         * NOT USED?
+         * Returns true if there exist not connected nodes in the zone
+         */
+        /*
+		public bool notConnectedGraph(List<Node> nodesInZone) 
         {
             for (int i = 0; i < nodesInZone.Count; i++)
             {
@@ -424,8 +429,7 @@ namespace STVRogue.GameLogic
                 if (n.notConnected()) return true;
             }
             return false;
-        }
-
+        }*/
     }
 
     public class Node
@@ -450,48 +454,57 @@ namespace STVRogue.GameLogic
             this.pred = null;
         }
 
-        public void setId(string id)
+		/*NOT USED
+		 public void setId(string id) 
         {
             this.id = id;
-        }
-        public bool isFullyConnected()
+        }*/
+		public bool isFullyConnected() //returns true if the node has maximum amount of connections(4)
         {
             return this.neighbors.Count == 4;
         }
 
-        public bool notConnected()
+        public bool notConnected() //returns true if the node does not have any neighbors
         {
             return this.neighbors.Count == 0;
         }
         /* To connect this node to another node. */
         public void connect(Node nd)
         {
-            neighbors.Add(nd); nd.neighbors.Add(this);
+            neighbors.Add(nd); nd.neighbors.Add(this); //add nodes to their respective neighbors list
         }
 
         /* To disconnect this node from the given node. */
         public void disconnect(Node nd)
         {
-            neighbors.Remove(nd); nd.neighbors.Remove(this);
+            neighbors.Remove(nd); nd.neighbors.Remove(this); //remove nodes from their neighbors list
         }
 
-        public bool alreadyConnected(Node nd)
+        public bool alreadyConnected(Node nd) //returns true if the nodes are already connected
         {
-            return this.neighbors.Contains(nd);
+            return this.neighbors.Contains(nd); //meaning if it already contains that node in neighbors list
         }
 
-        //ADDED
+        /**
+         * Returns number of monsters in that node currently
+         */
+
         public int currentNumberOfMonsters()
         {
             int numberOfMonsters = 0;
-            foreach (Pack p in this.packs)
+            foreach (Pack p in this.packs) //for each pack in the node
             {
-                numberOfMonsters += p.members.Count;
+                numberOfMonsters += p.members.Count; //add their number of monsters
             }
-            return numberOfMonsters;
+            return numberOfMonsters; //return total number of monsters in the node
         }
 
-        /* ADDED */
+        /**
+         * NOT USED
+         * If the node contains a pack and a player
+         * then the node is contested
+         */
+        /*
         public Boolean contested(Player player)
         {
             if (packs.Count > 0 && player.HP != 0)
@@ -502,17 +515,22 @@ namespace STVRogue.GameLogic
             {
                 return false;
             }
-        }
-        //ADDED
+        }*/
+		
+        /**
+         * Returns the sum of hp values of packs in that node
+         */
+
         public int getNodeHPValue()
         {
             int nodeHPValue = 0;
-            foreach (Pack p in this.packs)
+            foreach (Pack p in this.packs) //for each pack
             {
-                nodeHPValue += p.getPackHPValue();
+                nodeHPValue += p.getPackHPValue(); //add pack's hp value
             }
             return nodeHPValue;
         }
+
         /* Execute a fight between the player and the packs in this node.
          * Such a fight can take multiple rounds as describe in the Project Document.
          * A fight terminates when either the node has no more monster-pack, or when
@@ -533,7 +551,7 @@ namespace STVRogue.GameLogic
                 Logger.log("Press 1 to flee");
                 if (player.containsMagicCrystal())//if player bag contains item type of magic crystal
                     Logger.log("Press 2 to use Magic Crystal");
-                if (player.containsHealingPotion())
+                if (player.containsHealingPotion()) //only show option if player has the potion
                     Logger.log("Press 3 to use Healing Potion");
                 Logger.log("Press 4 to attack");
                 command = player.getNextCommand().commandId;
@@ -553,9 +571,9 @@ namespace STVRogue.GameLogic
                         return 0;
                     }
                 }
-                else if (command == 2)
+                else if (command == 2) //player wants to use magic crystal
                 {
-                    if (!player.containsMagicCrystal())
+                    if (!player.containsMagicCrystal()) //if player has no magic crystal
                     {
                         Logger.log("Player has no magic crystal, press a valid command");
                         return 0;
@@ -564,70 +582,72 @@ namespace STVRogue.GameLogic
                     //player uses magic crystal
                     foreach (Item i in player.bag)
                     {
-                        if (i.GetType() == typeof(Crystal))
+                        if (i.GetType() == typeof(Crystal)) //find magic crystal in player's bag
                         {
-                            player.use(i);
+                            player.use(i); 
                             Logger.log("Player used crystal");
                             break; //break the for loop
                         }
                         Logger.log("Could not be able to execute this");
 
                     }
-                    return 2;
+                    return 2; //pass to 2nd state
 
                 }
-                else if (command == 3)
+                else if (command == 3)//player wants to use healing potion
                 {
-                    if (!player.containsHealingPotion())
+                    if (!player.containsHealingPotion()) //if player has no healing potion
                     {
                         Logger.log("Player has no healing potion, press a valid command");
                         return 0;
 
                     }
-                    foreach (Item i in player.bag)
+                    foreach (Item i in player.bag) //else find healing potion in player's bag
                     {
                         if (i.GetType() == typeof(HealingPotion))
                         {
-                            player.use(i);
+                            player.use(i); //use that potion
                             Logger.log("Player used potion");
                             break; //break the for loop
                         }
-                        Logger.log("Could not be able to execute this");
+                        
 
                     }
                     //player uses healing potion
                     return 1;
 
                 }
-                else if (command == 4)
+                else if (command == 4) //player chooses to attack
                 {
                     //player attacks
-                    Logger.log("Player attacked");
-                    bool removePack = player.AttackBool(player.location.packs.First().members.First());
+                    Logger.log("Player is attacking");
+                    //player attacks only one pack in the node
+                    bool removePack = player.AttackBool(player.location.packs.First().members.First()); 
+					//attackBool function returns true if that pack is killed and should be removed from the node
                     if (removePack)
                     {
-                        player.location.packs.Remove(player.location.packs.First());
+                        player.location.packs.Remove(player.location.packs.First()); //if every monster died in the pack
+                                                                                      //it gets removed from the node
                     }
-                    if (player.location.packs.Count > 0)
+                    if (player.location.packs.Count > 0) //if the node is still constested
                     {
-                        return 3;
+                        return 3; //go to state 3
                     }
-                    else
-
-                    {
-                        return 6;
+                    else                  
+                    { //if the node is not contested anymore
+                        return 6; //go to state 6
                     }
-                    ///ASK:
-                    /// if player attacks the last monster in a pack, pack dies
-                    /// after this pack is removed, node can pass to the not contested situation if there is no other monster packs
+                    
 
 
                 }
 
 
             }
-            else if (state == 1)
+            else if (state == 1) //if combat is at state 1
             {
+				//player is not accelerated and
+				//there is no other option than player attack
                 Logger.log("Player is not accelerated, player is attacking a monster in a pack");
                 bool removePack = player.AttackBool(player.location.packs.First().members.FirstOrDefault()); //player attacks one monster in one pack
 
@@ -636,28 +656,27 @@ namespace STVRogue.GameLogic
                 {
                     player.location.packs.Remove(player.location.packs.First());
                 }
-                if (player.location.packs.Count > 0)
+				if (player.location.packs.Count > 0)//still contested
                 {
-                    return 3; //still contested
+                    return 3; //go to state 3
                 }
                 else
                 {
-                    return 6;
+                    return 6; //node is not contested anymore
                 }
-                //if still contested
-                //game.state = 3
-                //else game.state=6
 
 
             }
-            else if (state == 2)
+            else if (state == 2) //if combat is at state 2
             {
+				//player is accelerated and
+                //there is no other option than player attack
                 Logger.log("Player is accelerated, player is attacking all monsters in a pack");
                 bool removePack = player.AttackBool(player.location.packs.First().members.FirstOrDefault()); //accelerated check is inside the function
                                                                                                              //call attack function and check if attacked pack should be removed
-                if (removePack)
+                if (removePack) //if all monsters in the pack die
                 {
-                    player.location.packs.Remove(player.location.packs.First());
+                    player.location.packs.Remove(player.location.packs.First()); //remove that pack from the location
                 }
                 if (player.location.packs.Count > 0)
                 {
@@ -665,49 +684,43 @@ namespace STVRogue.GameLogic
                 }
                 else
                 {
-                    return 6;
+                    return 6; //not contested anymore
                 }
-                //if still contested
-                //game.state = 3
-                //else game.state=6
+                
 
             }
-            else if (state == 3)
+            else if (state == 3) //if the combat is at state 3
             {
                 Logger.log("Pack flees or attacks");
-                Pack pack = player.location.packs.First();
-                if (pack.getAction() == 1)
-                {//pack attacks
+                Pack pack = player.location.packs.First(); 
+				if (pack.getAction() == 1) //pack attacks
+                {
                     Logger.log("Pack attacks");
-                    pack.Attack(player); //TO-DO check attack method
+                    pack.Attack(player); //pack attacks to player
                     return 0;
                 }
                 else if (pack.getAction() == 2)
                 { //pack flees
-                    if (pack.flee())
-                    {//TO-DO check flee method
+                    if (pack.flee()) //if pack can flee
+                    {
                         Logger.log("Pack flees");
-                        if (player.location.packs.Count > 0)
+                        if (player.location.packs.Count > 0) //if the node is still contested
                         {
-                            return 4;
+                            return 4; //go to state 4
                         }
                         else
                         {
-                            return 6;
+                            return 6; //node is not contested anymore
                         }
                     }
                     else
-                    {
+                    { //if pack can not flee it attacks
                         Logger.log("Pack tried to flee, not possible. Pack attacks");
                         pack.Attack(player);
                         return 0;
                     }
                 }
-                else
-                {
-                    Logger.log("Not possible");
-                    return -1;
-                }
+                
                 //if flee probability> attack
                 //pack flees
                 //if still contested
@@ -718,15 +731,16 @@ namespace STVRogue.GameLogic
                 //game.state=0
 
             }
-            else if (state == 4)
+            else if (state == 4) //if combat state is 4
             {
                 Logger.log("Pack attacks");
-                player.location.packs.First().Attack(player); //TO-DO randomly decide the pack
+                player.location.packs.First().Attack(player); //first pack in the node attacks player
+				//TO-DO randomly decide the pack
                 return 0;
-                //game.state = 0 //if player is still alive checked in main while
+                //if player is still alive checked in main while
 
             }
-            else if (state == 5)
+            /*else if (state == 5) //if combat state is 5
             {
                 Logger.log("Player successfully fleed, not contested anymore");
                 return -1;
@@ -738,14 +752,18 @@ namespace STVRogue.GameLogic
                 return -1;
                 //return -1; //exit
 
-            }
+            }*/
             else
-            {
-                return -1;
+            { //it does not call the function with state 5 or 6
+				//since the node is not contested anymore, it does not enter while loop again
+                //this part is not executed only put for guarantee.
+				Logger.log("Combat ends");
+                
             }
+			return -1;
 
-            Logger.log("Control");
-            return -1;
+            
+            
         }
     }
 
@@ -766,16 +784,20 @@ namespace STVRogue.GameLogic
         public void connectToNodeOfNextZone(Node nd)
         {
             base.connect(nd);
-            toNodes.Add(nd);
+            toNodes.Add(nd); //add this node to toNodes list of the bridge
         }
 
-        /** ADDED */
+        /**
+         * Same zone signifies nodes in the fromNodes list of a bridge,
+         * it disconnects the bridge from same zone
+         */
+
         public void disconnectFromSameZone()
         {
             //for each node in fromNodes list, remove the connection between the bridge (call base.disconnect(Node n))
             foreach (Node nd in this.fromNodes)
             {
-                base.disconnect(nd);
+                base.disconnect(nd); //call node disconnect
             }
 
         }
@@ -783,28 +805,41 @@ namespace STVRogue.GameLogic
 
     public class Zone
     {
-        public List<Node> nodesInZone;
-        public uint capacity;
-        public int id;
+		public List<Node> nodesInZone;//it stores every node in the zone
+        public uint capacity; //number of monsters that each node can have in this node
+        public int id; //level of the zone
+
+        /**
+         * Creates a zone with specified level and the capacity
+         */
 
         public Zone(int level, uint M)
         {
-            this.id = level;
-            this.capacity = (uint)(M * (level + 1));
-            this.nodesInZone = new List<Node>();
+			this.id = level; //zone id gives its level (Zone 1-> first level)
+            this.capacity = (uint)(M * (level + 1)); //its capacity is calculated regarding the project document
+            this.nodesInZone = new List<Node>(); //it stores every node in the zone
 
         }
+
+        /**
+         * Add Node n to the zone's nodesInZone list
+         */
+
         public void addNodesToZone(Node n)
         {
-            this.nodesInZone.Add(n);
+            this.nodesInZone.Add(n); //nodesInZone stores every node in this zone
         }
+
+        /**
+         * Returns the zone's total hp value by adding up hp values of all nodes in that zone
+         */
 
         public int getZoneHPValue()
         {
             int zoneHPValue = 0;
-            foreach (Node n in this.nodesInZone)
+            foreach (Node n in this.nodesInZone) //for each zone in this zone
             {
-                zoneHPValue += n.getNodeHPValue();
+                zoneHPValue += n.getNodeHPValue(); //add their hp values
             }
             return zoneHPValue;
         }

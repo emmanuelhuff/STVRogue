@@ -59,7 +59,7 @@ namespace STVRogue.GameLogic
             base.use(player);
             player.accelerated = true; //if player uses magic crystal, player gets accelerated
 			if (player.location is Bridge) //if player is at the bridge
-				player.dungeon.Disconnect(player.location as Bridge); //dungeon gets disconnected
+				player.dungeon.disconnect(player.location as Bridge); //dungeon gets disconnected
         }
     }
 }
