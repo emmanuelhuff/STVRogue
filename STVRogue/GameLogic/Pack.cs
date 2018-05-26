@@ -83,18 +83,7 @@ namespace STVRogue.GameLogic
 			this.Move(path[0]);
 			Logger.log("Moved to " + this.location.id);
 		}
-
-		/*ADDED, USED?
-		public Monster getMonster() {
-			foreach (Monster m in members)
-			{
-				if (m.HP > 0){
-					return m;
-				}
-			}
-			throw new ArgumentException(); //*this is when no monsters are alive
-		}*/
-
+        
 		/**
 		 * Pack either flees or attacks, returns the action with specified possibility
 		 */

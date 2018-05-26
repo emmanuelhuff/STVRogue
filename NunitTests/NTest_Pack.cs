@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using STVRogue.Utils;
 using NUnit.Framework;
 namespace STVRogue.GameLogic
 {
@@ -105,28 +106,13 @@ namespace STVRogue.GameLogic
             dungeon.startNode.packs.Add(pack1);
 			Node nextNode = (dungeon.shortestpath(dungeon.startNode, dungeon.exitNode))[0];
             
-			Utils.Logger.log("Next node will be " + nextNode.id);
-            Utils.Logger.log("exitnode is " + dungeon.exitNode.id);
+			Logger.log("Next node will be " + nextNode.id);
+            Logger.log("exitnode is " + dungeon.exitNode.id);
 			pack1.MoveTowards(dungeon.exitNode);
-			/*
-
-			
-
-			
-
 			Assert.AreSame(nextNode.id, pack1.location.id);
-*/
+
 		}
-		/*[Test]
-        public void NTest_getMonster_noMonsterException()
-        {
 
-        }
-		[Test]
-        public void NTest_getMonster_returnsMonster()
-        {
-
-        }*/
 		[Test]
 		public void NTest_getAction()
 		{
