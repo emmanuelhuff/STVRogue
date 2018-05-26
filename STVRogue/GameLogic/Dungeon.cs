@@ -280,17 +280,22 @@ namespace STVRogue.GameLogic
 
 
         }
+        /**
+         * Returns true if all nodes in toReachNodes are reachable from
+         * the parameter mainNode
+         */
+
         public bool allReachable(List<Node> toReachNodes, Node mainNode)
         {
-            for (int i = 0; i < toReachNodes.Count; i++)
+            for (int i = 0; i < toReachNodes.Count; i++) //for each node in toReachNodes
             {
-                if (!predicates.isReachable(toReachNodes.ElementAt(i), mainNode)) return false;
+                if (!predicates.isReachable(toReachNodes.ElementAt(i), mainNode)) return false; //return false if not reachable
             }
             return true;
         }
-        /* ADDED */
-        //return average of connectivity for Dungeon
-		public float checkAvg(List<Node> allNodes)
+        /* NOT USED? */
+        //return average connectivity for Dungeon
+		/*public float checkAvg(List<Node> allNodes)
         {
             float avg = 0;
             int denominator = allNodes.Count;
@@ -300,22 +305,22 @@ namespace STVRogue.GameLogic
 
             }
             return avg /= denominator;
-        }
+        }*/
         /* ADDED */
         //return connectivity degree of Dungeon
 		public double connectivityDegree()
         {
             int connected = 0;
             int numOfNodes = 0;
-            foreach (Zone z in zones)
+            foreach (Zone z in zones) //for each zone
             {
-                foreach (Node n in z.nodesInZone)
+                foreach (Node n in z.nodesInZone) //for each node in the zone
                 {
-                    connected += n.neighbors.Count;
+                    connected += n.neighbors.Count; //get their connections
                 }
-                numOfNodes += z.nodesInZone.Count;
+                numOfNodes += z.nodesInZone.Count; //get number of nodes
             }
-            return connected / numOfNodes;
+            return connected / numOfNodes; // return total connections / total number of nodes
         }
 
         /* Return a shortest path between node u and node v */
@@ -324,47 +329,41 @@ namespace STVRogue.GameLogic
             List<Node> queue = new List<Node>(); //list of nodes to visit
             Dictionary<string, uint> nodeDist = new Dictionary<string, uint>(); //node id's and their distances 
                                                                                 //nodeDist dictionary contains all reachable nodes from node u
-            List<Node> reachableNodesFromU = predicates.reachableNodes(u);
-			//make their distances int max
-			Logger.log("in shortest");
+            List<Node> reachableNodesFromU = predicates.reachableNodes(u); //get reachable nodes from the node u
 
-            foreach (Node nd in reachableNodesFromU)
+
+
+			foreach (Node nd in reachableNodesFromU)//for each reachable node
             {
-                nodeDist.Add(nd.id, Int32.MaxValue); //include math to use INT_MAX?, using System? for Int32.MaxValue
-                nd.visited = false;
-                nd.pred = null;
+				nodeDist.Add(nd.id, Int32.MaxValue); //make its distance int max
+                nd.visited = false; //make it not visited
+                nd.pred = null; //and its predecessor null
             }
-			Logger.log("in shortest");
+
             //source node u is the first to be visited, change distance to 0, make it visited, add it to queue
             u.visited = true;
 			nodeDist[u.id] = 0;
             queue.Add(u);
-            uint tempDistance = 0;
-			Logger.log("in shortest");
+
+            uint tempDistance = 0; //temporary variable to store current distance to start point
             while (queue.Count != 0)
             { //while queue is not empty
-                Node nd = queue.First();
+                Node nd = queue.First(); //get first node at the queue
                 queue.RemoveAt(0); //delete queue's first element
 				tempDistance = nodeDist[nd.id]; //get the distance value
 
-                /**for each neighbour of the nd if the neighbour node is not visited, 
-                make it visited
-                make its distance = distance of nd+1
-                make its predecessor = nd
-                add it into queue to explore
-
-                if the node is node v, stop BFS 
-                */
-                foreach (Node tempNode in nd.neighbors)
+                
+				foreach (Node tempNode in nd.neighbors) //for each neighbour of the nd  
                 {
-                    if (!tempNode.visited)
+					if (!tempNode.visited) //if the neighbour node is not visited,
                     {
-                        tempNode.visited = true;
-						nodeDist[tempNode.id] = tempDistance + 1;
-                        tempNode.pred = nd;
-                        queue.Add(tempNode);
+						tempNode.visited = true;//make it visited
+						nodeDist[tempNode.id] = tempDistance + 1; //make its distance = distance of nd+1
+						tempNode.pred = nd; //make its predecessor = nd
+						queue.Add(tempNode); //add it into queue to explore
                     }
                     if (tempNode == v) break; //not sure if 'tempNode == v' is a valid compare
+					//if the node is node v, stop BFS
                 }
 
             }
@@ -374,7 +373,7 @@ namespace STVRogue.GameLogic
                                                 //path push back Node v
             Node current = v;// temp node
 
-            path.Add(current); // *****DOES IT REALLY WORK like push_back?
+            path.Add(current); //add current node to path
 
             while (current.pred != null)
             {
@@ -389,15 +388,15 @@ namespace STVRogue.GameLogic
         }
 
 
-        /** ADDED */
+       
         /* To disconnect a bridge from the rest of the zone the bridge is in. */
         public void disconnect(Bridge b)
         {
             Logger.log("Disconnecting the bridge " + b.id + " from its zone.");
 
-            b.disconnectFromSameZone();  /** ADDED */
-            startNode = b;
-            //throw new NotImplementedException();
+            b.disconnectFromSameZone();  //disconnet bridge from same zone
+            startNode = b; //make bridge the startnode of the dungeon
+            
         }
 
         /** ADDED */
