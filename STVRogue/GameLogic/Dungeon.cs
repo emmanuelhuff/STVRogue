@@ -25,11 +25,11 @@ namespace STVRogue.GameLogic
         public Dungeon(uint level, uint nodeCapacityMultiplier)
         {
             Logger.log("Creating a dungeon of difficulty level " + level + ", node capacity multiplier " + nodeCapacityMultiplier + ".");
-            difficultyLevel = level;
+            difficultyLevel = level; //assign dungeon difficulty level
             bridges = new List<Bridge>(); //List of bridges initialized
             predicates = new Predicates();
-            zones = new List<Zone>();
-            M = nodeCapacityMultiplier;
+            zones = new List<Zone>(); //initialize the zones
+            M = nodeCapacityMultiplier; //initialize node capacity multiğlier
             int numberOfNodesInZone = 0;
             int connected = 0;
 
@@ -37,38 +37,38 @@ namespace STVRogue.GameLogic
             string preId, lastId, nodeId = "";
             startNode = new Node("" + 10, 1); //start node id is set
             Logger.log("Set startNode Id: 10");
-            for (int i = 1; i < level + 1; i++) //i signifies zone level
+            for (int i = 1; i < level + 1; i++) //i signifies zone level, for each zone
             {
-                Zone newZone = new Zone(i, nodeCapacityMultiplier);
-                zones.Add(newZone);
+                Zone newZone = new Zone(i, nodeCapacityMultiplier); //create a new zone
+                zones.Add(newZone); //add it in dungeon.zones list
                 Logger.log("Creating level " + i);
-                //List<Node> nodesInZone = new List<Node>(); // stores nodes in the level
+                
                 preId = "" + i; // preId is zone level
                 numberOfNodesInZone = RandomGenerator.rnd.Next(2, 5); //randomly decide between 2-4 nodes in a zone
                                                                       //if you change number of nodes can be in a zone, be careful with the dependent statements below
                 Logger.log("Number of nodes in zone " + i + " is " + numberOfNodesInZone);
 
-                for (int j = 1; j <= numberOfNodesInZone; j++)
+                for (int j = 1; j <= numberOfNodesInZone; j++) //for each node in a zone
                 { //create and add nodes to the list nodesInZone
-                    lastId = "" + j;
+                    lastId = "" + j; 
                     nodeId = preId + lastId; //merge preId and lastId to create nodeId
                     Node newNode = new Node(nodeId, i); //create node
                     Logger.log("Created node with id " + nodeId);
                     newZone.nodesInZone.Add(newNode); //add node to the list
                 }
 
-                //nodesInZone stores every node in this zone
+                //zone's nodesInZone list stores every node in this zone
                 int numberOfNodesToConnect; // temp variable to decide how many nodes to connect for startNode or for bridges
                 Node zoneFirstNode; //holds start node or starting bridge for the zone 
                                     //(starting bridge for a zone is the bridge which is connecting it to the previous zone)
 
-                if (i == 1)
+                if (i == 1) //for the first level
                 { // connect start node to some nodes in the zone
                     zoneFirstNode = startNode;
                     numberOfNodesToConnect = RandomGenerator.rnd.Next(1, numberOfNodesInZone + 1); //randomly decide btw 1-4 nodes
                                                                                                    //rnd operation is exclusive for the max number, numberofNodesInZone can be 4 at most, thus it is safe this way
                     Logger.log("Connecting startNode to " + numberOfNodesToConnect + " nodes in the zone ");
-                    for (int j = 0; j < numberOfNodesToConnect; j++)
+                    for (int j = 0; j < numberOfNodesToConnect; j++) //for each nodes to connect
                     { //connect them with the start node
                         int nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone); //randomly get node index to connect
                         while (startNode.alreadyConnected(newZone.nodesInZone.ElementAt(nodeIndex)))
@@ -87,8 +87,8 @@ namespace STVRogue.GameLogic
                     zoneFirstNode = (Node)startBridge;
                     int maxConnect = 4 - startBridge.neighbors.Count; //maximum number of connections that bridge can make
 
-                    if (numberOfNodesInZone < maxConnect)
-                        maxConnect = numberOfNodesInZone;
+                    if (numberOfNodesInZone < maxConnect) //maximum number of connections are constrained by
+                        maxConnect = numberOfNodesInZone;   //number of zones in the zone
                     numberOfNodesToConnect = RandomGenerator.rnd.Next(1, maxConnect + 1); //Decide how many connections it should make
                     Logger.log("Connecting bridge " + startBridge.id + " to " + numberOfNodesToConnect + " nodes in the next zone ");
                     for (int j = 0; j < numberOfNodesToConnect; j++)
@@ -111,7 +111,7 @@ namespace STVRogue.GameLogic
                 //connect nodes in the same zone
                 //TO-DO improve the algorithm
                 //Currently it exits the algorithm once every node is accessible from the starting node of the zone            
-                while (!allReachable(newZone.nodesInZone, zoneFirstNode))
+				while (!allReachable(newZone.nodesInZone, zoneFirstNode)) //while there exists not reachable nodes 
                 {
 
                     Node n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //randomly choose node1
@@ -129,7 +129,8 @@ namespace STVRogue.GameLogic
                 }
 
 
-                List<Node> listOfNotFullNodes = new List<Node>(); //get list of not fully connected nodes to consider connections
+                List<Node> listOfNotFullNodes = new List<Node>(); //get list of not fully connected nodes in the zone to consider connections
+
                 for (int j = 0; j < newZone.nodesInZone.Count; j++)
                 {
                     Node nd = newZone.nodesInZone.ElementAt(j);
@@ -137,7 +138,7 @@ namespace STVRogue.GameLogic
                 }
                 Logger.log("Creating list of not full nodes, number of not full nodes " + listOfNotFullNodes.Count);
 
-                //will connect last node to the zone
+                //Connect last node to the zone, either a bridge or the exit node
                 int min = 1;
                 int max;
                 if (i == level)
@@ -145,32 +146,37 @@ namespace STVRogue.GameLogic
                   //connect exit node
 
                     lastId = "" + (numberOfNodesInZone + 1);
-                    nodeId = preId + lastId;
-                    exitNode = new Node(nodeId, i); //create exit node's id
+                    nodeId = preId + lastId; //create id of the exit node
+                    exitNode = new Node(nodeId, i); //create exit node
                     Logger.log("Last zone is finished, exit node id is set to " + nodeId);
-                    max = 4;
+                    max = 4; //max number of connections that node can have
+
                     if (listOfNotFullNodes.Count < 4) max = listOfNotFullNodes.Count; //can make at most listOfNotFullNodes.Count number of connections
-                    numberOfNodesToConnect = RandomGenerator.rnd.Next(min, max + 1);
-                    for (int j = 0; j < numberOfNodesToConnect; j++)
+                    numberOfNodesToConnect = RandomGenerator.rnd.Next(min, max + 1); //randomly decide number of nodes to connect
+
+                    for (int j = 0; j < numberOfNodesToConnect; j++) //connect exit node to that number of nodes
                     {
-                        exitNode.connect(listOfNotFullNodes.ElementAt(j)); //not randomized
+                        exitNode.connect(listOfNotFullNodes.ElementAt(j)); //can be randomized
                         Logger.log("Connected to node " + listOfNotFullNodes.ElementAt(j).id);
                     }
-					//this.exitNode = exitNode;
+
                 }
                 else
                 { //connect to end bridge
                   //a bridge can be connected to at minimum 1 and at maximum 3 nodes
                     lastId = "" + (numberOfNodesInZone + 1);
-                    nodeId = preId + lastId;
+                    nodeId = preId + lastId; //create bridge id
                     Bridge endBridge = new Bridge(nodeId, i); //create the bridge
                     bridges.Add(endBridge); //add it to bridges list to access it in the next loop iteration
                     Logger.log("A new bridge is created with id " + nodeId);
 
-                    max = 3;
+                    max = 3; //since a bridge should already have at least 1 connection to the other zone
+                    //max number of connections it can make can not be more than 3
+
                     if (listOfNotFullNodes.Count < 3) max = listOfNotFullNodes.Count;  //can make at most listOfNotFullNodes.Count number of connections
-                    numberOfNodesToConnect = RandomGenerator.rnd.Next(min, max + 1);
-                    for (int j = 0; j < numberOfNodesToConnect; j++)
+                    numberOfNodesToConnect = RandomGenerator.rnd.Next(min, max + 1); //decide number of nodes to connect
+
+                    for (int j = 0; j < numberOfNodesToConnect; j++) //connect it to that number of nodes
                     {
                         endBridge.connectToNodeOfSameZone(listOfNotFullNodes.ElementAt(j)); //not randomized
                         Logger.log("Connected to node " + listOfNotFullNodes.ElementAt(j).id);
@@ -178,6 +184,8 @@ namespace STVRogue.GameLogic
                     //end bridge is also connected
 
                 }
+
+                //Ensure the average connectivity
                 if (i == 1)
                 {
                     Node n1, n2;
@@ -270,7 +278,7 @@ namespace STVRogue.GameLogic
 					z.nodesInZone.Add(exitNode);
 				}
 
-					if (z.id != level)
+					if (z.id != level) //in middle zones, add their bridges
 					{
 						z.nodesInZone.Add(bridges.ElementAt(z.id - 1));
 					}
