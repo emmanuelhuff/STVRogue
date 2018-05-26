@@ -10,6 +10,18 @@ namespace STVRogue.GameLogic
     [TestFixture]
     public class NTest_Items
     {
+		[Test]
+		public void NTest_create_healingPorion()
+		{
+			Item c = new Crystal("ruby");
+			Assert.Equals(c.id, "ruby");
+		}
+		[Test]
+        public void NTest_create_crystal()
+        {
+            Item h = new HealingPotion("pot1");
+            Assert.Equals(h.id, "pot1");
+        }
         [Test]
         public void NTest_use_item()
         {
@@ -36,7 +48,7 @@ namespace STVRogue.GameLogic
             Item c = new Crystal("ruby");
             p.use(c);
             Assert.True(p.accelerated);
-            if (p.location is Bridge) ;
+			//TO-DO : check p.location is Bridge -> disconnection.
         }
     }
     
