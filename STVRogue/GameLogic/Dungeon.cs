@@ -555,6 +555,8 @@ namespace STVRogue.GameLogic
             int command = -1;
             if (state == 0)
             {
+				//ensure player is not accelerated
+				player.accelerated = false;
                 Logger.log("Press 1 to flee");
                 if (player.containsMagicCrystal())//if player bag contains item type of magic crystal
                     Logger.log("Press 2 to use Magic Crystal");
