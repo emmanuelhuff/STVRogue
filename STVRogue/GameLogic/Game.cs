@@ -45,19 +45,19 @@ namespace STVRogue.GameLogic
                     foreach (Zone z in dungeon.zones) //Seeds monsters zone by zone
                     {
 
-                        int monstersInZone = -1; // -1 is just for control does not have any meaning
+                        z.monstersInZone = -1; // -1 is just for control does not have any meaning
                         if (z.id == difficultyLevel+1)
                         {//if it is the last zone
-                            monstersInZone = numberOfMonstersToPut; //put remainder monsters
+                            z.monstersInZone = numberOfMonstersToPut; //put remainder monsters
                         }
                         else //else every zone gets proportioned number of monsters
                         {
-                            monstersInZone = getProportion(numberOfMonsters, z.id, difficultyLevel); //gets number of monsters to put in this zone
+                            z.monstersInZone = getProportion(numberOfMonsters, z.id, difficultyLevel); //gets number of monsters to put in this zone
                         }
-                        Logger.log("Will put " + monstersInZone + " monsters to the zone " + z.id);
+                        Logger.log("Will put " + z.monstersInZone + " monsters to the zone " + z.id);
                         numberOfNodesInZone = (uint)z.nodesInZone.Count; //get number of nodes (N)  
 
-                        while (monstersInZone > 0) //while there are monsters to put in the zone
+                        while (z.monstersInZone > 0) //while there are monsters to put in the zone
                         {
                             int nodeNumber = random.Next(0, (int)numberOfNodesInZone); //randomly pick which node to locate
                             Node nodeToLocate = z.nodesInZone.ElementAt<Node>(nodeNumber); //get this node instance
@@ -68,8 +68,8 @@ namespace STVRogue.GameLogic
                             if (nodeCapacity > 1)
                             {
                                 //the upper limit for max is either the node's capacity or remaining number of monsters that should be located in this zone
-                                if (nodeCapacity < monstersInZone) max = nodeCapacity; //if node capacity is less than remaining monsters to put, update max limit
-                                else max = monstersInZone;
+                                if (nodeCapacity < z.monstersInZone) max = nodeCapacity; //if node capacity is less than remaining monsters to put, update max limit
+                                else max = z.monstersInZone;
 
 								int monstersToLocate = random.Next(min, max + 1); //decide how many monsters will be in this monster-pack between this number limit                    
                                 Pack newPack = new Pack("" + packId, (uint)monstersToLocate, this.dungeon); //Create a pack
@@ -77,9 +77,9 @@ namespace STVRogue.GameLogic
                                 newPack.location = z.nodesInZone.ElementAt<Node>(nodeNumber);//Assign this pack's location
                                 packId++; //increase pack ID
                                 z.nodesInZone.ElementAt<Node>(nodeNumber).packs.Add(newPack); //add pack to the node
-                                monstersInZone -= monstersToLocate; //decrease number of monsters to be located in the zone
+                                z.monstersInZone -= monstersToLocate; //decrease number of monsters to be located in the zone
                                 numberOfMonstersToPut -= monstersToLocate; //decrease number of monsters to be located in the dungeon
-                                Logger.log("monsters to locate in zone: " + monstersInZone + " in dungeon: " + numberOfMonstersToPut);
+                                Logger.log("monsters to locate in zone: " + z.monstersInZone + " in dungeon: " + numberOfMonstersToPut);
                             }
 
                         }

@@ -646,9 +646,12 @@ namespace STVRogue.GameLogic
                     { //if the node is not contested anymore
                         return 6; //go to state 6
                     }
-                    
 
 
+
+                }else
+                {
+                    return 0;
                 }
 
 
@@ -817,6 +820,7 @@ namespace STVRogue.GameLogic
 		public List<Node> nodesInZone;//it stores every node in the zone
         public uint capacity; //number of monsters that each node can have in this node
         public int id; //level of the zone
+        public int monstersInZone;
 
         /**
          * Creates a zone with specified level and the capacity
@@ -827,7 +831,7 @@ namespace STVRogue.GameLogic
 			this.id = level; //zone id gives its level (Zone 1-> first level)
             this.capacity = (uint)(M * (level + 1)); //its capacity is calculated regarding the project document
             this.nodesInZone = new List<Node>(); //it stores every node in the zone
-
+            this.monstersInZone = 0;
         }
 
         /**
