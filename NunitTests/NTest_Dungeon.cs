@@ -14,7 +14,7 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_check_ifValidDungeon()
         {
-            Assert.IsTrue(dungeon.predicates.isValidDungeon(dungeon.startNode, dungeon.exitNode, 5));
+            Assert.IsTrue(dungeon.predicates.isValidDungeon(dungeon.startNode, dungeon.exitNode, dungeon.difficultyLevel));
         }
         [Test]
         public void NTest_check_allReachable()
@@ -56,7 +56,7 @@ namespace STVRogue.GameLogic
             nodes.Add(startNode);
             for (int i = 1; i <= 10; i++)
             {
-                Node newNode = new Node("" + (i), 1);
+                Node newNode = new Node("" + i, 1);
                 nodes.Add(newNode);
             }
             for (int i = 1; i <= 3; i++)
@@ -79,7 +79,7 @@ namespace STVRogue.GameLogic
                 listToCheck.Add(nodes.ElementAt(i));
                 i++;
             }
-            Assert.AreSame(listToCheck, dungeon.shortestpath(nodes.ElementAt(3), nodes.ElementAt(10)));
+            Assert.AreEqual(listToCheck, dungeon.shortestpath(nodes.ElementAt(3), nodes.ElementAt(10)));
         }
         [Test]
         public void NTest_check_fullyConnected_notConnected()
@@ -89,18 +89,59 @@ namespace STVRogue.GameLogic
             Node n3 = new Node("" + 2, 1);
             Node n4 = new Node("" + 3, 1);
             Node n5 = new Node("" + 4, 1);
+            Node n6 = new Node("" + 5, 1);
             n1.connect(n2);
             n1.connect(n3);
             n1.connect(n4);
             n1.connect(n5);
             Assert.IsTrue(n1.isFullyConnected());
+            Assert.IsTrue(n6.notConnected());
+        }
+        [Test]
+        public void NTest_check_connectedList()
+        {
+            Node n1 = new Node("" + 0, 1);
+            Node n2 = new Node("" + 1, 1);
+            Node n3 = new Node("" + 2, 1);
+            n1.connect(n2);
+            n1.connect(n3);
+            List<Node> nodeList = new List<Node>();
+            nodeList.Add(n2);
+            nodeList.Add(n3);
+            Assert.AreEqual(n1.neighbors, nodeList);
+        }
+        [Test]
+        public void NTest_check_disconnectedNodes()
+        {
+            Node n1 = new Node("" + 0, 1);
+            Node n2 = new Node("" + 1, 1);
+            Node n3 = new Node("" + 2, 1);
+            Node n4 = new Node("" + 3, 1);
+            n1.connect(n2);
+            n1.connect(n3);
+            n1.connect(n4);
+            List<Node> nodeList = new List<Node>();
+            nodeList.Add(n2);
+            nodeList.Add(n3);
+            nodeList.Add(n4);
+            Assert.AreEqual(n1.neighbors, nodeList);
+            n1.disconnect(n4);
+            nodeList.Remove(n4);
+            Assert.AreEqual(n1.neighbors, nodeList);
+            Assert.IsFalse(dungeon.predicates.isReachable(n1, n4));
+
+        }
+        [Test]
+        public void NTest_check_numberOfBridges()
+        {
+            Assert.AreEqual(dungeon.bridges.Count, 4);
         }
 
 		[Test(Description ="Test function level() that the result is equal to expectation")]
         public void NTest_located_Level()
 		{
 			Node n1 = new Node("1",1);
-			Assert.Equals(dungeon.level(n1), 1);
+			Assert.AreEqual(n1.level, 1);
         }
               
 		[Test(Description ="Test function disconnect() that Disconnection is fully completed")]
