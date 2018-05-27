@@ -22,7 +22,7 @@ namespace STVRogue.GameLogic
         /* To create a new dungeon with the specified difficult level and capacity multiplier */
         //TO-DO: check average connectivity predicate
         //TO-DO: improve the algorithm for building connections between nodes in the same zone
-        public Dungeon(uint level, uint nodeCapacityMultiplier)
+		public Dungeon(uint level, uint nodeCapacityMultiplier, Random random)
         {
             Logger.log("Creating a dungeon of difficulty level " + level + ", node capacity multiplier " + nodeCapacityMultiplier + ".");
             difficultyLevel = level; //assign dungeon difficulty level
@@ -44,7 +44,7 @@ namespace STVRogue.GameLogic
                 Logger.log("Creating level " + i);
                 
                 preId = "" + i; // preId is zone level
-                numberOfNodesInZone = RandomGenerator.rnd.Next(2, 5); //randomly decide between 2-4 nodes in a zone
+				numberOfNodesInZone = random.Next(2, 5); //randomly decide between 2-4 nodes in a zone
                                                                       //if you change number of nodes can be in a zone, be careful with the dependent statements below
                 Logger.log("Number of nodes in zone " + i + " is " + numberOfNodesInZone);
 
@@ -65,15 +65,15 @@ namespace STVRogue.GameLogic
                 if (i == 1) //for the first level
                 { // connect start node to some nodes in the zone
                     zoneFirstNode = startNode;
-                    numberOfNodesToConnect = RandomGenerator.rnd.Next(1, numberOfNodesInZone + 1); //randomly decide btw 1-4 nodes
+					numberOfNodesToConnect = random.Next(1, numberOfNodesInZone + 1); //randomly decide btw 1-4 nodes
                                                                                                    //rnd operation is exclusive for the max number, numberofNodesInZone can be 4 at most, thus it is safe this way
                     Logger.log("Connecting startNode to " + numberOfNodesToConnect + " nodes in the zone ");
                     for (int j = 0; j < numberOfNodesToConnect; j++) //for each nodes to connect
                     { //connect them with the start node
-                        int nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone); //randomly get node index to connect
+						int nodeIndex = random.Next(0, numberOfNodesInZone); //randomly get node index to connect
                         while (startNode.alreadyConnected(newZone.nodesInZone.ElementAt(nodeIndex)))
                         { //if the chosen node is already connected
-                            nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone); //choose a new one
+							nodeIndex = random.Next(0, numberOfNodesInZone); //choose a new one
                         }
                         startNode.connect(newZone.nodesInZone.ElementAt(nodeIndex)); //connect start node with that node
                         Logger.log("Connected to node " + newZone.nodesInZone.ElementAt(j).id);
@@ -89,14 +89,14 @@ namespace STVRogue.GameLogic
 
                     if (numberOfNodesInZone < maxConnect) //maximum number of connections are constrained by
                         maxConnect = numberOfNodesInZone;   //number of zones in the zone
-                    numberOfNodesToConnect = RandomGenerator.rnd.Next(1, maxConnect + 1); //Decide how many connections it should make
+                    numberOfNodesToConnect = random.Next(1, maxConnect + 1); //Decide how many connections it should make
                     Logger.log("Connecting bridge " + startBridge.id + " to " + numberOfNodesToConnect + " nodes in the next zone ");
                     for (int j = 0; j < numberOfNodesToConnect; j++)
                     { //connect them with the bridge node
-                        int nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone); //randomly decide the node index
+                        int nodeIndex = random.Next(0, numberOfNodesInZone); //randomly decide the node index
                         while (startBridge.alreadyConnected(newZone.nodesInZone.ElementAt(nodeIndex)))
                         {
-                            nodeIndex = RandomGenerator.rnd.Next(0, numberOfNodesInZone);
+							nodeIndex = random.Next(0, numberOfNodesInZone);
                         }
                         startBridge.connectToNodeOfNextZone(newZone.nodesInZone.ElementAt(nodeIndex)); //connect bridge with the next zone
                         Logger.log("Connected to node " + newZone.nodesInZone.ElementAt(j).id);
@@ -114,15 +114,15 @@ namespace STVRogue.GameLogic
 				while (!allReachable(newZone.nodesInZone, zoneFirstNode)) //while there exists not reachable nodes 
                 {
 
-                    Node n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //randomly choose node1
+					Node n1 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone)); //randomly choose node1
                     while (n1.isFullyConnected()) //if it is fully connected node
                     {
-                        n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //choose another one
+						n1 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone)); //choose another one
                     }
-                    Node n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone)); //randomly select node2
+					Node n2 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone)); //randomly select node2
                     while (n2.isFullyConnected() || n2.id == n1.id || n2.alreadyConnected(n1)) //make sure it is not fully connected, not same as node1, not already connected with node1
                     {
-                        n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+						n2 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                     }
                     n1.connect(n2);
                     Logger.log("Nodes " + n1.id + " " + n2.id + " are connected");
@@ -152,7 +152,7 @@ namespace STVRogue.GameLogic
                     max = 4; //max number of connections that node can have
 
                     if (listOfNotFullNodes.Count < 4) max = listOfNotFullNodes.Count; //can make at most listOfNotFullNodes.Count number of connections
-                    numberOfNodesToConnect = RandomGenerator.rnd.Next(min, max + 1); //randomly decide number of nodes to connect
+					numberOfNodesToConnect = random.Next(min, max + 1); //randomly decide number of nodes to connect
 
                     for (int j = 0; j < numberOfNodesToConnect; j++) //connect exit node to that number of nodes
                     {
@@ -174,7 +174,7 @@ namespace STVRogue.GameLogic
                     //max number of connections it can make can not be more than 3
 
                     if (listOfNotFullNodes.Count < 3) max = listOfNotFullNodes.Count;  //can make at most listOfNotFullNodes.Count number of connections
-                    numberOfNodesToConnect = RandomGenerator.rnd.Next(min, max + 1); //decide number of nodes to connect
+					numberOfNodesToConnect = random.Next(min, max + 1); //decide number of nodes to connect
 
                     for (int j = 0; j < numberOfNodesToConnect; j++) //connect it to that number of nodes
                     {
@@ -196,15 +196,15 @@ namespace STVRogue.GameLogic
                     }
                     while (Convert.ToDouble(connected / (numberOfNodesInZone + 1)) > 3)
                     {
-                        n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+						n1 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         while (n1.neighbors.Count <= 1)
                         {
-                            n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+							n1 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         }
-                        n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+						n2 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         while (n2.neighbors.Count <= 1 || n2.id == n1.id || !n2.alreadyConnected(n1))
                         {
-                            n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+							n2 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         }
                         n1.disconnect(n2);
                         Logger.log("Nodes " + n1.id + " " + n2.id + " are disconnected");
@@ -222,15 +222,15 @@ namespace STVRogue.GameLogic
                     }
                     while (Convert.ToDouble(connected / (numberOfNodesInZone + 2)) > 3)
                     {
-                        n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+						n1 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         while (n1.neighbors.Count <= 1)
                         {
-                            n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+							n1 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         }
-                        n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+						n2 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         while (n2.neighbors.Count <= 1 || n2.id == n1.id || !n2.alreadyConnected(n1))
                         {
-                            n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+							n2 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         }
                         n1.disconnect(n2);
                         Logger.log("Nodes " + n1.id + " " + n2.id + " are disconnected");
@@ -247,15 +247,15 @@ namespace STVRogue.GameLogic
                     }
                     while (Convert.ToDouble(connected / (numberOfNodesInZone + 1)) > 3)
                     {
-                        n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+						n1 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         while (n1.neighbors.Count <= 1)
                         {
-                            n1 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+							n1 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         }
-                        n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+						n2 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         while (n2.neighbors.Count <= 1 || n2.id == n1.id || !n2.alreadyConnected(n1))
                         {
-                            n2 = newZone.nodesInZone.ElementAt(RandomGenerator.rnd.Next(0, numberOfNodesInZone));
+							n2 = newZone.nodesInZone.ElementAt(random.Next(0, numberOfNodesInZone));
                         }
                         n1.disconnect(n2);
                         Logger.log("Nodes " + n1.id + " " + n2.id + " are disconnected");

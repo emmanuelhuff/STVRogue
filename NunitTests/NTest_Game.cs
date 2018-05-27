@@ -11,6 +11,10 @@ namespace STVRogue.GameLogic
     [TestFixture]
     public class NTest_Game
     {
+
+		//public Random random = RandomGenerator.rnd;
+		public Random random = RandomGenerator.initializeWithSeed(5);
+
         Game game = new Game(5, 5, 50);
 
         [Test]
