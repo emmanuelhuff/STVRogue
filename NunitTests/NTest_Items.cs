@@ -17,6 +17,12 @@ namespace STVRogue.GameLogic
 			Assert.IsFalse(c.used);
         }
 		[Test]
+        public void NTest_create_ItemwithID()
+        {
+            Item c = new Item("item");
+			Assert.AreEqual(c.id, "item");
+        }
+		[Test]
 		public void NTest_create_healingPorion()
 		{
 			Item c = new Crystal("ruby");
