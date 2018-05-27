@@ -14,6 +14,7 @@ namespace STVRogue.GameLogic
 
 		//public Random random = RandomGenerator.rnd;
 		public Random random = RandomGenerator.initializeWithSeed(5);
+        public Dungeon dungeon;
 
         Game game = new Game(5, 5, 50);
 
@@ -78,7 +79,7 @@ namespace STVRogue.GameLogic
         public void NTest_check_getHPM()
         {
             int totalMonsterHP = 0;
-            foreach (Zone z in this.dungeon.zones) //for each zone
+            foreach (Zone z in game.dungeon.zones) //for each zone
             {
                 totalMonsterHP += z.getZoneHPValue(); //adds up zone HP values
             }
