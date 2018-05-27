@@ -14,7 +14,7 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_create_commandclass()
         {
-			Assert.AreEqual(command.commandId,-1);
+			Assert.AreEqual(command.commandId,1);
         }
 
 		[Test]
