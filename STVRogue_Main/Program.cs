@@ -20,7 +20,6 @@ namespace STVRogue
 			int nextState = 0;
 			int command = -1;
 
-			game.player = 0;
             //The game continues while the player is alive
 			while (game.player.HP>0 && game.player.location != game.dungeon.exitNode)
             {
