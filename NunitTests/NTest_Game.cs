@@ -16,7 +16,7 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_check_ifValidGame()
         {
-            Assert.IsTrue(game.predicates.isValidDungeon(game.dungeon.startNode, game.dungeon.exitNode, 5));
+            Assert.IsTrue(game.dungeon.predicates.isValidDungeon(game.dungeon.startNode, game.dungeon.exitNode, 5));
         }
 
         [Test]
