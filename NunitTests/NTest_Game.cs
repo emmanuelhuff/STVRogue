@@ -92,5 +92,17 @@ namespace STVRogue.GameLogic
             }
             Assert.IsTrue(totalMonsterHP == game.getHPM());
         }
+
+        [Test]
+        public void NTest_gameCreation()
+        {
+            int totalMonsterHP = 0;
+            foreach (Zone z in game.dungeon.zones) //for each zone
+            {
+                totalMonsterHP += z.getZoneHPValue(); //adds up zone HP values
+            }
+            Assert.IsTrue(totalMonsterHP == game.getHPM());
+        }
+
     }
 }
