@@ -12,15 +12,18 @@ namespace STVRogue.GameLogic
     // instead of creating a player, this test creates a player
     // now we can test the input 
 
+    
     public class TestPlayer : Player
 
     {
-        public Command nextCommand;
+        public List <Command> nextCommand = new List<Command>;        
         new public Command getNextCommand()
         {
-            return nextCommand;
+            Command = first().
+            return nextCommand.get(0);
         }
     }
+    
 
     [TestFixture]
     public class NTest_Dungeon
@@ -97,6 +100,7 @@ namespace STVRogue.GameLogic
             Assert.AreSame(listToCheck, dungeon.shortestpath(nodes.ElementAt(3), nodes.ElementAt(10)));
         }
 
+        
         [Test]
         public void NTest_Fight()
         {
@@ -120,6 +124,7 @@ namespace STVRogue.GameLogic
             node1.fight(testPlayer, 5);
             node1.fight(testPlayer, 6);
         }
+        
         
 
 
