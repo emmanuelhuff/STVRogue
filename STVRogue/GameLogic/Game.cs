@@ -24,7 +24,7 @@ namespace STVRogue.GameLogic
 		 */
 		public Game(uint difficultyLevel, uint nodeCapacityMultiplier, uint numberOfMonsters)
 		{
-			try{
+			
 				Logger.log("Creating a game of difficulty level " + difficultyLevel + ", node capacity multiplier "
                        + nodeCapacityMultiplier + ", and " + numberOfMonsters + " monsters.");
 
@@ -128,7 +128,7 @@ namespace STVRogue.GameLogic
                 //Currently puts all items in the dungeon at the creation
                 int numberOfItemsToPut = itemsToSeed.Count; //number of items to seed is the length of the list
                 Logger.log("Number of items to put in total : " + numberOfItemsToPut);
-                int itemsInZone = (int)(numberOfItemsToPut / (int)difficultyLevel); //Equally partition the number of items, except the last zone
+			int itemsInZone = (int)(numberOfItemsToPut / ((int)difficultyLevel+1)); //Equally partition the number of items, except the last zone
                 int normalItemsInZone = itemsInZone; //used for indexing the items in itemsToSeed for the last level
                                                      //because itemsInZone for the last level changes, indexing changes
                 int itemsIndex = 0; //index of the item in the itemsToSeed list
@@ -137,7 +137,7 @@ namespace STVRogue.GameLogic
                     foreach (Zone z in dungeon.zones) //for each zone
                     {
 
-                        if (z.id == difficultyLevel)
+                        if (z.id == difficultyLevel+1)
                         {   //if it is the last zone
                             itemsInZone = numberOfItemsToPut; //put remainder items
 
@@ -162,9 +162,7 @@ namespace STVRogue.GameLogic
                     }
                 }
 				
-			}catch{
-				throw new GameCreationException("Could not create the game");
-			}
+
 
                      
             

@@ -37,7 +37,7 @@ namespace STVRogue.GameLogic
             string preId, lastId, nodeId = "";
             startNode = new Node("" + 10, 1); //start node id is set
             Logger.log("Set startNode Id: 10");
-            for (int i = 1; i < level + 1; i++) //i signifies zone level, for each zone
+            for (int i = 1; i <= level + 1; i++) //i signifies zone level, for each zone
             {
                 Zone newZone = new Zone(i, nodeCapacityMultiplier); //create a new zone
                 zones.Add(newZone); //add it in dungeon.zones list
@@ -141,7 +141,7 @@ namespace STVRogue.GameLogic
                 //Connect last node to the zone, either a bridge or the exit node
                 int min = 1;
                 int max;
-                if (i == level)
+                if (i == level+1)
                 { // last zone
                   //connect exit node
 
@@ -211,7 +211,7 @@ namespace STVRogue.GameLogic
                         connected -= 2;
                     }
                 }
-                else if (i == level)
+                else if (i == level+1)
                 {
                     Node n1, n2;
                     connected = exitNode.neighbors.Count;
@@ -274,14 +274,14 @@ namespace STVRogue.GameLogic
 			foreach(Zone z in zones){
 				if(z.id==1){ //first zone, add start node
 					z.nodesInZone.Add(startNode);
-				}else if(z.id == level){ //last zone, add end node
+				}else if(z.id == level+1){ //last zone, add end node
 					z.nodesInZone.Add(exitNode);
-				}
+				}else{
+					
+                    z.nodesInZone.Add(bridges.ElementAt(z.id - 1));
+                }
 
-					if (z.id != level) //in middle zones, add their bridges
-					{
-						z.nodesInZone.Add(bridges.ElementAt(z.id - 1));
-					}
+                
 				
 
 			}
