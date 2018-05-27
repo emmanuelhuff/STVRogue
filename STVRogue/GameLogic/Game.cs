@@ -28,7 +28,7 @@ namespace STVRogue.GameLogic
 				Logger.log("Creating a game of difficulty level " + difficultyLevel + ", node capacity multiplier "
                        + nodeCapacityMultiplier + ", and " + numberOfMonsters + " monsters.");
 
-				dungeon = new Dungeon(difficultyLevel, nodeCapacityMultiplier, random);//call dungeon constructor
+				dungeon = new Dungeon(difficultyLevel, nodeCapacityMultiplier);//call dungeon constructor
                 player = new Player();
                 player.location = dungeon.startNode;
                 int numberOfMonstersToPut = (int)numberOfMonsters; //a temporary variable to keep track of number of monsters to put in the dungeon
