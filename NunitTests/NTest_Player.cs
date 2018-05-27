@@ -257,7 +257,7 @@ namespace STVRogue.GameLogic
 			Player player = new Player();
 			player.location = dungeon.startNode;
 			player.move();
-			Assert.AreEqual(dungeon.startNode, player.location);
+			Assert.IsFalse(player.location == dungeon.startNode);
         }
         //TEST collectItems
 		[Test]
