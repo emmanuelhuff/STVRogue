@@ -185,15 +185,15 @@ namespace STVRogue.GameLogic
 		[Test]
         public void NTest_getNextCommand_unknown()
         {
-			Player player = new Player();
-			player.fakeInputForTest = "5";
-			Assert.AreEqual(new Command(-1).commandId, player.getNextCommand().commandId);
+            TestPlayer player = new TestPlayer();
+            player.nextCommand.Add(new Command(5));
+            Assert.AreEqual(new Command(5).commandId, player.getNextCommand().commandId);
         }
 		[Test]
         public void NTest_getNextCommand_known()
         {
-			Player player = new Player();
-			player.fakeInputForTest = "1";        
+			TestPlayer player = new TestPlayer();
+			player.nextCommand.Add(new Command(1));        
 			Assert.AreEqual(new Command(1).commandId, player.getNextCommand().commandId);
         }
         //TEST flee

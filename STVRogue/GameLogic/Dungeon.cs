@@ -547,7 +547,7 @@ namespace STVRogue.GameLogic
          * If the node contains a pack and a player
          * then the node is contested
          */
-        /*
+        
         public Boolean contested(Player player)
         {
             if (packs.Count > 0 && player.HP != 0)
@@ -558,7 +558,7 @@ namespace STVRogue.GameLogic
             {
                 return false;
             }
-        }*/
+        }
 		
         /**
          * Returns the sum of hp values of packs in that node
