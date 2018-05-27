@@ -19,6 +19,11 @@ namespace STVRogue.Utils
         }
     }
 
+    //ADDED, TEST
+	public interface IUserInput{
+		string GetInput();
+	}
+
     public class RandomGenerator
     {
         static private Random rnd_ = null;
