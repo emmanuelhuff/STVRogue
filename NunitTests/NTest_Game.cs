@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using STVRogue.Utils;
 using System;
 using System.Collections.Generic;
