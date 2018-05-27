@@ -30,22 +30,36 @@ namespace STVRogue.GameLogic
         public void NTest_not_LastZone()
         {
             //if not last zone, we have monsters to place still
-            Zone testZone = new Zone(5, 10);
-            //check if 5 == 5, we are last zone 
-            Assert.AreEqual(game.dungeon.difficultyLevel, testZone.id);
-
-            Assert.IsFalse(testZone.level, game.dungeon.difficultyLevel);
+            
 
         }
 
         [Test]
-        public void NTest_check_ifLastZone()
+        public void NTest_check_getProportion()
         {
             Zone testZone = new Zone(5, 10);
-            //check if 5 == 5, we are last zone 
-            Assert.AreEqual(game.dungeon.difficultyLevel, testZone.id);
+            
 
-            Assert.IsFalse(testZone.level, game.dungeon.difficultyLevel);
+        }
+
+        [Test]
+        public void NTest_check_getItemsHP()
+        {
+            Zone testZone = new Zone(5, 10);
+            
+        }
+
+        [Test]
+        public void NTest_check_getHPM()
+        {
+            Zone testZone = new Zone(5, 10);
+            
+        }
+
+        [Test]
+        public void NTest_check_gameCreated()
+        {
+            Zone testZone = new Zone(5, 10);
 
         }
     }
