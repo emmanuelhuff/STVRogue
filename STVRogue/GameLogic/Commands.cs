@@ -4,7 +4,6 @@ namespace STVRogue.GameLogic
     public class Command
     {
 		public int commandId;      
-        public Command() { }
 		public Command(int commandId) {
 			this.commandId = commandId;
 		}
