@@ -46,7 +46,7 @@ namespace STVRogue.GameLogic
                     {
 
                         int monstersInZone = -1; // -1 is just for control does not have any meaning
-                        if (z.id == difficultyLevel)
+                        if (z.id == difficultyLevel+1)
                         {//if it is the last zone
                             monstersInZone = numberOfMonstersToPut; //put remainder monsters
                         }
