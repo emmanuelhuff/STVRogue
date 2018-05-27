@@ -29,7 +29,8 @@ namespace STVRogue.GameLogic
                        + nodeCapacityMultiplier + ", and " + numberOfMonsters + " monsters.");
 
 				dungeon = new Dungeon(difficultyLevel, nodeCapacityMultiplier);//call dungeon constructor
-                player = new Player();
+			    player = new Player();
+			    player.dungeon = dungeon;
                 player.location = dungeon.startNode;
                 int numberOfMonstersToPut = (int)numberOfMonsters; //a temporary variable to keep track of number of monsters to put in the dungeon
                 int min = 1, max = 1; //used in while loop to define number of monsters in a pack
@@ -48,13 +49,16 @@ namespace STVRogue.GameLogic
                         int monstersInZone = -1; // -1 is just for control does not have any meaning
                         if (z.id == difficultyLevel+1)
                         {//if it is the last zone
-                            monstersInZone = numberOfMonstersToPut; //put remainder monsters
+                            z.monstersInZone = numberOfMonstersToPut; //put remainder monsters
+
                         }
                         else //else every zone gets proportioned number of monsters
                         {
-                            monstersInZone = getProportion(numberOfMonsters, z.id, difficultyLevel); //gets number of monsters to put in this zone
+                            z.monstersInZone = getProportion(numberOfMonsters, z.id, difficultyLevel); //gets number of monsters to put in this zone
+
                         }
-                        Logger.log("Will put " + monstersInZone + " monsters to the zone " + z.id);
+					    monstersInZone = z.monstersInZone;
+                        Logger.log("Will put " + z.monstersInZone + " monsters to the zone " + z.id);
                         numberOfNodesInZone = (uint)z.nodesInZone.Count; //get number of nodes (N)  
 
                         while (monstersInZone > 0) //while there are monsters to put in the zone
@@ -68,7 +72,7 @@ namespace STVRogue.GameLogic
                             if (nodeCapacity > 1)
                             {
                                 //the upper limit for max is either the node's capacity or remaining number of monsters that should be located in this zone
-                                if (nodeCapacity < monstersInZone) max = nodeCapacity; //if node capacity is less than remaining monsters to put, update max limit
+                                if (nodeCapacity < z.monstersInZone) max = nodeCapacity; //if node capacity is less than remaining monsters to put, update max limit
                                 else max = monstersInZone;
 
 								int monstersToLocate = random.Next(min, max + 1); //decide how many monsters will be in this monster-pack between this number limit                    
@@ -78,8 +82,9 @@ namespace STVRogue.GameLogic
                                 packId++; //increase pack ID
                                 z.nodesInZone.ElementAt<Node>(nodeNumber).packs.Add(newPack); //add pack to the node
                                 monstersInZone -= monstersToLocate; //decrease number of monsters to be located in the zone
+
                                 numberOfMonstersToPut -= monstersToLocate; //decrease number of monsters to be located in the dungeon
-                                Logger.log("monsters to locate in zone: " + monstersInZone + " in dungeon: " + numberOfMonstersToPut);
+                                Logger.log("monsters to locate in zone: " + z.monstersInZone + " in dungeon: " + numberOfMonstersToPut);
                             }
 
                         }

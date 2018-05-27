@@ -48,6 +48,7 @@ namespace STVRogue.GameLogic
         public Boolean accelerated = false; //true after player uses magic crystal
         public uint KillPoint = 0; //describes number of monsters beated
         public List<Item> bag = new List<Item>(); //list of items that player has
+		public string fakeInputForTest; //fake input for unit testing(without UI)
         public Player()
         {
             id = "player";
@@ -107,11 +108,19 @@ namespace STVRogue.GameLogic
          * Gets user input and returns command
          */
 
+		/*
+            Command List:
+            1- Move to next node
+            2- Use Magic Crystal
+            3- Use Healing Potion
+            4- Attack
+            */
 		public Command getNextCommand(){
-			
-			string userInput ="";
-			userInput = Console.ReadLine();
-			int command = -1;
+
+			//string userInput ="";
+			//userInput = Console.ReadLine(); 
+			string userInput = fakeInputForTest;
+			int command;
 			if(int.TryParse(userInput,out command)){ //user input should be int
 				if (command != 1 && command != 2 && command != 3 && command != 4)
                 {
@@ -120,6 +129,7 @@ namespace STVRogue.GameLogic
 				}
 			}else{
 				Logger.log("Input should be an integer.");
+				command = -1;
 			}
             
 			Command userCommand = new Command(command); //key press numbers for known commands, -1 for unknown commands

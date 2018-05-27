@@ -22,35 +22,43 @@ namespace STVRogue.GameLogic
         public void NTest_check_ifValidGame()
         {
             Assert.IsTrue(game.dungeon.predicates.isValidDungeon(game.dungeon.startNode, game.dungeon.exitNode, 5));
-        }
-
-        [Test]
-        public void NTest_check_ifLastZone()
-        {
-            Zone testZone = new Zone(5, 10);
-            //check if 5 == 5, we are last zone 
-            Assert.AreEqual(game.dungeon.difficultyLevel, testZone.id);
-
-            foreach (Zone z in game.dungeon.zones)
-            {
-                if (game.dungeon.difficultyLevel != testZone.id)
-                {
-
-                }
-            }
-
 
         }
 
         [Test]
-        public void NTest_not_LastZone()
+        public void NTest_checksZones()
         {
             //if not last zone, we have monsters to place still
-            Zone testZone = new Zone(1, 10);
-            //check if 1 == 5, our code is not working
-            Assert.AreNotEqual(game.dungeon.difficultyLevel, testZone.id);
+            Zone testZone = new Zone(2, 10);
+            //check if 2 != 5, we are not in last zone
+            Assert.AreNotEqual(game.dungeon.difficultyLevel + 1, testZone.id,"test1");
 
-            
+            int total_monsterCount = 0;
+            foreach (Zone z in game.dungeon.zones)
+            {
+                int monsterCount = 0;
+                //if (game.dungeon.difficultyLevel + 1 != testZone.id)
+                {
+                    foreach(Node n in z.nodesInZone)
+                    {
+                        foreach (Pack p in n.packs)
+                        {
+                            foreach (Monster m in p.members)
+                            {
+                                monsterCount += 1;
+                                total_monsterCount += 1;
+								Logger.log("Monster in " + n.id);
+                            }
+                        }
+                    }
+                }
+				Logger.log("in zone " + z.id);
+				Logger.log("proportion is " + game.getProportion(50, z.id, 5));
+				Logger.log(""+monsterCount);
+				Logger.log(""+z.monstersInZone);
+				Assert.AreEqual(monsterCount ,z.monstersInZone,"test2");
+            }
+            Assert.AreEqual(total_monsterCount, 50, "test3");
         }
 
         [Test]
@@ -85,5 +93,17 @@ namespace STVRogue.GameLogic
             }
             Assert.IsTrue(totalMonsterHP == game.getHPM());
         }
+
+        [Test]
+        public void NTest_gameCreation()
+        {
+            int totalMonsterHP = 0;
+            foreach (Zone z in game.dungeon.zones) //for each zone
+            {
+                totalMonsterHP += z.getZoneHPValue(); //adds up zone HP values
+            }
+            Assert.IsTrue(totalMonsterHP == game.getHPM());
+        }
+
     }
 }

@@ -18,7 +18,7 @@ namespace STVRogue.Utils
             Console.Out.WriteLine("** " + s);
         }
     }
-
+   
     public class RandomGenerator
     {
         static private Random rnd_ = null;

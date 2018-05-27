@@ -65,7 +65,7 @@ namespace STVRogue.GameLogic
                 if (i == 1) //for the first level
                 { // connect start node to some nodes in the zone
                     zoneFirstNode = startNode;
-					numberOfNodesToConnect =RandomGenerator.rnd.Next(1, numberOfNodesInZone + 1); //randomly decide btw 1-4 nodes
+					numberOfNodesToConnect =RandomGenerator.rnd.Next(2, numberOfNodesInZone + 1); //randomly decide btw 2-4 nodes
                                                                                                    //rnd operation is exclusive for the max number, numberofNodesInZone can be 4 at most, thus it is safe this way
                     Logger.log("Connecting startNode to " + numberOfNodesToConnect + " nodes in the zone ");
                     for (int j = 0; j < numberOfNodesToConnect; j++) //for each nodes to connect
@@ -89,7 +89,7 @@ namespace STVRogue.GameLogic
 
                     if (numberOfNodesInZone < maxConnect) //maximum number of connections are constrained by
                         maxConnect = numberOfNodesInZone;   //number of zones in the zone
-					numberOfNodesToConnect = RandomGenerator.rnd.Next(1, maxConnect + 1); //Decide how many connections it should make
+					numberOfNodesToConnect = RandomGenerator.rnd.Next(2, maxConnect + 1); //Decide how many connections it should make
                     Logger.log("Connecting bridge " + startBridge.id + " to " + numberOfNodesToConnect + " nodes in the next zone ");
                     for (int j = 0; j < numberOfNodesToConnect; j++)
                     { //connect them with the bridge node
@@ -139,7 +139,7 @@ namespace STVRogue.GameLogic
                 Logger.log("Creating list of not full nodes, number of not full nodes " + listOfNotFullNodes.Count);
 
                 //Connect last node to the zone, either a bridge or the exit node
-                int min = 1;
+                int min = 2;
                 int max;
                 if (i == level+1)
                 { // last zone
@@ -170,10 +170,10 @@ namespace STVRogue.GameLogic
                     bridges.Add(endBridge); //add it to bridges list to access it in the next loop iteration
                     Logger.log("A new bridge is created with id " + nodeId);
 
-                    max = 3; //since a bridge should already have at least 1 connection to the other zone
+                    max = 2; //since a bridge should already have at least 1 connection to the other zone //HARDCODED
                     //max number of connections it can make can not be more than 3
-
-                    if (listOfNotFullNodes.Count < 3) max = listOfNotFullNodes.Count;  //can make at most listOfNotFullNodes.Count number of connections
+                    
+					if (listOfNotFullNodes.Count < 2) min = listOfNotFullNodes.Count;  //can make at most listOfNotFullNodes.Count number of connections
 					numberOfNodesToConnect = RandomGenerator.rnd.Next(min, max + 1); //decide number of nodes to connect
 
                     for (int j = 0; j < numberOfNodesToConnect; j++) //connect it to that number of nodes
@@ -264,6 +264,8 @@ namespace STVRogue.GameLogic
                 }
 
 
+
+
                 //pass to next zone
                 Logger.log("Passing to next zone");
 
@@ -280,14 +282,48 @@ namespace STVRogue.GameLogic
 					
                     z.nodesInZone.Add(bridges.ElementAt(z.id - 1));
                 }
+            
+			}
 
-                
-				
+            //Check if valid dungeon
+			foreach(Zone z in this.zones){
+				List<Node> nodesInZone = z.nodesInZone;
+				foreach(Node nd in z.nodesInZone){
+					if(this.predicates.isBridge(startNode,exitNode,nd)){
+						if(nd.GetType() != typeof(Bridge)){//add 1 more connection
+							List<Node> itsNeighbors = nd.neighbors;
+							List<Node> listOfNotFullNodes = new List<Node>();
+                            //Get list of not full neighbors
+							foreach(Node k in itsNeighbors){
+								if (!k.isFullyConnected()) listOfNotFullNodes.Add(k);
+							}
 
+							if(listOfNotFullNodes.Count>2){//connect first two
+								Node n1 = listOfNotFullNodes.ElementAt(0);
+								Node n2 = listOfNotFullNodes.ElementAt(1);
+								n1.connect(n2);
+								Logger.log("Connecting " + n1.id + " and " + n2.id + " to ensure dungeon is valid");
+							}
+
+						}
+					}
+				}
 			}
 
 
         }
+
+		public bool ContainsBridge(List<Node> nodesInAZone)
+        {
+			foreach (Node nd in nodesInAZone)
+            {
+				if (this.predicates.isBridge(startNode,exitNode,nd))
+					return true;
+
+            }
+			return false;
+        }
+
         /**
          * Returns true if all nodes in toReachNodes are reachable from
          * the parameter mainNode
@@ -646,9 +682,12 @@ namespace STVRogue.GameLogic
                     { //if the node is not contested anymore
                         return 6; //go to state 6
                     }
-                    
 
 
+
+                }else
+                {
+                    return 0;
                 }
 
 
@@ -774,6 +813,7 @@ namespace STVRogue.GameLogic
             
             
         }
+
     }
 
     public class Bridge : Node
@@ -817,6 +857,7 @@ namespace STVRogue.GameLogic
 		public List<Node> nodesInZone;//it stores every node in the zone
         public uint capacity; //number of monsters that each node can have in this node
         public int id; //level of the zone
+        public int monstersInZone;
 
         /**
          * Creates a zone with specified level and the capacity
@@ -827,8 +868,10 @@ namespace STVRogue.GameLogic
 			this.id = level; //zone id gives its level (Zone 1-> first level)
             this.capacity = (uint)(M * (level + 1)); //its capacity is calculated regarding the project document
             this.nodesInZone = new List<Node>(); //it stores every node in the zone
-
+            this.monstersInZone = 0;
         }
+
+
 
         /**
          * Add Node n to the zone's nodesInZone list

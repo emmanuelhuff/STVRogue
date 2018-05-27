@@ -37,10 +37,10 @@ namespace STVRogue.Utils
                 //Console.WriteLine("++ marking " + x0.id + " as seen");
                 foreach (Node y in x0.neighbors)
                 {
-                    //Console.WriteLine("-- considering " + x0.id + " -> " + y.id);
+                  //  Console.WriteLine("-- considering " + x0.id + " -> " + y.id);
                     if (!seen.Contains(y) && !todo.Contains(y))
                     {
-                        //Console.WriteLine("++ adding " + y.id + " to todo-list");
+                    //    Console.WriteLine("++ adding " + y.id + " to todo-list");
                         todo.Add(y);
                     }
                 }
@@ -50,6 +50,11 @@ namespace STVRogue.Utils
 
         public Boolean isReachable(Node u, Node v)
         {
+			List<Node> reachables = reachableNodes(u);
+			//Logger.log("Can be reached:");
+			//foreach (Node n in reachables)
+			//	Logger.log(n.id);
+			//Logger.log("we want to reach " + v.id);
             return reachableNodes(u).Contains(v);
         }
 
@@ -64,6 +69,8 @@ namespace STVRogue.Utils
             if (isReachable(startNode, exitNode)) isBridge = false;
             // restore the connections
             foreach (Node a in around) a.neighbors.Add(nd);
+                     
+            
             return isBridge;
         }
 
@@ -73,7 +80,10 @@ namespace STVRogue.Utils
             List<Node> nodes = reachableNodes(startNode);
             uint n = 0;
             foreach (Node nd in nodes)
-                if (isBridge(startNode, exitNode, nd)) n++;
+				if (isBridge(startNode, exitNode, nd)){
+					n++;
+					Logger.log("counted as bridge " + nd.id);
+				} 
             return n;
         }
 
@@ -82,11 +92,18 @@ namespace STVRogue.Utils
          */
         public Boolean isValidDungeon(Node startNode, Node exitNode, uint level)
         {
+			Logger.log("HERE");
             if (startNode is Bridge || exitNode is Bridge) return false;
+			Logger.log("HERE");
             if (countNumberOfBridges(startNode, exitNode) != level) return false;
-
+			Logger.log("will check nodes contain exit node");
             List<Node> nodes = reachableNodes(startNode);
+			foreach(Node nd in nodes){
+				Logger.log(nd.id);
+			}
+			Logger.log("start exit reachable " + isReachable(startNode, exitNode));
             if (!nodes.Contains(exitNode)) return false;
+			Logger.log("2ill check connectivity");
             int totalConnectivityDegree = 0;
             foreach (Node nd in nodes)
             {
@@ -103,6 +120,7 @@ namespace STVRogue.Utils
                 if (nd is Bridge && !isBridge_) return false;
                 if (!(nd is Bridge) && isBridge_) return false;
             }
+			Logger.log("before avrg connectivity");
             float avrgConnectivity = (float)totalConnectivityDegree / (float)nodes.Count;
             if (avrgConnectivity > 3) return false;
             return true;
