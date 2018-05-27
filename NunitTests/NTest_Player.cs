@@ -209,15 +209,15 @@ namespace STVRogue.GameLogic
         public void NTest_getNextCommand_unknown()
         {
 			Player player = new Player();
-			Console.Write("Press any key 5 to 9");
-			Assert.AreSame(new Command(-1), player.getNextCommand());
+			Console.Write(5);
+			Assert.AreEqual(new Command(-1), player.getNextCommand());
         }
 		[Test]
         public void NTest_getNextCommand_known()
         {
 			Player player = new Player();
-            Console.Write("Press key 1");
-            Assert.AreSame(new Command(1), player.getNextCommand());
+            Console.Write(1);
+			Assert.AreEqual(new Command(1), player.getNextCommand());
         }
         //TEST flee
 		[Test]
