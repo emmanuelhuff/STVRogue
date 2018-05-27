@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using STVRogue.Utils;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace STVRogue.GameLogic
     [TestFixture]
     public class NTest_Dungeon
 	{
+		public Random random = RandomGenerator.initializeWithSeed(5);
 		Dungeon dungeon = new Dungeon(5, 6);
         [Test]
         public void NTest_check_ifValidDungeon()
@@ -50,7 +52,8 @@ namespace STVRogue.GameLogic
 		[Test(Description = "Test function shortestpath() that the result is equal to expectation")]
 		public void NTest_shortestpath()
 		{
-            List<Node> nodes = new List<Node>();
+			
+			List<Node> nodes = new List<Node>();
             Node n1, n2;
             Node startNode = new Node("" + 0, 1);
             nodes.Add(startNode);
@@ -80,7 +83,8 @@ namespace STVRogue.GameLogic
                 i++;
             }
             Assert.AreSame(listToCheck, dungeon.shortestpath(nodes.ElementAt(3), nodes.ElementAt(10)));
-        }
+
+}
         [Test]
         public void NTest_check_fullyConnected_notConnected()
         {
@@ -99,8 +103,9 @@ namespace STVRogue.GameLogic
 		[Test(Description ="Test function level() that the result is equal to expectation")]
         public void NTest_located_Level()
 		{
-			Node n1 = new Node("1",1);
-			Assert.Equals(dungeon.level(n1), 1);
+			List<Zone> zones = dungeon.zones;
+			Node n1 = zones.ElementAt(1).nodesInZone.First();
+			Assert.AreEqual(dungeon.level(n1), 1);
         }
               
 		[Test(Description ="Test function disconnect() that Disconnection is fully completed")]
