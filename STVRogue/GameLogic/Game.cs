@@ -12,6 +12,7 @@ namespace STVRogue.GameLogic
 		public Player player;
 		public Dungeon dungeon;
 		public List<Item> itemsToSeed;
+		public Random random =RandomGenerator.rnd;
 		//public int state;
 
 		/* This creates a player and a random dungeon of the given difficulty level and node-capacity
@@ -23,11 +24,11 @@ namespace STVRogue.GameLogic
 		 */
 		public Game(uint difficultyLevel, uint nodeCapacityMultiplier, uint numberOfMonsters)
 		{
-			try{
+			
 				Logger.log("Creating a game of difficulty level " + difficultyLevel + ", node capacity multiplier "
                        + nodeCapacityMultiplier + ", and " + numberOfMonsters + " monsters.");
 
-                dungeon = new Dungeon(difficultyLevel, nodeCapacityMultiplier);//call dungeon constructor
+				dungeon = new Dungeon(difficultyLevel, nodeCapacityMultiplier);//call dungeon constructor
                 player = new Player();
                 player.location = dungeon.startNode;
                 int numberOfMonstersToPut = (int)numberOfMonsters; //a temporary variable to keep track of number of monsters to put in the dungeon
@@ -45,7 +46,7 @@ namespace STVRogue.GameLogic
                     {
 
                         int monstersInZone = -1; // -1 is just for control does not have any meaning
-                        if (z.id == difficultyLevel)
+                        if (z.id == difficultyLevel+1)
                         {//if it is the last zone
                             monstersInZone = numberOfMonstersToPut; //put remainder monsters
                         }
@@ -58,7 +59,7 @@ namespace STVRogue.GameLogic
 
                         while (monstersInZone > 0) //while there are monsters to put in the zone
                         {
-                            int nodeNumber = RandomGenerator.rnd.Next(0, (int)numberOfNodesInZone); //randomly pick which node to locate
+                            int nodeNumber = random.Next(0, (int)numberOfNodesInZone); //randomly pick which node to locate
                             Node nodeToLocate = z.nodesInZone.ElementAt<Node>(nodeNumber); //get this node instance
 
                             int nodeCapacity = (int)z.capacity - (nodeToLocate.currentNumberOfMonsters()); //number of monsters that can locate in that node
@@ -70,7 +71,7 @@ namespace STVRogue.GameLogic
                                 if (nodeCapacity < monstersInZone) max = nodeCapacity; //if node capacity is less than remaining monsters to put, update max limit
                                 else max = monstersInZone;
 
-                                int monstersToLocate = RandomGenerator.rnd.Next(min, max + 1); //decide how many monsters will be in this monster-pack between this number limit                    
+								int monstersToLocate = random.Next(min, max + 1); //decide how many monsters will be in this monster-pack between this number limit                    
                                 Pack newPack = new Pack("" + packId, (uint)monstersToLocate, this.dungeon); //Create a pack
                                 Logger.log("Putting " + monstersToLocate + " monsters in pack" + packId + " locating in " + nodeToLocate.id);
                                 newPack.location = z.nodesInZone.ElementAt<Node>(nodeNumber);//Assign this pack's location
@@ -93,7 +94,7 @@ namespace STVRogue.GameLogic
                 Logger.log("Upper limit " + (0.8 * getHPM()));
                 while (getItemsHP() <= (0.8 * getHPM())) //while this constraint is satisfied, it creates items
                 {
-                    int decide = RandomGenerator.rnd.Next(0, 2); //0 or 1, 0 means create healing potion, 1 means create magic crystal 
+					int decide = random.Next(0, 2); //0 or 1, 0 means create healing potion, 1 means create magic crystal 
                     if (decide == 0)
                     {
                         //create healing potion
@@ -127,7 +128,7 @@ namespace STVRogue.GameLogic
                 //Currently puts all items in the dungeon at the creation
                 int numberOfItemsToPut = itemsToSeed.Count; //number of items to seed is the length of the list
                 Logger.log("Number of items to put in total : " + numberOfItemsToPut);
-                int itemsInZone = (int)(numberOfItemsToPut / (int)difficultyLevel); //Equally partition the number of items, except the last zone
+			int itemsInZone = (int)(numberOfItemsToPut / ((int)difficultyLevel+1)); //Equally partition the number of items, except the last zone
                 int normalItemsInZone = itemsInZone; //used for indexing the items in itemsToSeed for the last level
                                                      //because itemsInZone for the last level changes, indexing changes
                 int itemsIndex = 0; //index of the item in the itemsToSeed list
@@ -136,7 +137,7 @@ namespace STVRogue.GameLogic
                     foreach (Zone z in dungeon.zones) //for each zone
                     {
 
-                        if (z.id == difficultyLevel)
+                        if (z.id == difficultyLevel+1)
                         {   //if it is the last zone
                             itemsInZone = numberOfItemsToPut; //put remainder items
 
@@ -147,7 +148,7 @@ namespace STVRogue.GameLogic
 
                         for (int i = 0; i < itemsInZone; i++)
                         { //for each item to put in this zone
-                            int nodeNumber = RandomGenerator.rnd.Next(0, (int)numberOfNodesInZone); //randomly pick which node to locate
+							int nodeNumber = random.Next(0, (int)numberOfNodesInZone); //randomly pick which node to locate
                             Node nodeToLocate = z.nodesInZone.ElementAt<Node>(nodeNumber); //get this node
                             Item itemToAdd = itemsToSeed.ElementAt<Item>((int)(itemsIndex * normalItemsInZone + i)); //starts from 0 for level 1, 0+number of items put in each zone for level 2
                                                                                                                      //increases by number of items put in zone for every level
@@ -161,9 +162,7 @@ namespace STVRogue.GameLogic
                     }
                 }
 				
-			}catch{
-				throw new GameCreationException("Could not create the game");
-			}
+
 
                      
             

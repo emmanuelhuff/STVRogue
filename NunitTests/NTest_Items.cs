@@ -10,12 +10,25 @@ namespace STVRogue.GameLogic
     [TestFixture]
     public class NTest_Items
     {
+		[Test]
+		public void NTest_create_healingPorion()
+		{
+			Item c = new Crystal("ruby");
+			Assert.AreEqual(c.id, "ruby");
+		}
+		[Test]
+        public void NTest_create_crystal()
+        {
+            Item h = new HealingPotion("pot1");
+			Assert.AreEqual(h.id, "pot1");
+        }
         [Test]
         public void NTest_use_item()
         {
-            Player P = new Player();
+            Player p = new Player();
             Item x = new HealingPotion("pot1");
-            P.use(x);
+			p.bag.Add(x);
+            p.use(x);
             Assert.True(x.used);
         }
         [Test]
@@ -24,6 +37,7 @@ namespace STVRogue.GameLogic
             Player p = new Player();
             Item h = new HealingPotion("pot1");
             p.HP = 50;
+			p.bag.Add(h);
             p.use(h);
             Assert.True(p.HP > 50);
             Assert.False(p.HP < 51);
@@ -32,11 +46,16 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_use_crystal()
         {
+			Dungeon dungeon = new Dungeon(5, 6);
             Player p = new Player();
             Item c = new Crystal("ruby");
+			p.bag.Add(c);
             p.use(c);
-            Assert.True(p.accelerated);
-            if (p.location is Bridge) ;
+			Assert.True(p.accelerated);
+			if(p.location is Bridge)
+			{
+				Assert.True(p.location == dungeon.startNode);
+			}
         }
     }
     

@@ -22,7 +22,7 @@ namespace STVRogue
 
 
             //The game continues while the player is alive
-			while (game.player.HP>0)
+			while (game.player.HP>0 && game.player.location != game.dungeon.exitNode)
             {
 				
 				 //Could not debug it without terminal, Visual studio community does not have integrated terminal
@@ -106,6 +106,7 @@ namespace STVRogue
 
 				} //REMOVE THIS COMMENT */
             }
+			Logger.log("Player died, the game ends..");
 
 
         }

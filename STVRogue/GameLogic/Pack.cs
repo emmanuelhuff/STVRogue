@@ -42,7 +42,7 @@ namespace STVRogue.GameLogic
 		{
 
 			if (!location.neighbors.Contains(u)) throw new ArgumentException();
-			int capacity = (int)(dungeon.M * (dungeon.Level(u) + 1)); //each zone has a specified capacity
+			int capacity = (int)(dungeon.M * (dungeon.level(u) + 1)); //each zone has a specified capacity
 			// count monsters already in the node:
 			foreach (Pack Q in location.packs) //for each pack in the node
 			{
@@ -78,23 +78,12 @@ namespace STVRogue.GameLogic
 		public void MoveTowards(Node u)
 		{
 
-			List<Node> path = this.dungeon.Shortestpath(this.location, u); //take the shortest path between them
+			List<Node> path = this.dungeon.shortestpath(this.location, u); //take the shortest path between them
 			Logger.log("will move to " + path[0].id);
 			this.Move(path[0]);
 			Logger.log("Moved to " + this.location.id);
 		}
-
-		/*ADDED, USED?
-		public Monster getMonster() {
-			foreach (Monster m in members)
-			{
-				if (m.HP > 0){
-					return m;
-				}
-			}
-			throw new ArgumentException(); //*this is when no monsters are alive
-		}*/
-
+        
 		/**
 		 * Pack either flees or attacks, returns the action with specified possibility
 		 */
