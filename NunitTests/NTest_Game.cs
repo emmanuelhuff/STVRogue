@@ -12,6 +12,7 @@ namespace STVRogue.GameLogic
     public class NTest_Game
     {
         public RandomGenerator random;
+        public Dungeon dungeon;
         
         Game game = new Game(5, 5, 50);
 
