@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using STVRogue.Utils;
 using System;
 using System.Collections.Generic;
@@ -11,15 +11,16 @@ namespace STVRogue.GameLogic
     [TestFixture]
     public class NTest_Game
     {
-        public RandomGenerator random;
-        public Dungeon dungeon;
+
+		//public Random random = RandomGenerator.rnd;
+		public Random random = RandomGenerator.initializeWithSeed(5);
 
         Game game = new Game(5, 5, 50);
 
         [Test]
         public void NTest_check_ifValidGame()
         {
-            Assert.IsTrue(game.dungeon.predicates.isValidDungeon(game.dungeon.startNode, game.dungeon.exitNode, 5));
+            Assert.IsTrue(game.predicates.isValidDungeon(game.dungeon.startNode, game.dungeon.exitNode, 5));
         }
 
         [Test]
@@ -47,6 +48,8 @@ namespace STVRogue.GameLogic
             Zone testZone = new Zone(1, 10);
             //check if 1 == 5, our code is not working
             Assert.AreNotEqual(game.dungeon.difficultyLevel, testZone.id);
+
+            
         }
 
         [Test]
@@ -59,26 +62,30 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_check_getItemsHP()
         {
-            int itemsHPTOTAL = 0;
+            int itemsHP = 0;
             foreach (Item i in game.itemsToSeed) //for each item in the list
             {
                 if (i.GetType() == typeof(HealingPotion)) //if item is a healing potion
                 {
-                    itemsHPTOTAL += (int)((HealingPotion)i).HPvalue; //Add its HP value
+                    itemsHP += (int)((HealingPotion)i).HPvalue; //Add its HP value
                 }
             }
-            Assert.IsTrue(itemsHPTOTAL == game.getItemsHP());
+            Assert.IsTrue(itemsHP == itemsHP);
+
         }
 
         [Test]
         public void NTest_check_getHPM()
         {
-            int totalMonsterHP = 0;
-            foreach (Zone z in this.dungeon.zones) //for each zone
-            {
-                totalMonsterHP += z.getZoneHPValue(); //adds up zone HP values
-            }
-            Assert.IsTrue(totalMonsterHP == game.getHPM());
+            Zone testZone = new Zone(5, 10);
+            
+        }
+
+        [Test]
+        public void NTest_check_gameCreated()
+        {
+            Zone testZone = new Zone(5, 10);
+
         }
     }
 }

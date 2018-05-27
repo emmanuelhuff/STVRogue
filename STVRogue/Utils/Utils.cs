@@ -22,6 +22,7 @@ namespace STVRogue.Utils
     public class RandomGenerator
     {
         static private Random rnd_ = null;
+
         static public Random rnd
         {
             get
@@ -31,9 +32,12 @@ namespace STVRogue.Utils
             }
         }
 
-        static public void initializeWithSeed(int seed)
+		static public Random initializeWithSeed(int seed)
         {
             rnd_ = new Random(seed);
+			return rnd_;
         }
-    }
+
+
+	}
 }
