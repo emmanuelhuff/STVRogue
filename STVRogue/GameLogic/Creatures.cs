@@ -110,8 +110,8 @@ namespace STVRogue.GameLogic
 		public Command getNextCommand(){
 			
 			string userInput ="";
-			userInput = Console.ReadLine();
-			int command = -1;
+			userInput = Console.ReadLine();                  
+			int command;
 			if(int.TryParse(userInput,out command)){ //user input should be int
 				if (command != 1 && command != 2 && command != 3 && command != 4)
                 {
@@ -120,6 +120,7 @@ namespace STVRogue.GameLogic
 				}
 			}else{
 				Logger.log("Input should be an integer.");
+				command = -1;
 			}
             
 			Command userCommand = new Command(command); //key press numbers for known commands, -1 for unknown commands

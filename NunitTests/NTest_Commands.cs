@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using STVRogue.Utils;
 
 namespace STVRogue.GameLogic
 {
@@ -23,7 +24,8 @@ namespace STVRogue.GameLogic
         
 		[Test]
 		public void NTest_check_userCommand(){
-			Console.Write(2);
+			//Console.Write(2);
+
 			Assert.AreEqual(command.getUserCommand().commandId, 2);
 		}
     }

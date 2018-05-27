@@ -209,15 +209,16 @@ namespace STVRogue.GameLogic
         public void NTest_getNextCommand_unknown()
         {
 			Player player = new Player();
-			Console.Write(5);
-			Assert.AreEqual(new Command(-1), player.getNextCommand());
+			Console.WriteLine(5);
+			Assert.AreEqual(new Command(-1).commandId, player.getNextCommand().commandId);
         }
 		[Test]
         public void NTest_getNextCommand_known()
         {
 			Player player = new Player();
-            Console.Write(1);
-			Assert.AreEqual(new Command(1), player.getNextCommand());
+            
+            //Console.WriteLine(1);         
+			Assert.AreEqual(new Command(1).commandId, player.getNextCommand().commandId);
         }
         //TEST flee
 		[Test]
@@ -256,7 +257,7 @@ namespace STVRogue.GameLogic
 			Player player = new Player();
 			player.location = dungeon.startNode;
 			player.move();
-			Assert.AreSame(dungeon.startNode, player.location);
+			Assert.AreEqual(dungeon.startNode, player.location);
         }
         //TEST collectItems
 		[Test]
