@@ -13,9 +13,7 @@ namespace STVRogue.GameLogic
     // instead of creating a player, this test creates a player
     // now we can test the input 
 
-    
-    public class TestPlayer : Player
-
+    public class TestPlayer : Player   
     {
         public List <Command> nextCommand = new List<Command>;        
         new public Command getNextCommand()
@@ -23,9 +21,7 @@ namespace STVRogue.GameLogic
             Command = first().
             return nextCommand.get(0);
         }
-    }
-    
-
+    }   
     [TestFixture]
     public class NTest_Dungeon
 	{
@@ -70,7 +66,6 @@ namespace STVRogue.GameLogic
 		[Test(Description = "Test function shortestpath() that the result is equal to expectation")]
 		public void NTest_shortestpath()
 		{
-			
 			List<Node> nodes = new List<Node>();
             Node n1, n2;
             Node startNode = new Node("" + 0, 1);
@@ -101,17 +96,12 @@ namespace STVRogue.GameLogic
                 i++;
             }
             Assert.AreSame(listToCheck, dungeon.shortestpath(nodes.ElementAt(3), nodes.ElementAt(10)));
-            
-
-
+         
             Assert.AreEqual(listToCheck, dungeon.shortestpath(nodes.ElementAt(3), nodes.ElementAt(10)));
         }
-
-        
         [Test]
         public void NTest_Fight()
         {
-            
             TestPlayer testPlayer = new TestPlayer();
             testPlayer.nextCommand = new Command(4);  //player fights          
 
@@ -130,14 +120,7 @@ namespace STVRogue.GameLogic
             node1.fight(testPlayer, 4);
             node1.fight(testPlayer, 5);
             node1.fight(testPlayer, 6);
-        }
-        
-        
-
-
-
-
-
+        }      
         [Test]
         public void NTest_check_fullyConnected_notConnected()
         {
@@ -186,8 +169,7 @@ namespace STVRogue.GameLogic
             n1.disconnect(n4);
             nodeList.Remove(n4);
             Assert.AreEqual(n1.neighbors, nodeList);
-            Assert.IsFalse(dungeon.predicates.isReachable(n1, n4));
-
+            Assert.IsFalse(dungeon.predicates.isReachable(n1, n4));         
         }
         [Test]
         public void NTest_check_numberOfBridges()
@@ -203,8 +185,7 @@ namespace STVRogue.GameLogic
 			Assert.AreEqual(dungeon.level(n1), 1);
 			Node n1 = new Node("1",1);
 			Assert.AreEqual(n1.level, 1);
-        }
-              
+        }     
 		[Test]
 		public void NTest_check_alreadyConnected()
 		{
@@ -252,8 +233,7 @@ namespace STVRogue.GameLogic
             b1.connectToNodeOfSameZone(n2);
             bridgeNodes.Add(n1);
             bridgeNodes.Add(n2);
-            Assert.AreEqual(b1.neighbors, bridgeNodes);
-
+            Assert.AreEqual(b1.neighbors, bridgeNodes);         
         }
         [Test]
         public void NTest_check_bridgeConnectToNextZone()
@@ -326,8 +306,7 @@ namespace STVRogue.GameLogic
             z.addNodesToZone(n3);
             Assert.AreEqual(z.getZoneHPValue(), (p1HP * 2) + (p2HP * 2) + (p3HP * 2));
             z.nodesInZone.Remove(n2);
-            Assert.AreEqual(z.getZoneHPValue(), (p1HP * 2) + p2HP + p3HP);
-
+            Assert.AreEqual(z.getZoneHPValue(), (p1HP * 2) + p2HP + p3HP);         
         }
         [Test]
         public void NTest_check_fight()
