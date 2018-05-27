@@ -29,7 +29,8 @@ namespace STVRogue.GameLogic
                        + nodeCapacityMultiplier + ", and " + numberOfMonsters + " monsters.");
 
 				dungeon = new Dungeon(difficultyLevel, nodeCapacityMultiplier);//call dungeon constructor
-                player = new Player();
+			    player = new Player();
+			    player.dungeon = dungeon;
                 player.location = dungeon.startNode;
                 int numberOfMonstersToPut = (int)numberOfMonsters; //a temporary variable to keep track of number of monsters to put in the dungeon
                 int min = 1, max = 1; //used in while loop to define number of monsters in a pack

@@ -11,6 +11,12 @@ namespace STVRogue.GameLogic
     public class NTest_Items
     {
 		[Test]
+        public void NTest_create_Item()
+        {
+			Item c = new Item();
+			Assert.IsFalse(c.used);
+        }
+		[Test]
 		public void NTest_create_healingPorion()
 		{
 			Item c = new Crystal("ruby");
@@ -48,14 +54,22 @@ namespace STVRogue.GameLogic
         {
 			Dungeon dungeon = new Dungeon(5, 6);
             Player p = new Player();
+			p.dungeon = dungeon;
+
+			List<Node> nodes = dungeon.shortestpath(dungeon.startNode, dungeon.exitNode);
+			p.location = nodes[1];
+			foreach(Node n in nodes){
+				if(n is Bridge){
+					p.location = n;
+				}
+			}
+
             Item c = new Crystal("ruby");
 			p.bag.Add(c);
             p.use(c);
-			Assert.True(p.accelerated);
-			if(p.location is Bridge)
-			{
-				Assert.True(p.location == dungeon.startNode);
-			}
+			Assert.IsTrue(p.accelerated);         
+			Assert.AreSame(p.location, dungeon.startNode);
+
         }
     }
     
