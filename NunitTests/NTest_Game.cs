@@ -46,11 +46,16 @@ namespace STVRogue.GameLogic
                             {
                                 monsterCount += 1;
                                 total_monsterCount += 1;
+								Logger.log("Monster in " + n.id);
                             }
                         }
                     }
                 }
-                Assert.IsTrue(monsterCount == z.monstersInZone,"test2");
+				Logger.log("in zone " + z.id);
+				Logger.log("proportion is " + game.getProportion(50, z.id, 5));
+				Logger.log(""+monsterCount);
+				Logger.log(""+z.monstersInZone);
+				Assert.AreEqual(monsterCount ,z.monstersInZone,"test2");
             }
             Assert.AreEqual(total_monsterCount, 50, "test3");
         }
