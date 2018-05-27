@@ -20,14 +20,14 @@ namespace STVRogue.GameLogic
             4- Attack
             */
 		public Command getUserCommand(){
-			int command = Console.Read();
+			int command = Console.Read(); //get user input
 			if(command==1 ||command == 2 ||command == 3 ||command == 4 ){
-				commandId = command;
+				commandId = command; //if it is a known command, change the id
 			}else{
 				commandId = -1; //unknown command
 			}
 			Command userCommand = new Command(commandId); //key press numbers for known commands, -1 for unknown commands
-			return userCommand;
+			return userCommand; //erturn userCommand
 		}
 	}
 }

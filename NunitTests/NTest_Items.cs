@@ -44,11 +44,15 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_use_crystal()
         {
+			Dungeon dungeon = new Dungeon(5, 6);
             Player p = new Player();
             Item c = new Crystal("ruby");
             p.use(c);
-            Assert.True(p.accelerated);
-			//TO-DO : check p.location is Bridge -> disconnection.
+			Assert.True(p.accelerated);
+			if(p.location is Bridge)
+			{
+				Assert.True(p.location == dungeon.startNode);
+			}
         }
     }
     
