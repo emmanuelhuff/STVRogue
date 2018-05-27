@@ -19,8 +19,7 @@ namespace STVRogue.GameLogic
 				packStartingHP += m.HP;
 				Assert.AreSame(m.pack, pack);
 			}
-			Assert.AreEqual(packStartingHP, pack.startingHP);
-
+			Assert.AreEqual(packStartingHP, pack.startingHP);         
 		}
 		[Test]
 		public void NTest_attack_playerDies()
@@ -42,8 +41,7 @@ namespace STVRogue.GameLogic
 			uint monsterAttackRating = pack.members.First().AttackRating;
 			player.HP = (int)(monsterAttackRating + 5);
 			pack.Attack(player);
-			Assert.AreNotEqual(player.HP, 0);
-
+			Assert.AreNotEqual(player.HP, 0);         
 		}
 		[Test]
 		public void NTest_move_throwsException()
@@ -75,8 +73,7 @@ namespace STVRogue.GameLogic
 			}
 			pack1.Move(firstZone.ElementAt(2));
 			//rejected
-			Assert.AreSame(firstZone.ElementAt(1), pack1.location);
-
+			Assert.AreSame(firstZone.ElementAt(1), pack1.location);         
 		}
 		[Test]
 		public void NTest_move_packMoves()
@@ -93,8 +90,7 @@ namespace STVRogue.GameLogic
 				Node secondNode = firstNode.neighbors.First();
 				pack1.Move(secondNode);
 				Assert.AreSame(secondNode, pack1.location);
-			}
-
+			}         
 		}
 		[Test]
 		public void NTest_moveTowards_validMove()
@@ -109,10 +105,8 @@ namespace STVRogue.GameLogic
 			Logger.log("Next node will be " + nextNode.id);
             Logger.log("exitnode is " + dungeon.exitNode.id);
 			pack1.MoveTowards(dungeon.exitNode);
-			Assert.AreSame(nextNode.id, pack1.location.id);
-
-		}
-
+			Assert.AreSame(nextNode.id, pack1.location.id);         
+		}      
 		[Test]
 		public void NTest_getAction()
 		{
@@ -130,8 +124,6 @@ namespace STVRogue.GameLogic
 			bool inBetween = (possibility <= (flee + 20) / 100) && (possibility >= (flee - 20) / 100);
 			Assert.IsTrue(inBetween);
 		}
-
-
 		[Test]
 		public void NTest_getPackHPValue_validHP()
 		{
@@ -142,10 +134,8 @@ namespace STVRogue.GameLogic
 			{
 				packHP += m.HP;
 			}
-			Assert.AreEqual(packHP, pack.getPackHPValue());
-
-		}
-
+			Assert.AreEqual(packHP, pack.getPackHPValue());         
+		}      
 		[Test]
 		public void NTest_flee_returnsTruePackFlees()
 		{
@@ -175,8 +165,6 @@ namespace STVRogue.GameLogic
 			}
 			Assert.IsFalse(pack1.flee());
 			Assert.AreSame(pack1.location, dungeon.startNode);
-		}
-
-
+		}      
 	}
 }

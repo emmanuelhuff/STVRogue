@@ -12,8 +12,7 @@ namespace STVRogue.GameLogic
 			Monster monster = new Monster("1");
 			Assert.LessOrEqual(monster.HP, 6);
 			Assert.GreaterOrEqual(monster.HP, 0);
-		}
-
+		}      
 		[Test]
         public void NTest_setHP_changesHP()
         {
@@ -21,8 +20,7 @@ namespace STVRogue.GameLogic
 			int oldHP = monster.HP;
 			monster.setHP(oldHP + 5);
 			Assert.AreEqual(oldHP + 5, monster.HP);
-        }
-
+        }      
 		[Test]
         public void NTest_attack_playerDies()
         {   
@@ -31,8 +29,7 @@ namespace STVRogue.GameLogic
 			Monster monster = new Monster("1");
 			monster.Attack(player);
             Assert.AreEqual(player.HP, 0);
-        }
-
+        }      
         [Test]
         public void NTest_attack_playerAlive()
         {
@@ -40,8 +37,7 @@ namespace STVRogue.GameLogic
 			Monster monster = new Monster("1");
             player.HP = 5;
 			monster.Attack(player);
-            Assert.AreNotEqual(player.HP, 0);
-
+            Assert.AreNotEqual(player.HP, 0);         
         }
     }
 }

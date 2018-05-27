@@ -15,17 +15,14 @@ namespace STVRogue.GameLogic
     [TestFixture]
     public class NTest_Player
     {
-        
 		[Test]
         public void NTest_createPlayer()
         {
             Player P = new Player();
 			Assert.AreEqual(P.id, "player");
 			Assert.AreEqual(P.AttackRating, 5);
-			Assert.AreEqual(P.HPbase, 100);
-
-        }
-
+			Assert.AreEqual(P.HPbase, 100);         
+        }      
 		[Test]
         public void NTest_bagContainsMagicCrystal_returnsTrue()
         {
@@ -34,10 +31,8 @@ namespace STVRogue.GameLogic
 			Crystal crystal = new Crystal("crystal");
 			P.bag.Add(healingPotion);
 			P.bag.Add(crystal);
-			Assert.IsTrue(P.containsMagicCrystal());
-
-        }
-
+			Assert.IsTrue(P.containsMagicCrystal());         
+        }      
 		[Test]
         public void NTest_bagDoesNotContainMagicCrystal_returnsFalse()
         {
@@ -46,10 +41,8 @@ namespace STVRogue.GameLogic
 			HealingPotion healingPotion2 = new HealingPotion("healing2");
             P.bag.Add(healingPotion1);
 			P.bag.Add(healingPotion2);
-            Assert.IsFalse(P.containsMagicCrystal());
-
-        }
-
+            Assert.IsFalse(P.containsMagicCrystal());         
+        }      
 		[Test]
         public void NTest_bagContainsHealingPotion_returnsTrue()
         {
@@ -58,10 +51,8 @@ namespace STVRogue.GameLogic
             Crystal crystal = new Crystal("crystal");
             P.bag.Add(healingPotion);
             P.bag.Add(crystal);
-			Assert.IsTrue(P.containsHealingPotion());
-
-        }
-
+			Assert.IsTrue(P.containsHealingPotion());         
+        }      
         [Test]
         public void NTest_bagDoesNotContainHealingPotion_returnsFalse()
         {
@@ -70,17 +61,14 @@ namespace STVRogue.GameLogic
 			Crystal crystal2 = new Crystal("crystal2");
 			P.bag.Add(crystal1);
 			P.bag.Add(crystal2);
-			Assert.IsFalse(P.containsHealingPotion());
-
-        }
-
+			Assert.IsFalse(P.containsHealingPotion());         
+        }      
 		[Test]
         public void NTest_use_onEmptyBag()
         {
             Player P = new Player();
             Assert.Throws<ArgumentException>(() => P.use(new Item()));
-        }
-
+        }      
         [Test]
         public void NTest_use_item_in_bag()
         {
@@ -90,15 +78,13 @@ namespace STVRogue.GameLogic
             P.use(x);
             Assert.True(x.used);
             Assert.False(P.bag.Contains(x));
-        }
-
+        }      
 		[Test]
         public void NTest_getHPValueOfBag_onEmptyBag_returnsZero()
         {
             Player P = new Player();
 			Assert.Zero(P.getHPValueOfBag());
-        }
-
+        }      
 		[Test]
         public void NTest_getHPValueOfBag_returnsValid()
         {
@@ -108,18 +94,13 @@ namespace STVRogue.GameLogic
 			P.bag.Add(healingPotion);
 			Assert.AreEqual(originalHPValue, P.getHPValueOfBag());
         }
-
-
-
-
 		[Test]
         public void NTest_attack_foeNotMonster_throwsException()
         {
             Player p1 = new Player();
 			Player p2 = new Player();
 			Assert.Throws<ArgumentException>(() => p1.Attack(p2));
-        }
-
+        }      
 		[Test]
         public void NTest_attack_notAcceleratedFoeHPZero_creatureIsKilled()
         {
@@ -134,8 +115,6 @@ namespace STVRogue.GameLogic
             testPlayer.Attack(M);
 			Assert.IsTrue(testPack.members.Count==0);
 			Assert.IsFalse(testPack.members.Count!=0);
-            
-            
         }
 		[Test]
         public void NTest_attack_notAcceleratedFoeHPDiffThanZero_creatureIsNotKilled()
@@ -174,8 +153,7 @@ namespace STVRogue.GameLogic
 			targetMonster.pack = testPack;
 			testPlayer.Attack(testMonster); //player attacks first monster
 			Assert.IsTrue(!testPack.members.Contains(targetMonster)); //returns true if last monster is killed
-			Assert.IsFalse(testPack.members.Contains(targetMonster));
-
+			Assert.IsFalse(testPack.members.Contains(targetMonster));         
         }
 		[Test]
         public void NTest_attack_acceleratedTargetHPNotZero_targetIsNotKilled()
@@ -202,8 +180,7 @@ namespace STVRogue.GameLogic
             testPlayer.Attack(testMonster); //player attacks first monster
             Assert.IsTrue(testPack.members.Contains(targetMonster)); //returns true if last monster is not killed
             Assert.IsFalse(!testPack.members.Contains(targetMonster));
-        }
-
+        }      
         //TEST getNextCommand
 		[Test]
         public void NTest_getNextCommand_unknown()
@@ -230,8 +207,7 @@ namespace STVRogue.GameLogic
 			player.location = n1;
 			Assert.IsTrue(player.flee());         
 			Assert.AreSame(player.location, n2);         
-		}
-
+		}      
 		[Test]
         public void NTest_flee_playerCanNotFlee()
         {
@@ -245,8 +221,7 @@ namespace STVRogue.GameLogic
 			Pack pack = new Pack("1", 2,dungeon);
 			n2.packs.Add(pack);
 			Assert.IsFalse(player.flee()); 
-            Assert.AreSame(player.location, n1);
-
+            Assert.AreSame(player.location, n1);         
         }
         //TEST move
 		[Test]
@@ -273,8 +248,7 @@ namespace STVRogue.GameLogic
 			P.location = testNode;
 
 			P.collectItems();
-			CollectionAssert.AreEquivalent(testList, P.bag.ToList<Item>());
-
+			CollectionAssert.AreEquivalent(testList, P.bag.ToList<Item>());         
         }
         //TEST attackbool
 		[Test]
@@ -282,8 +256,7 @@ namespace STVRogue.GameLogic
         {
 			Player p1 = new Player();
             Player p2 = new Player();
-            Assert.Throws<ArgumentException>(() => p1.Attack(p2));
-
+            Assert.Throws<ArgumentException>(() => p1.Attack(p2));         
         }
 		[Test]
         public void NTest_attackBool_packIsBeated()
@@ -297,9 +270,7 @@ namespace STVRogue.GameLogic
 			int monsterHP = pack.members.First().HP;
 			pack.members.First().setHP((int)Math.Max(1, playerAttackRating - 5));
 
-			Assert.IsTrue(player.AttackBool(pack.members.First()));
-
-
+			Assert.IsTrue(player.AttackBool(pack.members.First()));         
         }
 		[Test]
         public void NTest_attackBool_packIsAlive()
@@ -313,8 +284,6 @@ namespace STVRogue.GameLogic
             int monsterHP = pack.members.First().HP;
 			pack.members.First().setHP((int)(playerAttackRating + 5));
 			Assert.IsFalse(player.AttackBool(pack.members.First()));
-        }
-        
-
+        }      
     }
 }

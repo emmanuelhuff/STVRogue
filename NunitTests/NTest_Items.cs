@@ -52,31 +52,26 @@ namespace STVRogue.GameLogic
 			p.bag.Add(h);
             p.use(h);
             Assert.True(p.HP > 50);
-            Assert.False(p.HP < 51);
-
+            Assert.False(p.HP < 51);         
         }
         [Test]
         public void NTest_use_crystal()
         {
 			Dungeon dungeon = new Dungeon(5, 6);
             Player p = new Player();
-			p.dungeon = dungeon;
-
+			p.dungeon = dungeon;         
 			List<Node> nodes = dungeon.shortestpath(dungeon.startNode, dungeon.exitNode);
 			p.location = nodes[1];
 			foreach(Node n in nodes){
 				if(n is Bridge){
 					p.location = n;
 				}
-			}
-
+			}         
             Item c = new Crystal("ruby");
 			p.bag.Add(c);
             p.use(c);
 			Assert.IsTrue(p.accelerated);         
-			Assert.AreSame(p.location, dungeon.startNode);
-
+			Assert.AreSame(p.location, dungeon.startNode);         
         }
     }
-    
 }

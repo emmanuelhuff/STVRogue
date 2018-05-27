@@ -15,8 +15,7 @@ namespace STVRogue.GameLogic
         public void NTest_create_commandclass()
         {
 			Assert.AreEqual(command.commandId,1);
-        }
-
+        }      
 		[Test]
 		public void NTest_check_stringreturn(){
 			Assert.AreEqual(command.ToString(), "no-action");

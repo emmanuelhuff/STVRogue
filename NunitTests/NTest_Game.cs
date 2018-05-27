@@ -10,9 +10,7 @@ namespace STVRogue.GameLogic
 {
     [TestFixture]
     public class NTest_Game
-    {
-
-		//public Random random = RandomGenerator.rnd;
+    {     
 		public Random random = RandomGenerator.initializeWithSeed(5);
         public Dungeon dungeon;
 
@@ -21,18 +19,15 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_check_ifValidGame()
         {
-            Assert.IsTrue(game.dungeon.predicates.isValidDungeon(game.dungeon.startNode, game.dungeon.exitNode, 5));
-
-        }
-
+            Assert.IsTrue(game.dungeon.predicates.isValidDungeon(game.dungeon.startNode, game.dungeon.exitNode, 5));         
+        }      
         [Test]
         public void NTest_checksZones()
         {
             //if not last zone, we have monsters to place still
             Zone testZone = new Zone(2, 10);
             //check if 2 != 5, we are not in last zone
-            Assert.AreNotEqual(game.dungeon.difficultyLevel + 1, testZone.id,"test1");
-
+            Assert.AreNotEqual(game.dungeon.difficultyLevel + 1, testZone.id,"test1");         
             int total_monsterCount = 0;
             foreach (Zone z in game.dungeon.zones)
             {
@@ -59,15 +54,13 @@ namespace STVRogue.GameLogic
 				Assert.AreEqual(monsterCount ,z.monstersInZone,"test2");
             }
             Assert.AreEqual(total_monsterCount, 50, "test3");
-        }
-
+        }      
         [Test]
         public void NTest_check_getProportion()
         {
             int test = game.getProportion(10, 5, 3);
             Assert.AreEqual(test, 5); // 100 % 20 == 5
-        }
-
+        }      
         [Test]
         public void NTest_check_getItemsHP()
         {
@@ -79,10 +72,8 @@ namespace STVRogue.GameLogic
                     itemsHPTOTAL += (int)((HealingPotion)i).HPvalue; //Add its HP value
                 }
             }
-            Assert.IsTrue(itemsHPTOTAL == game.getItemsHP());
-
-        }
-
+            Assert.IsTrue(itemsHPTOTAL == game.getItemsHP());         
+        }      
         [Test]
         public void NTest_check_getHPM()
         {
@@ -92,8 +83,7 @@ namespace STVRogue.GameLogic
                 totalMonsterHP += z.getZoneHPValue(); //adds up zone HP values
             }
             Assert.IsTrue(totalMonsterHP == game.getHPM());
-        }
-
+        }      
         [Test]
         public void NTest_gameCreation()
         {
@@ -103,7 +93,6 @@ namespace STVRogue.GameLogic
                 totalMonsterHP += z.getZoneHPValue(); //adds up zone HP values
             }
             Assert.IsTrue(totalMonsterHP == game.getHPM());
-        }
-
+        }      
     }
 }
