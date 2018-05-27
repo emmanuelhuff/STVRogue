@@ -29,6 +29,7 @@ namespace STVRogue.GameLogic
             Player player = new Player();
             player.HP = 1;
 			Monster monster = new Monster("1");
+			monster.Attack(player);
             Assert.AreEqual(player.HP, 0);
         }
 
@@ -38,6 +39,7 @@ namespace STVRogue.GameLogic
             Player player = new Player();
 			Monster monster = new Monster("1");
             player.HP = 5;
+			monster.Attack(player);
             Assert.AreNotEqual(player.HP, 0);
 
         }
