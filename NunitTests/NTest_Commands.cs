@@ -13,7 +13,7 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_create_commandclass()
         {
-			Assert.AreEqual(command.commandId,1);
+			Assert.AreEqual(command.commandId,-1);
         }
 
 		[Test]
@@ -23,7 +23,7 @@ namespace STVRogue.GameLogic
         
 		[Test]
 		public void NTest_check_userCommand(){
-			Console.Write("Press 2");
+			Console.Write(2);
 			Assert.AreEqual(command.getUserCommand().commandId, 2);
 		}
     }
