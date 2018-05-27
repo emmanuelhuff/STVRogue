@@ -116,7 +116,8 @@ namespace STVRogue.GameLogic
 				if (command != 1 && command != 2 && command != 3 && command != 4)
                 {
                     Logger.log("Unknown command");
-                }
+					command = -1;
+				}
 			}else{
 				Logger.log("Input should be an integer.");
 			}
