@@ -7,6 +7,21 @@ using System.Threading.Tasks;
 
 namespace STVRogue.GameLogic
 {
+
+    // overrides the getNextCommand player class
+    // instead of creating a player, this test creates a player
+    // now we can test the input 
+
+    public class TestPlayer : Player
+
+    {
+        public Command nextCommand;
+        new public Command getNextCommand()
+        {
+            return nextCommand;
+        }
+    }
+
     [TestFixture]
     public class NTest_Dungeon
 	{
@@ -81,6 +96,35 @@ namespace STVRogue.GameLogic
             }
             Assert.AreSame(listToCheck, dungeon.shortestpath(nodes.ElementAt(3), nodes.ElementAt(10)));
         }
+
+        [Test]
+        public void NTest_Fight()
+        {
+            
+            TestPlayer testPlayer = new TestPlayer();
+            testPlayer.nextCommand = new Command(4);  //player fights          
+
+            Dungeon dungeon = new Dungeon(3, 4);
+            Pack pack = new Pack("1", 2, dungeon);
+            Node node1 = new Node("1", 1);
+            //Node node2 = new Node("2", 1);
+            pack.location = node1;
+            node1.packs.Add(pack);
+
+            testPlayer.location = node1;
+            node1.fight(testPlayer, 1);
+            //Assert.IfFalse(node1.contested());
+            node1.fight(testPlayer, 2);
+            node1.fight(testPlayer, 3);
+            node1.fight(testPlayer, 4);
+            node1.fight(testPlayer, 5);
+            node1.fight(testPlayer, 6);
+        }
+        
+
+
+
+
         [Test]
         public void NTest_check_fullyConnected_notConnected()
         {
