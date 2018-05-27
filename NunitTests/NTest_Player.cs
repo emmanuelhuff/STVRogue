@@ -209,7 +209,7 @@ namespace STVRogue.GameLogic
         public void NTest_getNextCommand_unknown()
         {
 			Player player = new Player();
-			Console.Write("Press key 5");
+			Console.Write("Press any key 5 to 9");
 			Assert.AreSame(new Command(-1), player.getNextCommand());
         }
 		[Test]
@@ -252,7 +252,11 @@ namespace STVRogue.GameLogic
 		[Test]
         public void NTest_move_playerMoves()
         {
-
+			Dungeon dungeon = new Dungeon(3, 4);
+			Player player = new Player();
+			player.location = dungeon.startNode;
+			player.move();
+			Assert.AreSame(dungeon.startNode, player.location);
         }
         //TEST collectItems
 		[Test]
