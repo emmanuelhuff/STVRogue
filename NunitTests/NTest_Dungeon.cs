@@ -16,7 +16,7 @@ namespace STVRogue.GameLogic
     public class TestPlayer : Player
     {
         public List<Command> nextCommand = new List<Command>();
-        public TestPlayer() : base()
+        public TestPlayer(Dungeon dungeon) : base(dungeon)
         {
         }
         new public Command getNextCommand()
@@ -122,7 +122,7 @@ namespace STVRogue.GameLogic
         public void NTest_Fight()
         {
             Dungeon dungeon = new Dungeon(3, 4);
-            Player p = new Player();
+            Player p = new Player(dungeon);
             Pack p1 = new Pack("1", 3, dungeon);
             Node n1 = new Node("1", 1);
             Node n2 = new Node("2", 1);
@@ -143,7 +143,7 @@ namespace STVRogue.GameLogic
             }
 
             // optional 2.2
-            TestPlayer testPlayer = new TestPlayer();
+            TestPlayer testPlayer = new TestPlayer(dungeon);
             testPlayer.nextCommand.Add(new Command(4));
             testPlayer.nextCommand.Add(new Command(1));
             testPlayer.nextCommand.Add(new Command(2));
@@ -353,7 +353,7 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_check_fight()
         {
-            Player p = new Player();
+            Player p = new Player(dungeon);
             Pack p1 = new Pack("1", 3, dungeon);
             Node n1 = new Node("1", 1);
             Node n2 = new Node("2", 1);

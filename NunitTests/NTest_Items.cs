@@ -37,7 +37,8 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_use_item()
         {
-            Player p = new Player();
+            Dungeon dungeon = new Dungeon(5, 6);
+            Player p = new Player(dungeon);
             Item x = new HealingPotion("pot1");
 			p.bag.Add(x);
             p.use(x);
@@ -46,7 +47,8 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_use_healingPotionWithHalfHP()
         {
-            Player p = new Player();
+            Dungeon dungeon = new Dungeon(5, 6);
+            Player p = new Player(dungeon);
             Item h = new HealingPotion("pot1");
             p.HP = 50;
 			p.bag.Add(h);
@@ -57,9 +59,9 @@ namespace STVRogue.GameLogic
         [Test]
         public void NTest_use_crystal()
         {
-			Dungeon dungeon = new Dungeon(5, 6);
-            Player p = new Player();
-			p.dungeon = dungeon;         
+            Dungeon dungeon = new Dungeon(5, 6);
+            Player p = new Player(dungeon);
+            p.dungeon = dungeon;         
 			List<Node> nodes = dungeon.shortestpath(dungeon.startNode, dungeon.exitNode);
 			p.location = nodes[1];
 			foreach(Node n in nodes){

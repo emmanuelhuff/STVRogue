@@ -24,9 +24,9 @@ namespace STVRogue.GameLogic
 		[Test]
 		public void NTest_attack_playerDies()
 		{
-			Dungeon dungeon = new Dungeon(3, 4);
-			Player player = new Player();
-			player.HP = 1;
+            Dungeon dungeon = new Dungeon(5, 6);
+            Player player = new Player(dungeon);
+            player.HP = 1;
 			Pack pack = new Pack("1", 4, dungeon);
 			pack.Attack(player);
 			Assert.AreEqual(player.HP, 0);
@@ -34,10 +34,10 @@ namespace STVRogue.GameLogic
 		[Test]
 		public void NTest_attack_playerAlive()
 		{
-			Dungeon dungeon = new Dungeon(3, 4);
-			Player player = new Player();
+            Dungeon dungeon = new Dungeon(5, 6);
+            Player player = new Player(dungeon);
 
-			Pack pack = new Pack("1", 1, dungeon);
+            Pack pack = new Pack("1", 1, dungeon);
 			uint monsterAttackRating = pack.members.First().AttackRating;
 			player.HP = (int)(monsterAttackRating + 5);
 			pack.Attack(player);

@@ -7,6 +7,7 @@ using STVRogue.Utils;
 
 namespace STVRogue.GameLogic
 {
+
 	public abstract class Creature //contains common fields of Monster and Player
 	{
 		public String id;
@@ -41,7 +42,7 @@ namespace STVRogue.GameLogic
 		}
     }
 
-    public class Player : Creature
+    public class Player : Creature 
     {
         public Dungeon dungeon;
         public int HPbase = 100;
@@ -49,11 +50,11 @@ namespace STVRogue.GameLogic
         public uint KillPoint = 0; //describes number of monsters beated
         public List<Item> bag = new List<Item>(); //list of items that player has
 		//public string fakeInputForTest; //fake input for unit testing(without UI)
-        public Player()
-        {
+        public Player(Dungeon dungeon) {         
             id = "player";
             AttackRating = 5;
 			HP = HPbase;
+            this.dungeon = dungeon; 
         }
         /**
          * Returns true if player's bag contains magic crystal
@@ -195,21 +196,46 @@ namespace STVRogue.GameLogic
 		 */
 
         public void move()
-        {         
+        {
+            Node currentLocation = this.location;
+            if (this.location.level >= dungeon.difficultyLevel) //if last zone
+            {
+                List<Node> shortestPathlist = dungeon.shortestpath(this.location, dungeon.exitNode);
+                this.location = shortestPathlist[1];
+            }
+            else
+            {
+                int bridgeLevel = this.location.level; //gets zone level from current location
+                Node bridge = this.dungeon.bridges[bridgeLevel]; // uses zone level to find zone level's bridge
+                List<Node> shortestPathlist = dungeon.shortestpath(this.location, bridge);
+                this.location = shortestPathlist[1]; //makes the player's location the second to farthest node from the bridge. Could even be the bridge if there is nothing between them.
+            }
+            if (currentLocation.level != this.location.level) // when the player goes up a level
+            {
+                Logger.log("Player moved from level " + currentLocation.level + " to " + "" + this.location.level);
+            }
+            Logger.log("Player moved from " + currentLocation.id + " to " + this.location.id);
+            this.collectItems(); //Collect items in this location    
+        }
+
+        /*
+        public void move()
+        {
             Node currentLocation = this.location;
             List<Node> adjacentNodes = currentLocation.neighbors; //get neighbors of the location
-			int nodeIndex = RandomGenerator.rnd.Next(0, adjacentNodes.Count); //randomly decide which node to move
-			this.location = adjacentNodes.ElementAt(nodeIndex); //change player's location
-			Logger.log("Player moved from "+currentLocation.id+" to " + this.location.id);
+            int nodeIndex = RandomGenerator.rnd.Next(0, adjacentNodes.Count); //randomly decide which node to move
+            this.location = adjacentNodes.ElementAt(nodeIndex); //change player's location
+            Logger.log("Player moved from " + currentLocation.id + " to " + this.location.id);
 
-			this.collectItems();//Collect items in this location
+            this.collectItems();//Collect items in this location
         }
+        */
 
         /**
          * Player automatically collects colocated items and puts in the bag
          */
 
-		public void collectItems(){
+        public void collectItems(){
 			Node currentLocation = this.location;
 			foreach(Item i in currentLocation.items.ToList()){ //for each item in the same location
 				currentLocation.items.Remove(i); //remove them from node's item list

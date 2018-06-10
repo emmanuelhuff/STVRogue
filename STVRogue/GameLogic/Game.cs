@@ -12,7 +12,7 @@ namespace STVRogue.GameLogic
 		public Player player;
 		public Dungeon dungeon;
 		public List<Item> itemsToSeed;
-		public Random random =RandomGenerator.rnd;
+		public Random random = RandomGenerator.rnd;
 		//public int state;
 
 		/* This creates a player and a random dungeon of the given difficulty level and node-capacity
@@ -29,7 +29,7 @@ namespace STVRogue.GameLogic
                        + nodeCapacityMultiplier + ", and " + numberOfMonsters + " monsters.");
 
 				dungeon = new Dungeon(difficultyLevel, nodeCapacityMultiplier);//call dungeon constructor
-			    player = new Player();
+			    player = new Player(dungeon);
 			    player.dungeon = dungeon;
                 player.location = dungeon.startNode;
                 int numberOfMonstersToPut = (int)numberOfMonsters; //a temporary variable to keep track of number of monsters to put in the dungeon
