@@ -19,16 +19,18 @@ namespace STVRogue
 
 			int nextState = 0;
 			int command = -1;
+            //int count1 = 0; 
 
             //The game continues while the player is alive
 			while (game.player.HP>0 && game.player.location != game.dungeon.exitNode)
-            {				
-				 //Could not debug it without terminal, Visual studio community does not have integrated terminal
-				 
-				 
-				//While it is not contested,
-				//  player can move in the dungeon,
-				// can use an item
+            {
+                //Could not debug it without terminal, Visual studio community does not have integrated terminal
+
+
+                //While it is not contested,
+                //  player can move in the dungeon,
+                // can use an item
+                Logger.log("Player's Turn:");
 				Logger.log("Press 1 to move an adjacent node."); //TO-DO: Add you can move these nodes, select the node you want to move..
 				Logger.log("Adjacent nodes:");
 				foreach(Node n in game.player.location.neighbors)
@@ -107,29 +109,40 @@ namespace STVRogue
                 // get all packs in current level, have all move towards player
                 // if(currentlevel) is on alert then move the pack towards the player 
                 // using shortpath from pack to player
-                // else, do nothing               
-                foreach(Zone zone in game.player.dungeon.zones)
+                // else, do nothing  
+                Logger.log("Monster's Turn:");
+                foreach (Zone zone in game.player.dungeon.zones)
                 {
                     if(game.player.location.level == zone.id)
                     {
+                        int count2 = 0;
                         foreach (Node node in zone.nodesInZone)
                         {
+                            if (count2 == 1)
+                            {
+                                Logger.log("There were no packs in the zone to move.");
+                            }
                             foreach (Pack pack in node.packs)
                             {
                                 if (game.player.dungeon.zones[(game.player.location.level) - 1].onR_Alert == true)
                                 {
                                     //rALERT MODE: packs moves towards
                                     List<Node> shortestPathlist = game.player.dungeon.shortestpath(pack.location, game.player.location);
+                                    Logger.log("ALERT MODE IN ACTION. MONSTERS WILL MOVE TOWARDS PLAYER.");
+                                    Logger.log("Monster pack moves from" + pack.location.id + " to" + shortestPathlist[1].id + ".");
                                     pack.location = shortestPathlist[1];
+                                    
                                 } else
                                 {
                                     //NORMAL MODE: packs moves to a neighbor
                                     if (pack.location.neighbors.Count > 0)
-                                    {
+                                    {                                        
+                                        Logger.log("Monster pack moves from" + pack.location + " to" + pack.location.neighbors + ".");
                                         pack.location = pack.location.neighbors[0];
                                     }
                                 }
-                            }                                
+                            }
+                            count2++;                                
                         }                        
                     }
                  }
