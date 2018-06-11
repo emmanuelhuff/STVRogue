@@ -50,6 +50,7 @@
     <Compile Include="Utils\Predicates.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="Utils\Test.cs" />
+    <Compile Include="GameLogic\GamePlay.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
