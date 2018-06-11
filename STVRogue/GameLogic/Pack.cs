@@ -77,7 +77,6 @@ namespace STVRogue.GameLogic
 		/* Move the pack one node further along a shortest path to u. */
 		public void MoveTowards(Node u)
 		{
-
 			List<Node> path = this.dungeon.shortestpath(this.location, u); //take the shortest path between them
 			Logger.log("will move to " + path[0].id);
 			this.Move(path[1]);

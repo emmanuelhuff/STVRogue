@@ -22,8 +22,7 @@ namespace STVRogue
 
             //The game continues while the player is alive
 			while (game.player.HP>0 && game.player.location != game.dungeon.exitNode)
-            {
-				
+            {				
 				 //Could not debug it without terminal, Visual studio community does not have integrated terminal
 				 
 				 
@@ -101,13 +100,52 @@ namespace STVRogue
 						nextState = 0;
 						break;
 					}
+				}
 
+                // now give a pack a turn
+                // find any pack in current zone
+                // get all packs in current level, have all move towards player
+                // if(currentlevel) is on alert then move the pack towards the player 
+                // using shortpath from pack to player
+                // else, do nothing               
+                foreach(Zone zone in game.player.dungeon.zones)
+                {
+                    if(game.player.location.level == zone.id)
+                    {
+                        foreach (Node node in zone.nodesInZone)
+                        {
+                            foreach (Pack pack in node.packs)
+                            {
+                                if (game.player.dungeon.zones[(game.player.location.level) - 1].onR_Alert == true)
+                                {
+                                    //rALERT MODE: packs moves towards
+                                    List<Node> shortestPathlist = game.player.dungeon.shortestpath(pack.location, game.player.location);
+                                    pack.location = shortestPathlist[1];
+                                } else
+                                {
+                                    //NORMAL MODE: packs moves to a neighbor
+                                    if (pack.location.neighbors.Count > 0)
+                                    {
+                                        pack.location = pack.location.neighbors[0];
+                                    }
+                                }
+                            }                                
+                        }                        
+                    }
+                 }
 
-				} //REMOVE THIS COMMENT */
             }
-			Logger.log("Player died, the game ends..");
+            if (game.player.location == game.dungeon.exitNode)
+            {
+                Logger.log("Congrats! You've reached the end of the tunnel :-)");                
 
-
+            }
+            else
+            {
+                Logger.log("Player died, GAME OVER...");
+            }
+            Logger.log("Press any key to exit.");
+            command = game.player.getNextCommand().commandId;
         }
     }
 }

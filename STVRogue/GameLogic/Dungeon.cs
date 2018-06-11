@@ -589,6 +589,7 @@ namespace STVRogue.GameLogic
         public int fight(Player player, int state)
         {
             int command = -1;
+            player.dungeon.zones[(player.location.level)-1].onR_Alert = true;
             if (state == 0)
             {
 				//ensure player is not accelerated
@@ -858,6 +859,7 @@ namespace STVRogue.GameLogic
         public uint capacity; //number of monsters that each node can have in this node
         public int id; //level of the zone
         public int monstersInZone;
+        public bool onR_Alert; 
 
         /**
          * Creates a zone with specified level and the capacity
@@ -869,6 +871,7 @@ namespace STVRogue.GameLogic
             this.capacity = (uint)(M * (level + 1)); //its capacity is calculated regarding the project document
             this.nodesInZone = new List<Node>(); //it stores every node in the zone
             this.monstersInZone = 0;
+            this.onR_Alert = false;
         }
 
 

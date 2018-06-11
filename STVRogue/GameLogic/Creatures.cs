@@ -218,7 +218,7 @@ namespace STVRogue.GameLogic
             this.collectItems(); //Collect items in this location    
         }
 
-        /*
+        /* OLD MOVE, moved player randomly
         public void move()
         {
             Node currentLocation = this.location;
