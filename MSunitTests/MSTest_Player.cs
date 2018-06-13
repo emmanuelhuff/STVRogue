@@ -15,16 +15,14 @@ namespace STVRogue.GameLogic
         [ExpectedException(typeof(ArgumentException))]
         public void MSTest_use_onEmptyBag()
         {
-            Dungeon dungeon = new Dungeon(5,6);
-            Player P = new Player(dungeon);
+            Player P = new Player();
             P.use(new Item());
         }
 
         [TestMethod]
         public void MSTest_use_item_in_bag()
         {
-            Dungeon dungeon = new Dungeon(5, 6);
-            Player P = new Player(dungeon);
+            Player P = new Player();
             Item x = new HealingPotion("pot1");
             P.bag.Add(x);
             P.use(x);

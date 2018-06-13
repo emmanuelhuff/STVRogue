@@ -11,154 +11,242 @@ namespace STVRogue
     /* A dummy top-level program to run the STVRogue game */
     class Program
     {
+        public static Game game = new Game(5, 2, 20);
+
+        static void consoleLogger(Creature c)
+        {
+            Logger.log("Press 1 to move an adjacent node. Current node: " + c.location.id); //TO-DO: Add you can move these nodes, select the node you want to move..
+            Logger.log("Adjacent nodes: ");
+            foreach (Node n in c.location.neighbors)
+            {
+                Logger.log(n.id);
+            }
+            Logger.log("Press 2 to do nothing.");
+            if (game.player.containsMagicCrystal())
+                Logger.log("Press 3 to use a Healing Potion");
+            if (game.player.containsHealingPotion() && game.isContested())
+                Logger.log("Press 4 to use a Magic Crystal");
+            if (game.isContested())
+            { //currently consoleLogger is not called when game is constested
+
+                Logger.log("Press 5 to flee");
+                Logger.log("Press 6 to fight");
+
+
+            }
+
+
+        }
+
+        static void consoleLoggerPack(Pack p)
+        {
+            Logger.log("Press 1 to move an adjacent node."); //TO-DO: Add you can move these nodes, select the node you want to move..
+            Logger.log("Adjacent nodes: ");
+            foreach (Node n in p.location.neighbors)
+            {
+                Logger.log(n.id);
+            }
+            Logger.log("Press 2 to do nothing.");
+
+            if (game.isContested() && p.location.id == game.player.location.id) //currently consoleLoggerPack is not called when game is constested
+            {
+                Logger.log("Press 5 to flee");
+                Logger.log("Press 6 to fight");
+            }
+
+
+        }
+
         static void Main(string[] args)
         {
-            Game game = new Game(5, 2, 20); //Initializes the game
-			game.player.location = game.dungeon.startNode; //sets player's first location in the game
-			game.player.collectItems(); //player collects items in its position(startnode)
+            //game = new Game(5, 2, 20); //Initializes the game
+            game.player.location = game.dungeon.startNode; //sets player's first location in the game
+            game.player.collectItems(); //player collects items in its position(startnode)
 
-			int nextState = 0;
-			int command = -1;
-            //int count1 = 0; 
+            int nextState = 0;
 
-            //The game continues while the player is alive
-			while (game.player.HP>0 && game.player.location != game.dungeon.exitNode)
+
+            GamePlay gp = new GamePlay();
+            gp.saveInitialGame(game);
+
+            // take out later??
+            
+            gp.saveToFile("test.xml", game);
+            //GamePlay gp2 = new GamePlay("testOneTurn.xml");
+            //gp2.reset();
+            //game = gp2.getState();
+            
+
+            uint x = game.player.dungeon.difficultyLevel;
+            //The game continues while the player is alive or the player reaches the exit node
+            while (game.player.HP > 0 && game.player.location != game.dungeon.exitNode)
             {
-                //Could not debug it without terminal, Visual studio community does not have integrated terminal
+                Logger.log("Turn is " + game.turnCount);
 
+                if (game.isContested())
+                {
 
-                //While it is not contested,
-                //  player can move in the dungeon,
-                // can use an item
-                Logger.log("Player's Turn:");
-				Logger.log("Press 1 to move an adjacent node."); //TO-DO: Add you can move these nodes, select the node you want to move..
-				Logger.log("Adjacent nodes:");
-				foreach(Node n in game.player.location.neighbors)
-                {
-                    Logger.log(n.id);
-                }
-				if(game.player.containsMagicCrystal())
-				    Logger.log("Press 2 to use a Crystal");
-				if (game.player.containsHealingPotion())
-				    Logger.log("Press 3 to use a Healing Potion");
-                command = game.player.getNextCommand().commandId;
-				while(command==-1){
-					Logger.log("Waiting for the user input");
-					command = game.player.getNextCommand().commandId;
-				}
+                    Logger.log("CONTESTED!");
+                    Logger.log("You have encountered a pack of Orcs! A battle commences...");
 
-                if (command == 1)
-                {
-					game.player.move();
-                }
-                else if (command == 2)
-                {
-					if (!game.player.containsMagicCrystal())
+                    while (game.isContested())
                     {
-                        Logger.log("Player has no magic crystal, press a valid command");
-
-					}else{
-						//player uses magic crystal
-                        foreach (Item i in game.player.bag)
+                        Logger.log("Calling with state " + nextState);
+                        nextState = game.player.location.fight(game.player, nextState);
+                        if (nextState == -1 || nextState == 5 || nextState == 6)
                         {
-                            if (i.GetType() == typeof(Crystal))
+                            nextState = 0;
+                            Logger.log("Not contested anymore");
+                            foreach (Zone z in game.dungeon.zones)
                             {
-                                game.player.use(i);
-                                Logger.log("Player used a crystal");
-                                break; //break the for loop
+                                z.onR_Alert = false;
                             }
-                            Logger.log("Could not be able to execute this");
+                            //br
+                        }
+                        Logger.log("The packs that are not combatting are playing:");
+                        //not combating packs play
+                        List<Pack> packList = game.dungeon.GetPacks();
+
+                        foreach (Pack p in packList)
+                        {
+                            Node packLocation = p.location;
+                            if (packLocation.id != game.player.location.id)
+                            { //not combatting
+                                Logger.log("Pack " + p.id + "'s turn, pack node: " + packLocation.id);
+
+                                game.activePack = p;
+                                consoleLoggerPack(p);
+                                Command command = game.player.getNextCommand();
+
+                                while (!game.update(command, game.turn, game.dungeon.zones.ElementAt(packLocation.level - 1)))
+                                {
+                                    Logger.log("enter a valid command");
+                                    command = game.player.getNextCommand();
+                                }
+
+                            }
+
 
                         }
-					}
-                    
-                }
-                else if (command == 3)
-                {
-					if (!game.player.containsHealingPotion())
-                    {
-                        Logger.log("Player has no healing potion, press a valid command");
 
-					}else{
-						foreach (Item i in game.player.bag)
+                        game.turnCount++;
+
+                    }
+                    //game is not contested anymore, player's turn to play
+                    game.turn = true;
+
+
+                }
+                else
+                {
+
+                    if (game.turn)
+                    { //player's turn
+                        Logger.log("Player's turn");
+                        consoleLogger(game.player);
+                        Command command = game.player.getNextCommand();
+
+                        while (command.commandId == -1)
                         {
-                            if (i.GetType() == typeof(HealingPotion))
+                            command = game.player.getNextCommand();
+                        }
+                        game.update(command, game.turn, null);
+
+
+
+                        game.turn = false;
+                        game.turnCount++;
+                    }
+                    else
+                    { //monster pack's turn
+                        Logger.log("Packs are playing: ");
+
+                        List<Pack> packList = game.dungeon.GetPacks();
+                        foreach (Pack p in packList)
+                        {
+                            Logger.log(p.id);
+                        }
+                        foreach (Pack p in packList)
+                        {
+                            Node packLocation = p.location;
+                            Logger.log("Pack " + p.id + "'s turn, pack node: " + packLocation.id);
+
+                            game.activePack = p;
+                            consoleLoggerPack(p);
+                            Command command = game.player.getNextCommand();
+
+                            while (!game.update(command, game.turn, game.dungeon.zones.ElementAt(packLocation.level - 1)))
                             {
-                                game.player.use(i);
-                                Logger.log("Player used potion");
-                                break; //break the for loop
+                                Logger.log("enter a valid command");
+                                command = game.player.getNextCommand();
                             }
-                            Logger.log("Could not be able to execute this");
+
 
                         }
-					}
-                    
-                }
-				while(game.player.location.packs.Count>0 && game.player.HP>0){//node is contested
-					Logger.log("Calling with state " + nextState);
-					Logger.log("You have encountered a pack of Orcs! A battle commences...");
-					nextState = game.player.location.fight(game.player, nextState); //it calls the fight function with the current state
-					if(nextState==-1 || nextState == 5 || nextState == 6){
-						nextState = 0;
-						break;
-					}
-				}
 
-                // now give a pack a turn
-                // find any pack in current zone
-                // get all packs in current level, have all move towards player
-                // if(currentlevel) is on alert then move the pack towards the player 
-                // using shortpath from pack to player
-                // else, do nothing  
-                Logger.log("Monster's Turn:");
-                foreach (Zone zone in game.player.dungeon.zones)
-                {
-                    if(game.player.location.level == zone.id)
-                    {
-                        int count2 = 0;
-                        foreach (Node node in zone.nodesInZone)
-                        {
-                            if (count2 == 1)
+
+
+                        game.turn = true;
+                        game.turnCount++;
+
+                        /*//only selecting one pack at a time
+						int zoneIndex = game.player.location.level - 1;
+
+
+						//Boolean found = false;
+						Zone packZone = game.dungeon.zones.ElementAt(zoneIndex);
+						Pack pack;
+						if(packZone.monstersInZone > 0){
+							//a pack in this zone can either move or do nothing
+							foreach (Node n in packZone.nodesInZone)
                             {
-                                Logger.log("There were no packs in the zone to move.");
-                            }
-                            foreach (Pack pack in node.packs)
-                            {
-                                if (game.player.dungeon.zones[(game.player.location.level) - 1].onR_Alert == true)
+                                if (n.packs.Count > 0)
                                 {
-                                    //rALERT MODE: packs moves towards
-                                    List<Node> shortestPathlist = game.player.dungeon.shortestpath(pack.location, game.player.location);
-                                    Logger.log("ALERT MODE IN ACTION. MONSTERS WILL MOVE TOWARDS PLAYER.");
-                                    Logger.log("Monster pack moves from" + pack.location.id + " to" + shortestPathlist[1].id + ".");
-                                    pack.location = shortestPathlist[1];
-                                    
-                                } else
-                                {
-                                    //NORMAL MODE: packs moves to a neighbor
-                                    if (pack.location.neighbors.Count > 0)
-                                    {                                        
-                                        Logger.log("Monster pack moves from" + pack.location + " to" + pack.location.neighbors + ".");
-                                        pack.location = pack.location.neighbors[0];
+                                    pack = n.packs.First();
+                                    if (pack == null)
+                                    {
+                                        Logger.log("Pack is NULL?"); //ideally raise an exception
                                     }
+                                    //we have the pack
+                                    game.activePack = pack;
+                                    consoleLoggerPack(pack);
+                                    break;
                                 }
                             }
-                            count2++;                                
-                        }                        
+							Command command = game.player.getNextCommand();
+                            while (!game.update(command, game.turn))
+                            {
+                                Logger.log("enter a valid command");
+                                command = game.player.getNextCommand();
+                            }
+
+                            game.turn = true;
+                            game.turnCount++;
+
+						}else{
+							Logger.log("No monster pack in the zone, turn passes to player");
+							game.turn = true;
+                            game.turnCount++;
+						}*/
+
                     }
-                 }
+                    //gp.saveToFile("testOneTurn.xml", game);
+
+                }
 
             }
             if (game.player.location == game.dungeon.exitNode)
             {
-                Logger.log("Congrats! You've reached the end of the tunnel :-)");                
-
+                Logger.log("CONGRATULATIONS, you reached the end!");
             }
-            else
+            else if (game.player.HP <= 0)
             {
-                Logger.log("Player died, GAME OVER...");
+                Logger.log("Player died..");
             }
-            Logger.log("Press any key to exit.");
-            command = game.player.getNextCommand().commandId;
+            Logger.log("The game ends.");
+
+
         }
+
     }
 }

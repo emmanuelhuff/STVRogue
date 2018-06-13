@@ -4,13 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using STVRogue.Utils;
+using System.Runtime.Serialization;
 
 namespace STVRogue.GameLogic
 {
+    [DataContract(Name = "Item", Namespace = "STVRogue.GameLogic")]
+    [KnownType(typeof(HealingPotion))]
+    [KnownType(typeof(Crystal))]
     public class Item
     {
+        [DataMember()]
         public String id; //id of the item
+        [DataMember()]
         public Boolean used = false; //if the item is used it is true
+
         public Item() { }
         public Item(String id) { this.id = id; }
 
@@ -26,13 +33,15 @@ namespace STVRogue.GameLogic
             //otherwise player uses the item
             Logger.log("" + player.id + " uses " + this.GetType().Name + " " + id);
             used = true;
-			player.bag.Remove(this); //added this on 26th of May, because implementation assumes that when player
-                                    //uses an item, item get removed from the bag
+            player.bag.Remove(this); //added this on 26th of May, because implementation assumes that when player
+                                     //uses an item, item get removed from the bag
         }
     }
 
+    [DataContract(Name = "HealingPotion", Namespace = "STVRogue.GameLogic")]
     public class HealingPotion : Item
     {
+        [DataMember()]
         public uint HPvalue; //hp value of the healing potion
 
         /* Create a healing potion with random HP-value */
@@ -50,6 +59,7 @@ namespace STVRogue.GameLogic
         }
     }
 
+    [DataContract(Name = "Crystal", Namespace = "STVRogue.GameLogic")]
     public class Crystal : Item
     {
         public Crystal(String id) : base(id) { } //calls Item's constructor
@@ -58,8 +68,8 @@ namespace STVRogue.GameLogic
         {
             base.use(player);
             player.accelerated = true; //if player uses magic crystal, player gets accelerated
-			if (player.location is Bridge) //if player is at the bridge
-				player.dungeon.disconnect(player.location as Bridge); //dungeon gets disconnected
+            if (player.location is Bridge) //if player is at the bridge
+                player.dungeon.disconnect(player.location as Bridge); //dungeon gets disconnected
         }
     }
 }

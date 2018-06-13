@@ -16,16 +16,14 @@ namespace STVRogue.GameLogic
         [Fact]
         public void XTest_use_onEmptyBag()
         {
-            Dungeon dungeon = new Dungeon(5, 6);
-            Player P = new Player(dungeon);
+            Player P = new Player();
             Assert.Throws<ArgumentException>(() => P.use(new Item()));
         }
 
         [Fact]
         public void XTest_use_item_in_bag()
         {
-            Dungeon dungeon = new Dungeon(5, 6);
-            Player P = new Player(dungeon);
+            Player P = new Player();
             Item x = new HealingPotion("pot1");
             P.bag.Add(x);
             P.use(x);
