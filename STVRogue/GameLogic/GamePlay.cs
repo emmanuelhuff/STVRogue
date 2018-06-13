@@ -13,6 +13,7 @@ namespace STVRogue.GameLogic
 
     public class GamePlay
     {
+        //
         public Game game;
         private static DataContractSerializer serializer;
 
