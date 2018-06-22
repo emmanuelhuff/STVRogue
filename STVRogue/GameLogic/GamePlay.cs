@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
+using STVRogue.Utils;
+
 
 namespace STVRogue.GameLogic
 {
@@ -16,12 +18,10 @@ namespace STVRogue.GameLogic
         //
         public Game game;
         private static DataContractSerializer serializer;
-
-        public GamePlay()
-        {
-
-        }
-
+      
+		public GamePlay(){
+			
+		}
         public GamePlay(string fileName)
         {
             //GamePlay(file) load a saved game play from a file
@@ -81,10 +81,12 @@ namespace STVRogue.GameLogic
             this.game = tempGame;
         }
 
-        public void replayTurn()
+
+		public void replayTurn()
         {
-            //replay the current turn in the recorded game play
-            //game play to the next turn
+			//replay the current turn in the recorded game play         
+			Zone curZone = new Zone(game.player.location.level, game.dungeon.M);
+			game.update(game.player.getNextCommand(),game.turn,curZone);         
         }
 
         public Game getState()
@@ -93,11 +95,32 @@ namespace STVRogue.GameLogic
             return this.game;
         }
 
-        public Boolean replay()
-        {
-            //replay(Specification S)
-            //replay the whole recoreded game play and test the given specificaiton S
+        //**ADDED**//
+		public bool hasNextTurn(){
+            //find that there is next Turn
+			if(game.player.replayInput.Count == 0){
+				return false;
+			}
+			return true;
+		}
 
+        public Boolean replay(Specification S)
+        {
+			//replay the whole recoreded game play and test the given specificaiton S
+			reset();
+			while(true)
+			{
+				bool ok = S.test(getState());
+				if(ok){
+					if(hasNextTurn()){
+						replayTurn();
+					}
+					else break;               
+				}
+				else{
+					return false;
+				}
+			}         
             return true;
         }
     }

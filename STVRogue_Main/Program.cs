@@ -38,15 +38,15 @@ namespace STVRogue
 
         }
 
-        static void consoleLoggerPack(Pack p)
+        /*static void consoleLoggerPack(Pack p)
         {
-            Logger.log("Press 1 to move an adjacent node."); //TO-DO: Add you can move these nodes, select the node you want to move..
-            Logger.log("Adjacent nodes: ");
+            //Logger.log("Press 1 to move an adjacent node."); //TO-DO: Add you can move these nodes, select the node you want to move..
+            //Logger.log("Adjacent nodes: ");
             foreach (Node n in p.location.neighbors)
             {
                 Logger.log(n.id);
             }
-            Logger.log("Press 2 to do nothing.");
+            //Logger.log("Press 2 to do nothing.");
 
             if (game.isContested() && p.location.id == game.player.location.id) //currently consoleLoggerPack is not called when game is constested
             {
@@ -55,7 +55,7 @@ namespace STVRogue
             }
 
 
-        }
+        }*/
 
         static void Main(string[] args)
         {
@@ -115,7 +115,7 @@ namespace STVRogue
                                 Logger.log("Pack " + p.id + "'s turn, pack node: " + packLocation.id);
 
                                 game.activePack = p;
-                                consoleLoggerPack(p);
+                                //consoleLoggerPack(p);
                                 Command command = game.player.getNextCommand();
 
                                 while (!game.update(command, game.turn, game.dungeon.zones.ElementAt(packLocation.level - 1)))
@@ -159,30 +159,35 @@ namespace STVRogue
                     }
                     else
                     { //monster pack's turn
-                        Logger.log("Packs are playing: ");
+                        Logger.log("Pack's turn: ");
 
                         List<Pack> packList = game.dungeon.GetPacks();
                         foreach (Pack p in packList)
                         {
                             Logger.log(p.id);
                         }
-                        foreach (Pack p in packList)
-                        {
-                            Node packLocation = p.location;
-                            Logger.log("Pack " + p.id + "'s turn, pack node: " + packLocation.id);
-
-                            game.activePack = p;
-                            consoleLoggerPack(p);
+                        Logger.log("Press 1 to move packs"); 
+                        Redo:
                             Command command = game.player.getNextCommand();
-
-                            while (!game.update(command, game.turn, game.dungeon.zones.ElementAt(packLocation.level - 1)))
-                            {
-                                Logger.log("enter a valid command");
-                                command = game.player.getNextCommand();
-                            }
-
-
+                        if (command.commandId != 1)
+                        {
+                            Logger.log("Invalid command. Try again");
+                            goto Redo;
                         }
+                        else
+                        {
+                            foreach (Pack p in packList)
+                            {
+                                Node packLocation = p.location;
+                                Logger.log("Pack " + p.id + "'s turn, pack node: " + packLocation.id);
+
+                                game.activePack = p;
+                                //consoleLoggerPack(p);
+                                game.update(command, game.turn, game.dungeon.zones.ElementAt(packLocation.level - 1));
+                                
+                            }
+                        }
+
 
 
 

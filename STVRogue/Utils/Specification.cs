@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using STVRogue.GameLogic;
 using System.IO;
 
-
 namespace STVRogue.Utils
 {
     public abstract class Specification
@@ -17,7 +16,7 @@ namespace STVRogue.Utils
     {
         private Predicate<Game> p;
         public Always(Predicate<Game> p) { this.p = p; }
-        public override bool test(Game G) { return p(G);  }
+        public override bool test(Game G) { return p(G); }
     }
     public class Unless : Specification
     {

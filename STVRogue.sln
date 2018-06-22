@@ -13,6 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STVRogue", "STVRogue\STVRog
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STVRogue_Main", "STVRogue_Main\STVRogue_Main.csproj", "{C90736AF-02C9-483E-8D05-B66F233D4AC5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6AD30DC6-F4F1-40F1-B63D-AACF36894546}"
+	ProjectSection(SolutionItems) = preProject
+		test.xml = test.xml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
