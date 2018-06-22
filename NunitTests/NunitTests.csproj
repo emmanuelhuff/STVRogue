@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NTest_GameRuleSpecs.cs" />
     <Compile Include="Example_fscheckTest.cs" />
     <Compile Include="NTest_Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
