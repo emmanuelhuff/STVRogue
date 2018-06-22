@@ -19,6 +19,9 @@ namespace STVRogue.GameLogic
         public Game game;
         private static DataContractSerializer serializer;
       
+		public GamePlay(){
+			
+		}
         public GamePlay(string fileName)
         {
             //GamePlay(file) load a saved game play from a file

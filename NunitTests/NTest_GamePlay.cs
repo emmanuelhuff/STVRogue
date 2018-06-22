@@ -13,7 +13,7 @@ namespace STVRogue.GameLogic
         public void test_HPplayer_never_negative()
         {
 			List<GamePlay> plays = new List<GamePlay>();
-			plays.Add(new GamePlay("test.xml"));
+			plays.Add(new GamePlay("test.xml"));//I can't find the location?
 			foreach(GamePlay gp in plays){
 				//testing two "always" properties
 				Assert.IsTrue(gp.replay(new Always(Game => Game.player.HP >= 0)));
