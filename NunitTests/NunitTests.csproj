@@ -67,7 +67,6 @@
     <Compile Include="NTest_Pack.cs" />
     <Compile Include="NTest_Commands.cs" />
     <Compile Include="NTest_GamePlay.cs" />
-    <Compile Include="NTest_Specification.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
